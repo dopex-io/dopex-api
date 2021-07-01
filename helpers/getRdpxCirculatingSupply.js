@@ -31,12 +31,15 @@ module.exports = async () => {
   // For bootstrapping liquidity
   const sideEmitted = 20200;
 
+  const airdropEmitted = 83920;
+
   const circulatingSupply =
     tokenSaleEmitted +
     dpxFarmEmitted +
     dpxWethFarmEmitted +
     rdpxWethFarmEmitted +
-    sideEmitted;
+    sideEmitted +
+    airdropEmitted;
 
   return circulatingSupply;
 };
