@@ -1,5 +1,6 @@
 const getTvl = require("../../../../helpers/getTvl");
 const fetch = require("node-fetch");
+const getPrice = require("../../../../helpers/getPrice");
 
 const isValidQuery = (query) => {
   const upperCasedQuery = query.pool.toUpperCase();
@@ -17,13 +18,7 @@ module.exports = async (req, res) => {
   let tvl = 0;
   if (req.query.pool) {
     if (isValidQuery(req.query)) {
-      const ethPriceFinal = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          return data.ethereum.usd;
-        });
+      const { usd: ethPriceFinal } = getPrice("ethereum");
       tvl = (
         await getTvl(req.query.pool.toUpperCase(), ethPriceFinal)
       ).toString();
