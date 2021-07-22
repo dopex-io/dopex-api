@@ -13,12 +13,17 @@ module.exports = async () => {
   const rdpxBalanceOf = rdpx.contract.methods.balanceOf;
 
   // Async call of all promises
-  const [dpxFarmBalance, dpxWethFarmBalance, rdpxWethFarmBalance] =
-    await Promise.all([
-      rdpxBalanceOf(Addresses.mainnet.DPXStakingRewards).call(),
-      rdpxBalanceOf(Addresses.mainnet["DPX-WETHStakingRewards"]).call(),
-      rdpxBalanceOf(Addresses.mainnet["RDPX-WETHStakingRewards"]).call(),
-    ]);
+  const [
+    dpxFarmBalance,
+    dpxWethFarmBalance,
+    rdpxWethFarmBalance,
+    rdpxMerkleDistributorBalance,
+  ] = await Promise.all([
+    rdpxBalanceOf(Addresses.mainnet.DPXStakingRewards).call(),
+    rdpxBalanceOf(Addresses.mainnet["DPX-WETHStakingRewards"]).call(),
+    rdpxBalanceOf(Addresses.mainnet["RDPX-WETHStakingRewards"]).call(),
+    rdpxBalanceOf("0x20E3D49241A9658C36Df595437160a6F6Dc01bDe").call(),
+  ]);
 
   // Farming (Total Rewards - Current Rewards)
   const dpxFarmEmitted =
@@ -31,7 +36,9 @@ module.exports = async () => {
   // For bootstrapping liquidity
   const sideEmitted = 20200;
 
-  const airdropEmitted = 83920;
+  const airdropEmitted =
+    83920 -
+    new BigNumber(rdpxMerkleDistributorBalance).dividedBy(1e18).toNumber();
 
   const circulatingSupply =
     tokenSaleEmitted +
