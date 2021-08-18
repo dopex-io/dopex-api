@@ -33,9 +33,9 @@ module.exports = async (token, ethPriceFinal) => {
     contractAddresses[stakingAsset]
   );
 
-  let priceLP = 100;
-  let priceDPX = 50;
-  let priceRDPX = 10;
+  let priceLP;
+  let priceDPX;
+  let priceRDPX;
   let LPT1, LPT2, LPT1r, LPT2r;
 
   let weth;
