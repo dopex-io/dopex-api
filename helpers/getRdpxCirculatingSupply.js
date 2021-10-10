@@ -1,16 +1,30 @@
-const { ERC20, Addresses } = require("@dopex-io/sdk");
+const { ERC20__factory, Addresses } = require("@dopex-io/sdk");
 const { BigNumber } = require("bignumber.js");
-const Web3 = require("web3");
+const { providers } = require("@0xsequence/multicall");
+const ethers = require("ethers");
 
 module.exports = async () => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
-  const web3 = new Web3(`https://mainnet.infura.io/v3/${infuraProjectId}`);
+
+  const arbProvider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      "any"
+    )
+  );
+
+  const ethProvider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://mainnet.infura.io/v3/${infuraProjectId}`,
+      "any"
+    )
+  );
 
   const tokenSaleEmitted = 60000;
 
-  const rdpx = new ERC20(web3, Addresses.mainnet.RDPX);
+  const rdpxArb = ERC20__factory.connect(Addresses.arbitrum.RDPX, arbProvider);
 
-  const rdpxBalanceOf = rdpx.contract.methods.balanceOf;
+  const rdpxEth = ERC20__factory.connect(Addresses.mainnet.RDPX, ethProvider);
 
   // Async call of all promises
   const [
@@ -19,26 +33,30 @@ module.exports = async () => {
     rdpxWethFarmBalance,
     rdpxMerkleDistributorBalance,
   ] = await Promise.all([
-    rdpxBalanceOf(Addresses.mainnet.DPXStakingRewards).call(),
-    rdpxBalanceOf(Addresses.mainnet["DPX-WETHStakingRewards"]).call(),
-    rdpxBalanceOf(Addresses.mainnet["RDPX-WETHStakingRewards"]).call(),
-    rdpxBalanceOf("0x20E3D49241A9658C36Df595437160a6F6Dc01bDe").call(),
+    rdpxArb.balanceOf(Addresses.arbitrum.DPXStakingRewards),
+    rdpxArb.balanceOf(Addresses.arbitrum["DPX-WETHStakingRewards"]),
+    rdpxArb.balanceOf(Addresses.arbitrum["RDPX-WETHStakingRewards"]),
+    rdpxEth.balanceOf("0x20E3D49241A9658C36Df595437160a6F6Dc01bDe"),
   ]);
 
   // Farming (Total Rewards - Current Rewards)
   const dpxFarmEmitted =
-    400000 - new BigNumber(dpxFarmBalance).dividedBy(1e18).toNumber();
+    400000 -
+    new BigNumber(dpxFarmBalance.toString()).dividedBy(1e18).toNumber();
   const dpxWethFarmEmitted =
-    800000 - new BigNumber(dpxWethFarmBalance).dividedBy(1e18).toNumber();
+    800000 -
+    new BigNumber(dpxWethFarmBalance.toString()).dividedBy(1e18).toNumber();
   const rdpxWethFarmEmitted =
-    800000 - new BigNumber(rdpxWethFarmBalance).dividedBy(1e18).toNumber();
-
+    800000 -
+    new BigNumber(rdpxWethFarmBalance.toString()).dividedBy(1e18).toNumber();
   // For bootstrapping liquidity
-  const sideEmitted = 20200;
+  const sideEmitted = 20700;
 
   const airdropEmitted =
     83920 -
-    new BigNumber(rdpxMerkleDistributorBalance).dividedBy(1e18).toNumber();
+    new BigNumber(rdpxMerkleDistributorBalance.toString())
+      .dividedBy(1e18)
+      .toNumber();
 
   const circulatingSupply =
     tokenSaleEmitted +

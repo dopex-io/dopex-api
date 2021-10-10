@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   let tvl = 0;
   if (req.query.pool) {
     if (isValidQuery(req.query)) {
-      const { usd: ethPriceFinal } = getPrice("ethereum");
+      const { usd: ethPriceFinal } = await getPrice("ethereum");
       tvl = (
         await getTvl(req.query.pool.toUpperCase(), ethPriceFinal)
       ).toString();
