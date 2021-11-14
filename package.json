@@ -5,14 +5,17 @@
   "main": "index.js",
   "author": "Dopex",
   "license": "UNLICENSED",
+  "scripts": {
+    "dev": "vc dev"
+  },
   "dependencies": {
-    "@0xsequence/multicall": "^0.28.0",
-    "@dopex-io/sdk": "^1.0.0-alpha.30",
+    "@0xsequence/multicall": "^0.29.8",
+    "@dopex-io/sdk": "^1.0.0-alpha.35",
     "bignumber.js": "^9.0.1",
-    "ethers": "^5.4.7",
+    "ethers": "^5.5.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "eslint": "^8.0.0"
+    "eslint": "^8.2.0"
   }
 }

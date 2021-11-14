@@ -22,9 +22,9 @@ module.exports = async () => {
 
   const tokenSaleEmitted = 60000;
 
-  const rdpxArb = ERC20__factory.connect(Addresses.arbitrum.RDPX, arbProvider);
+  const rdpxArb = ERC20__factory.connect(Addresses[42161].RDPX, arbProvider);
 
-  const rdpxEth = ERC20__factory.connect(Addresses.mainnet.RDPX, ethProvider);
+  const rdpxEth = ERC20__factory.connect(Addresses[42161].RDPX, ethProvider);
 
   // Async call of all promises
   const [
@@ -33,9 +33,9 @@ module.exports = async () => {
     rdpxWethFarmBalance,
     rdpxMerkleDistributorBalance,
   ] = await Promise.all([
-    rdpxArb.balanceOf(Addresses.arbitrum.DPXStakingRewards),
-    rdpxArb.balanceOf(Addresses.arbitrum["DPX-WETHStakingRewards"]),
-    rdpxArb.balanceOf(Addresses.arbitrum["RDPX-WETHStakingRewards"]),
+    rdpxArb.balanceOf(Addresses[42161].DPXStakingRewards),
+    rdpxArb.balanceOf(Addresses[42161]["DPX-WETHStakingRewards"]),
+    rdpxArb.balanceOf(Addresses[42161]["RDPX-WETHStakingRewards"]),
     rdpxEth.balanceOf("0x20E3D49241A9658C36Df595437160a6F6Dc01bDe"),
   ]);
 

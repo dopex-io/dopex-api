@@ -32,12 +32,12 @@ module.exports = async () => {
   const teamVestingAddress = "0x38569f73190d6d2f3927c0551526451e3af4d8d6";
   const teamVestingAllocation = 60000;
 
-  const dpxEth = ERC20__factory.connect(Addresses.mainnet.DPX, ethProvider);
+  const dpxEth = ERC20__factory.connect(Addresses[1].DPX, ethProvider);
 
-  const dpxArb = ERC20__factory.connect(Addresses.arbitrum.DPX, arbProvider);
+  const dpxArb = ERC20__factory.connect(Addresses[42161].DPX, arbProvider);
 
   const dpxStakingRewards = StakingRewards__factory.connect(
-    Addresses.arbitrum.DPXStakingRewards,
+    Addresses[42161].DPXStakingRewards,
     arbProvider
   );
 
@@ -52,10 +52,10 @@ module.exports = async () => {
   ] = await Promise.all([
     dpxEth.balanceOf(presaleAddress),
     dpxEth.balanceOf(teamVestingAddress),
-    dpxArb.balanceOf(Addresses.arbitrum.DPXStakingRewards),
+    dpxArb.balanceOf(Addresses[42161].DPXStakingRewards),
     dpxStakingRewards.totalSupply(),
-    dpxArb.balanceOf(Addresses.arbitrum["DPX-WETHStakingRewards"]),
-    dpxArb.balanceOf(Addresses.arbitrum["RDPX-WETHStakingRewards"]),
+    dpxArb.balanceOf(Addresses[42161]["DPX-WETHStakingRewards"]),
+    dpxArb.balanceOf(Addresses[42161]["RDPX-WETHStakingRewards"]),
   ]);
 
   const presaleEmitted =

@@ -1,4 +1,4 @@
-const getTvl = require("../../../../helpers/getTvl");
+const getTvl = require("../../../../helpers/getFarmTvl");
 const fetch = require("node-fetch");
 const getPrice = require("../../../../helpers/getPrice");
 
@@ -7,7 +7,8 @@ const isValidQuery = (query) => {
   if (
     upperCasedQuery !== "DPX" &&
     upperCasedQuery !== "DPX-WETH" &&
-    upperCasedQuery !== "RDPX-WETH"
+    upperCasedQuery !== "RDPX-WETH" &&
+    upperCasedQuery !== "RDPX"
   ) {
     return false;
   }
@@ -35,12 +36,13 @@ module.exports = async (req, res) => {
       .then((data) => {
         return data.ethereum.usd;
       });
-    const [dpxTvl, dpxWethTvl, rdpxWethTvl] = await Promise.all([
+    const [dpxTvl, dpxWethTvl, rdpxWethTvl, rdpxTvl] = await Promise.all([
       getTvl("DPX", ethPriceFinal),
       getTvl("DPX-WETH", ethPriceFinal),
       getTvl("RDPX-WETH", ethPriceFinal),
+      getTvl("RDPX", ethPriceFinal),
     ]);
-    tvl = dpxTvl.plus(dpxWethTvl).plus(rdpxWethTvl).toString();
+    tvl = dpxTvl.plus(dpxWethTvl).plus(rdpxWethTvl).plus(rdpxTvl).toString();
   }
   res.json({ tvl });
 };

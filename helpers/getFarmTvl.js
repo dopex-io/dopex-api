@@ -11,7 +11,7 @@ const BN = require("bignumber.js");
 module.exports = async (token, ethPriceFinal) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
-  const contractAddresses = Addresses.arbitrum;
+  const contractAddresses = Addresses[42161];
 
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
@@ -90,6 +90,8 @@ module.exports = async (token, ethPriceFinal) => {
 
   if (token === "DPX") {
     priceLP = priceDPX;
+  } else if (token === "RDPX") {
+    priceLP = priceRDPX;
   } else if (token === "DPX-WETH") {
     priceLP =
       (priceDPX * Number(dpxReserveOfDpxWethPool) +
