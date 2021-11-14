@@ -24,7 +24,7 @@ module.exports = async () => {
 
   const rdpxArb = ERC20__factory.connect(Addresses[42161].RDPX, arbProvider);
 
-  const rdpxEth = ERC20__factory.connect(Addresses[42161].RDPX, ethProvider);
+  const rdpxEth = ERC20__factory.connect(Addresses[1].RDPX, ethProvider);
 
   // Async call of all promises
   const [
