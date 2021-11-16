@@ -1,4 +1,8 @@
-const { ERC20__factory, Addresses } = require("@dopex-io/sdk");
+const {
+  ERC20__factory,
+  Addresses,
+  StakingRewards__factory,
+} = require("@dopex-io/sdk");
 const { BigNumber } = require("bignumber.js");
 const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
@@ -26,16 +30,25 @@ module.exports = async () => {
 
   const rdpxEth = ERC20__factory.connect(Addresses[1].RDPX, ethProvider);
 
+  const rdpxStakingRewards = StakingRewards__factory.connect(
+    Addresses[42161].RDPXStakingRewards,
+    arbProvider
+  );
+
   // Async call of all promises
   const [
     dpxFarmBalance,
     dpxWethFarmBalance,
     rdpxWethFarmBalance,
+    rdpxFarmTotalSupply,
+    rdpxFarmBalance,
     rdpxMerkleDistributorBalance,
   ] = await Promise.all([
     rdpxArb.balanceOf(Addresses[42161].DPXStakingRewards),
     rdpxArb.balanceOf(Addresses[42161]["DPX-WETHStakingRewards"]),
     rdpxArb.balanceOf(Addresses[42161]["RDPX-WETHStakingRewards"]),
+    rdpxStakingRewards.totalSupply(),
+    rdpxArb.balanceOf(Addresses[42161]["RDPXStakingRewards"]),
     rdpxEth.balanceOf("0x20E3D49241A9658C36Df595437160a6F6Dc01bDe"),
   ]);
 
@@ -49,8 +62,14 @@ module.exports = async () => {
   const rdpxWethFarmEmitted =
     800000 -
     new BigNumber(rdpxWethFarmBalance.toString()).dividedBy(1e18).toNumber();
+  const rdpxFarmEmitted =
+    40000 -
+    new BigNumber(rdpxFarmBalance.toString())
+      .minus(rdpxFarmTotalSupply.toString())
+      .dividedBy(1e18)
+      .toNumber();
   // For bootstrapping liquidity
-  const sideEmitted = 20700;
+  const sideEmitted = 21200;
 
   const airdropEmitted =
     83920 -
@@ -63,6 +82,7 @@ module.exports = async () => {
     dpxFarmEmitted +
     dpxWethFarmEmitted +
     rdpxWethFarmEmitted +
+    rdpxFarmEmitted +
     sideEmitted +
     airdropEmitted;
 

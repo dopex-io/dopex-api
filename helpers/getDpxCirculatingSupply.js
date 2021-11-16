@@ -49,6 +49,7 @@ module.exports = async () => {
     dpxFarmTotalSupply,
     dpxWethFarmBalance,
     rdpxWethFarmBalance,
+    rdpxFarmBalance,
   ] = await Promise.all([
     dpxEth.balanceOf(presaleAddress),
     dpxEth.balanceOf(teamVestingAddress),
@@ -56,6 +57,7 @@ module.exports = async () => {
     dpxStakingRewards.totalSupply(),
     dpxArb.balanceOf(Addresses[42161]["DPX-WETHStakingRewards"]),
     dpxArb.balanceOf(Addresses[42161]["RDPX-WETHStakingRewards"]),
+    dpxArb.balanceOf(Addresses[42161]["RDPXStakingRewards"]),
   ]);
 
   const presaleEmitted =
@@ -79,8 +81,10 @@ module.exports = async () => {
   const rdpxWethFarmEmitted =
     15000 -
     new BigNumber(rdpxWethFarmBalance.toString()).dividedBy(1e18).toNumber();
-  // From operational allocation for liquidity
-  const sideEmitted = 914;
+  const rdpxFarmEmitted =
+    400 - new BigNumber(rdpxFarmBalance.toString()).dividedBy(1e18).toNumber();
+  // From operational allocation
+  const sideEmitted = 925;
 
   const circulatingSupply =
     presaleEmitted +
@@ -89,6 +93,7 @@ module.exports = async () => {
     dpxFarmEmitted +
     dpxWethFarmEmitted +
     rdpxWethFarmEmitted +
+    rdpxFarmEmitted +
     sideEmitted;
 
   return circulatingSupply;
