@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
     const INCLUDE_QUERY_MAPPING = {
       "dpx-ssov": { fn: getSsovTvl, args: ["DPX"] },
       "rdpx-ssov": { fn: getSsovTvl, args: ["RDPX"] },
+      "gohm-ssov": { fn: getSsovTvl, args: ["GOHM"] },
       "dpx-farm": { fn: getFarmTvl, args: ["DPX", ethPriceFinal] },
       "rdpx-farm": { fn: getFarmTvl, args: ["RDPX", ethPriceFinal] },
       "dpx-weth-farm": { fn: getFarmTvl, args: ["DPX-WETH", ethPriceFinal] },
@@ -36,7 +37,8 @@ module.exports = async (req, res) => {
     }, new BN(0));
 
     res.json({ tvl });
-  } catch {
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ error: "Something went wrong." });
   }
 };

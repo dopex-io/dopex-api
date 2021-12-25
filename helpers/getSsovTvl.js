@@ -1,10 +1,14 @@
-const { Addresses, SSOV__factory } = require("@dopex-io/sdk");
+const { Addresses, ERC20SSOV__factory } = require("@dopex-io/sdk");
 const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
 const getPrice = require("./getPrice");
 
-const TOKEN_TO_CG_ID = { DPX: "dopex", RDPX: "dopex-rebate-token" };
+const TOKEN_TO_CG_ID = {
+  DPX: "dopex",
+  RDPX: "dopex-rebate-token",
+  GOHM: "governance-ohm",
+};
 
 module.exports = async (token) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
@@ -18,7 +22,7 @@ module.exports = async (token) => {
     )
   );
 
-  const ssovContract = SSOV__factory.connect(
+  const ssovContract = ERC20SSOV__factory.connect(
     contractAddresses.SSOV[token].Vault,
     provider
   );

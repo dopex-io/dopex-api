@@ -9,8 +9,8 @@
     "dev": "vc dev"
   },
   "dependencies": {
-    "@0xsequence/multicall": "^0.29.8",
-    "@dopex-io/sdk": "^1.0.0-alpha.35",
+    "@0xsequence/multicall": "^0.35.1",
+    "@dopex-io/sdk": "^1.0.0-alpha.44",
     "bignumber.js": "^9.0.1",
     "ethers": "^5.5.1",
     "node-fetch": "^2.6.1"
