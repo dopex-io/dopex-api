@@ -10,6 +10,33 @@ const {
 
 const getPrices = require("../../../../helpers/getPrices");
 
+async function getBnbApy() {
+  const provider = new providers.MulticallProvider(
+    new ethers.providers.JsonRpcProvider(
+      "https://speedy-nodes-nyc.moralis.io/5175b25bfb4a31b9ed82dc8b/bsc/mainnet/archive",
+      56
+    )
+  );
+
+  const vbnbContract = new ethers.Contract(
+    "0xA07c5b74C9B40447a954e1466938b865b6BBea36",
+    ["function supplyRatePerBlock() external view returns (uint)"],
+    provider
+  );
+
+  const blocksPerDay = 20 * 60 * 24;
+  const supplyRatePerBlock = await vbnbContract.supplyRatePerBlock();
+
+  return (
+    (Math.pow(
+      (supplyRatePerBlock.toString() / 1e18) * blocksPerDay + 1,
+      365 - 1
+    ) -
+      1) *
+    100
+  );
+}
+
 async function getGohmApy() {
   const mainnetProvider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
@@ -141,6 +168,7 @@ const ASSET_TO_GETTER = {
   RDPX: { fn: getDopexApy, args: ["RDPX"] },
   ETH: { fn: getEthApy, args: [] },
   GOHM: { fn: getGohmApy, args: [] },
+  BNB: { fn: getBnbApy, args: [] },
 };
 
 module.exports = async (req, res) => {
