@@ -32,16 +32,27 @@ module.exports = async (token) => {
 
   const epoch = await ssovContract.currentEpoch();
 
-  const [deposits, tokenPrice] = await Promise.all([
-    ssovContract.totalEpochDeposits(epoch),
+  const [strikes, tokenPrice] = await Promise.all([
+    ssovContract.getEpochStrikes(epoch),
     getPrice(TOKEN_TO_CG_ID[token]),
   ]);
 
-  let tvl = deposits;
-  const allStrikesPremiums = await ssovContract.getTotalEpochPremium(epoch);
-  allStrikesPremiums.map(premium => tvl = tvl.add(premium));
+  const optionsPrices = {};
+  const currentPrice = await ssovContract.getUsdPrice();
+  const amount = "1000000000000000000"; // 1
+  let i;
 
-  return new BN(tvl.toString())
-    .dividedBy(1e18)
-    .multipliedBy(tokenPrice.usd);
+  for (i in strikes) {
+    const strike = strikes[i].toNumber();
+    const premium = await ssovContract.calculatePremium(strike, amount);
+    const fees = await ssovContract.calculatePurchaseFees(currentPrice, strike, amount);
+    optionsPrices[BN(strikes[i].toString()).dividedBy(1e8)] = {
+      'premium': BN(premium.toString()).dividedBy(1e18),
+      'fees': BN(fees.toString()).dividedBy(1e18),
+      'total': BN(premium.add(fees).toString()).dividedBy(1e18),
+      'usd': BN(premium.add(fees).toString()).dividedBy(1e18).multipliedBy(tokenPrice.usd)
+    }
+  }
+
+  return optionsPrices
 };

@@ -32,16 +32,20 @@ module.exports = async (token) => {
 
   const epoch = await ssovContract.currentEpoch();
 
-  const [deposits, tokenPrice] = await Promise.all([
-    ssovContract.totalEpochDeposits(epoch),
+  const [strikes, deposits, tokenPrice] = await Promise.all([
+    ssovContract.getEpochStrikes(epoch),
+    ssovContract.getTotalEpochStrikeDeposits(epoch),
     getPrice(TOKEN_TO_CG_ID[token]),
   ]);
 
-  let tvl = deposits;
-  const allStrikesPremiums = await ssovContract.getTotalEpochPremium(epoch);
-  allStrikesPremiums.map(premium => tvl = tvl.add(premium));
+  const ssovDeposits = {};
+  for (let i in strikes) {
+    const amount = BN(deposits[i].toString()).dividedBy(1e18);
+    ssovDeposits[BN(strikes[i].toString()).dividedBy(1e8)] = {
+      'amount': amount,
+      'usd': amount.multipliedBy(tokenPrice.usd)
+    };
+  }
 
-  return new BN(tvl.toString())
-    .dividedBy(1e18)
-    .multipliedBy(tokenPrice.usd);
+  return ssovDeposits
 };
