@@ -27,6 +27,8 @@ async function getBnbApy() {
   const blocksPerDay = 20 * 60 * 24;
   const supplyRatePerBlock = await vbnbContract.supplyRatePerBlock();
 
+  console.log(supplyRatePerBlock.toNumber())
+
   return (
     (Math.pow(
       (supplyRatePerBlock.toString() / 1e18) * blocksPerDay + 1,
@@ -35,6 +37,63 @@ async function getBnbApy() {
       1) *
     100
   );
+}
+
+async function getGmxApy() {
+  const infuraProjectId = process.env.INFURA_PROJECT_ID;
+
+  const provider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      "any"
+    )
+  );
+
+  const stakingContract = new ethers.Contract(
+    "0xd2D1162512F927a7e282Ef43a362659E4F2a728F",
+    ["function totalSupply() view returns (uint256)"],
+    provider
+  );
+
+  const ssov = new ethers.Contract(
+    "0x04996AFcf40A14D0892B00C816874F9C1A52C93B",
+    [
+      "function getUsdPrice() public view returns (uint256)",
+    ],
+    provider
+  );
+
+  const ethSsov = new ethers.Contract(
+    "0x711Da677a0D61Ee855DAd4241B552A706F529C70",
+    [
+      "function getUsdPrice() view returns (uint256)",
+    ],
+    provider
+  );
+
+  const gmx = new ethers.Contract(
+    "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+    [
+      "function balanceOf(address _account) view returns (uint256)",
+    ],
+    provider
+  );
+
+  const stakedGmxTracker = await gmx.balanceOf("0x908C4D94D34924765f1eDc22A1DD098397c59dD4");
+  const gmxPrice = (await ssov.getUsdPrice()) * 10 ** 22;
+  const tokensPerInterval = 677910052910052;
+  const secondsPerYear = 31536000;
+  const stakedGmxTrackerAnnualRewardsUsd = 39776760107741941 * secondsPerYear * gmxPrice / 10 ** 18;
+  const basisPointsDivisor = 10000;
+  const feeGmxSupply = await stakingContract.totalSupply();
+  const feeGmxSupplyUsd = feeGmxSupply * gmxPrice / 10 ** 18;
+  const ethPrice = (await ethSsov.getUsdPrice()) * 10 ** 22;
+  const stakedGmxTrackerSupplyUsd = stakedGmxTracker * gmxPrice / 10 ** 18;
+  const gmxAprForEsGmx = stakedGmxTrackerAnnualRewardsUsd * basisPointsDivisor / stakedGmxTrackerSupplyUsd / 100;
+  const feeGmxTrackerAnnualRewardsUsd = tokensPerInterval * secondsPerYear * ethPrice / 10 ** 18;
+  const gmxAprForNativeToken = feeGmxTrackerAnnualRewardsUsd * basisPointsDivisor / feeGmxSupplyUsd / 100;
+  const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx;
+  return Number((((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2));
 }
 
 async function getGohmApy() {
@@ -163,21 +222,22 @@ async function getEthApy() {
   return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2));
 }
 
-const ASSET_TO_GETTER = {
-  DPX: { fn: getDopexApy, args: ["DPX"] },
-  RDPX: { fn: getDopexApy, args: ["RDPX"] },
-  ETH: { fn: getEthApy, args: [] },
-  GOHM: { fn: getGohmApy, args: [] },
-  BNB: { fn: getBnbApy, args: [] },
+const SSOV_TO_GETTER = {
+  "dpx-ssov": { fn: getDopexApy, args: ["DPX"] },
+  "rdpx-ssov": { fn: getDopexApy, args: ["RDPX"] },
+  "eth-ssov": { fn: getEthApy, args: [] },
+  "gohm-ssov": { fn: getGohmApy, args: [] },
+  "bnb-ssov": { fn: getBnbApy, args: [] },
+  "gmx-ssov": { fn: getGmxApy, args: [] },
 };
 
 module.exports = async (req, res) => {
   try {
-    const asset = req.query.asset;
+    const ssov = req.query.ssov;
 
-    if (!asset) return;
+    if (!ssov) return;
 
-    let apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
+    let apy = await SSOV_TO_GETTER[ssov].fn(...SSOV_TO_GETTER[ssov].args);
 
     res.json({ apy });
   } catch (err) {

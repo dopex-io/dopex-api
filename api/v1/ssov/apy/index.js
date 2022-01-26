@@ -69,6 +69,63 @@ async function getGohmApy() {
   return Number(((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(0));
 }
 
+async function getGmxApy() {
+  const infuraProjectId = process.env.INFURA_PROJECT_ID;
+
+  const provider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      "any"
+    )
+  );
+
+  const stakingContract = new ethers.Contract(
+    "0xd2D1162512F927a7e282Ef43a362659E4F2a728F",
+    ["function totalSupply() view returns (uint256)"],
+    provider
+  );
+
+  const ssov = new ethers.Contract(
+    "0x04996AFcf40A14D0892B00C816874F9C1A52C93B",
+    [
+      "function getUsdPrice() public view returns (uint256)",
+    ],
+    provider
+  );
+
+  const ethSsov = new ethers.Contract(
+    "0x711Da677a0D61Ee855DAd4241B552A706F529C70",
+    [
+      "function getUsdPrice() view returns (uint256)",
+    ],
+    provider
+  );
+
+  const gmx = new ethers.Contract(
+    "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+    [
+      "function balanceOf(address _account) view returns (uint256)",
+    ],
+    provider
+  );
+
+  const stakedGmxTracker = await gmx.balanceOf("0x908C4D94D34924765f1eDc22A1DD098397c59dD4");
+  const gmxPrice = (await ssov.getUsdPrice()) * 10 ** 22;
+  const tokensPerInterval = 677910052910052;
+  const secondsPerYear = 31536000;
+  const stakedGmxTrackerAnnualRewardsUsd = 39776760107741941 * secondsPerYear * gmxPrice / 10 ** 18;
+  const basisPointsDivisor = 10000;
+  const feeGmxSupply = await stakingContract.totalSupply();
+  const feeGmxSupplyUsd = feeGmxSupply * gmxPrice / 10 ** 18;
+  const ethPrice = (await ethSsov.getUsdPrice()) * 10 ** 22;
+  const stakedGmxTrackerSupplyUsd = stakedGmxTracker * gmxPrice / 10 ** 18;
+  const gmxAprForEsGmx = stakedGmxTrackerAnnualRewardsUsd * basisPointsDivisor / stakedGmxTrackerSupplyUsd / 100;
+  const feeGmxTrackerAnnualRewardsUsd = tokensPerInterval * secondsPerYear * ethPrice / 10 ** 18;
+  const gmxAprForNativeToken = feeGmxTrackerAnnualRewardsUsd * basisPointsDivisor / feeGmxSupplyUsd / 100;
+  const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx;
+  return Number((((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2));
+}
+
 async function getDopexApy(asset) {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
@@ -166,6 +223,7 @@ async function getEthApy() {
 const ASSET_TO_GETTER = {
   DPX: { fn: getDopexApy, args: ["DPX"] },
   RDPX: { fn: getDopexApy, args: ["RDPX"] },
+  APY: { fn: getGmxApy, args: []},
   ETH: { fn: getEthApy, args: [] },
   GOHM: { fn: getGohmApy, args: [] },
   BNB: { fn: getBnbApy, args: [] },
