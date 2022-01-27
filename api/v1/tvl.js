@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
       "gohm-ssov": { fn: getSsovTvl, args: ["GOHM"] },
       "gmx-ssov": { fn: getSsovTvl, args: ["GMX"] },
       "eth-ssov": { fn: getSsovTvl, args: ["ETH"] },
-      "bnb-ssov": { fn: getSsovTvl, args: ["BNB"] },
+      // "bnb-ssov": { fn: getSsovTvl, args: ["BNB"] }, # TODO: implement
       "dpx-farm": { fn: getFarmTvl, args: ["DPX", ethPriceFinal] },
       "rdpx-farm": { fn: getFarmTvl, args: ["RDPX", ethPriceFinal] },
       "dpx-weth-farm": { fn: getFarmTvl, args: ["DPX-WETH", ethPriceFinal] },

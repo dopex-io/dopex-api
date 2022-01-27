@@ -1,4 +1,4 @@
-const getSsovOptionsPrices = require("../../../../helpers/getSsovOptionsPrices");
+import getSsovOptionsPrices from "../../../../helpers/getSsovOptionsPrices";
 
 const ASSET_TO_GETTER = {
   "DPX": { fn: getSsovOptionsPrices, args: ["DPX"] },

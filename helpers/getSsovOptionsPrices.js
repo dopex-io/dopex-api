@@ -5,7 +5,7 @@ const BN = require("bignumber.js");
 const getPrice = require("./getPrice");
 import { TOKEN_TO_CG_ID } from "./constants";
 
-async (token) => {
+module.exports = async (token) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
   const contractAddresses = Addresses[42161];
