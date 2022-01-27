@@ -3,17 +3,9 @@ const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
 const getPrice = require("./getPrice");
+import { TOKEN_TO_CG_ID } from "./constants";
 
-const TOKEN_TO_CG_ID = {
-  DPX: "dopex",
-  RDPX: "dopex-rebate-token",
-  GOHM: "governance-ohm",
-  ETH: "ethereum",
-  GMX: "gmx",
-  BNB: "binancecoin"
-};
-
-module.exports = async (token) => {
+async (token) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
   const contractAddresses = Addresses[42161];

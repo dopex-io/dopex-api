@@ -37,38 +37,6 @@ async function getBnbApy() {
   );
 }
 
-async function getGohmApy() {
-  const mainnetProvider = new providers.MulticallProvider(
-    new ethers.providers.JsonRpcProvider(
-      "https://eth-mainnet.gateway.pokt.network/v1/lb/61ceae3bb86d760039e05c85",
-      1
-    )
-  );
-
-  const stakingContract = new ethers.Contract(
-    "0xB63cac384247597756545b500253ff8E607a8020",
-    [
-      "function epoch() view returns (uint256 length, uint256 number, uint256 end, uint256 distribute)",
-    ],
-    mainnetProvider
-  );
-  const sohmMainContract = new ethers.Contract(
-    "0x04906695D6D12CF5459975d7C3C03356E4Ccd460",
-    ["function circulatingSupply() view returns (uint256)"],
-    mainnetProvider
-  );
-
-  const [epoch, circulatingSupply] = await Promise.all([
-    stakingContract.epoch(),
-    sohmMainContract.circulatingSupply(),
-  ]);
-
-  const stakingRebase =
-    Number(epoch.distribute.toString()) / Number(circulatingSupply.toString());
-
-  return Number(((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(0));
-}
-
 async function getGmxApy() {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
@@ -124,6 +92,38 @@ async function getGmxApy() {
   const gmxAprForNativeToken = feeGmxTrackerAnnualRewardsUsd * basisPointsDivisor / feeGmxSupplyUsd / 100;
   const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx;
   return Number((((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2));
+}
+
+async function getGohmApy() {
+  const mainnetProvider = new providers.MulticallProvider(
+    new ethers.providers.JsonRpcProvider(
+      "https://eth-mainnet.gateway.pokt.network/v1/lb/61ceae3bb86d760039e05c85",
+      1
+    )
+  );
+
+  const stakingContract = new ethers.Contract(
+    "0xB63cac384247597756545b500253ff8E607a8020",
+    [
+      "function epoch() view returns (uint256 length, uint256 number, uint256 end, uint256 distribute)",
+    ],
+    mainnetProvider
+  );
+  const sohmMainContract = new ethers.Contract(
+    "0x04906695D6D12CF5459975d7C3C03356E4Ccd460",
+    ["function circulatingSupply() view returns (uint256)"],
+    mainnetProvider
+  );
+
+  const [epoch, circulatingSupply] = await Promise.all([
+    stakingContract.epoch(),
+    sohmMainContract.circulatingSupply(),
+  ]);
+
+  const stakingRebase =
+    Number(epoch.distribute.toString()) / Number(circulatingSupply.toString());
+
+  return Number(((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(0));
 }
 
 async function getDopexApy(asset) {
@@ -221,19 +221,19 @@ async function getEthApy() {
 }
 
 const ASSET_TO_GETTER = {
-  DPX: { fn: getDopexApy, args: ["DPX"] },
-  RDPX: { fn: getDopexApy, args: ["RDPX"] },
-  APY: { fn: getGmxApy, args: []},
-  ETH: { fn: getEthApy, args: [] },
-  GOHM: { fn: getGohmApy, args: [] },
-  BNB: { fn: getBnbApy, args: [] },
+  "DPX": { fn: getDopexApy, args: ["DPX"] },
+  "RDPX": { fn: getDopexApy, args: ["RDPX"] },
+  "ETH": { fn: getEthApy, args: [] },
+  "GOHM": { fn: getGohmApy, args: [] },
+  "BNB": { fn: getBnbApy, args: [] },
+  "GMX": { fn: getGmxApy, args: [] },
 };
 
 module.exports = async (req, res) => {
   try {
     const asset = req.query.asset;
 
-    if (!asset) return;
+    if (!asset) res.status(500).json({ error: "Please send the GET parameter asset" });
 
     let apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
 

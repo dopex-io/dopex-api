@@ -2,16 +2,6 @@ const { Addresses, ERC20SSOV__factory } = require("@dopex-io/sdk");
 const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
-const getPrice = require("./getPrice");
-
-const TOKEN_TO_CG_ID = {
-  DPX: "dopex",
-  RDPX: "dopex-rebate-token",
-  GOHM: "governance-ohm",
-  ETH: "ethereum",
-  GMX: "gmx",
-  BNB: "binancecoin"
-};
 
 module.exports = async (token) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
