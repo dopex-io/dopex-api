@@ -199,7 +199,11 @@ async function getEthApy() {
     provider
   );
 
-  const epoch = await ssovContract.currentEpoch();
+  let epoch = await ssovContract.currentEpoch();
+
+  if (epoch.isZero()) {
+    epoch = 1;
+  }
 
   const [totalEpochDeposits, [priceETH, priceDPX]] = await Promise.all([
     ssovContract.totalEpochDeposits(epoch),

@@ -20,7 +20,11 @@ module.exports = async (token) => {
     provider
   );
 
-  const epoch = await ssovContract.currentEpoch();
+  let epoch = await ssovContract.currentEpoch();
+
+  if (epoch.isZero()) {
+    epoch = 1;
+  }
 
   const strikes = await ssovContract.getEpochStrikes(epoch);
 
