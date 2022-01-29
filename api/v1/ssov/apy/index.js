@@ -9,6 +9,7 @@ const {
 } = require("@dopex-io/sdk");
 
 const getPrices = require("../../../../helpers/getPrices");
+const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../../../helpers/constants");
 
 async function getBnbApy() {
   const provider = new providers.MulticallProvider(
@@ -137,7 +138,7 @@ async function getDopexApy(asset) {
   );
 
   const ssovContract = ERC20SSOV__factory.connect(
-    Addresses[42161].SSOV[asset].Vault,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].SSOV[asset].Vault,
     provider
   );
 
@@ -195,7 +196,7 @@ async function getEthApy() {
   );
 
   const ssovContract = NativeSSOV__factory.connect(
-    Addresses[42161].SSOV.ETH.Vault,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].SSOV.ETH.Vault,
     provider
   );
 

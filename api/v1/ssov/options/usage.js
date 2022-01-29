@@ -1,12 +1,13 @@
 const getSsovOptionsUsage = require("../../../../helpers/getSsovOptionsUsage");
+const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../../../helpers/constants");
 
 const ASSET_TO_GETTER = {
-  "DPX": { fn: getSsovOptionsUsage, args: ["DPX"] },
-  "RDPX": { fn: getSsovOptionsUsage, args: ["RDPX"] },
-  "ETH": { fn: getSsovOptionsUsage, args: ["ETH"] },
-  "GOHM": { fn: getSsovOptionsUsage, args: ["GOHM"] },
-  "GMX": { fn: getSsovOptionsUsage, args: ["GMX"] },
-  "BNB": { fn: getSsovOptionsUsage, args: ["BNB"] },
+  "DPX": { fn: getSsovOptionsUsage, args: ["DPX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "RDPX": { fn: getSsovOptionsUsage, args: ["RDPX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "ETH": { fn: getSsovOptionsUsage, args: ["ETH", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "GOHM": { fn: getSsovOptionsUsage, args: ["GOHM", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "GMX": { fn: getSsovOptionsUsage, args: ["GMX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "BNB": { fn: getSsovOptionsUsage, args: ["BNB", BLOCKCHAIN_TO_CHAIN_ID["BNB"]] },
 };
 
 module.exports = async (req, res) => {

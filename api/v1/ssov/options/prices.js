@@ -1,12 +1,13 @@
 import getSsovOptionsPrices from "../../../../helpers/getSsovOptionsPrices";
+const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../../../helpers/constants");
 
 const ASSET_TO_GETTER = {
-  "DPX": { fn: getSsovOptionsPrices, args: ["DPX"] },
-  "RDPX": { fn: getSsovOptionsPrices, args: ["RDPX"] },
-  "ETH": { fn: getSsovOptionsPrices, args: ["ETH"] },
-  "GOHM": { fn: getSsovOptionsPrices, args: ["GOHM"] },
-  "GMX": { fn: getSsovOptionsPrices, args: ["GMX"] },
-  "BNB": { fn: getSsovOptionsPrices, args: ["BNB"] },
+  "DPX": { fn: getSsovOptionsPrices, args: ["DPX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "RDPX": { fn: getSsovOptionsPrices, args: ["RDPX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "ETH": { fn: getSsovOptionsPrices, args: ["ETH", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "GOHM": { fn: getSsovOptionsPrices, args: ["GOHM", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "GMX": { fn: getSsovOptionsPrices, args: ["GMX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
+  "BNB": { fn: getSsovOptionsPrices, args: ["BNB", BLOCKCHAIN_TO_CHAIN_ID["BNB"]] },
 };
 
 module.exports = async (req, res) => {

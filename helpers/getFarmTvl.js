@@ -7,11 +7,12 @@ const {
 const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
+const { BLOCKCHAIN_TO_CHAIN_ID } = require("../helpers/constants");
 
 module.exports = async (token, ethPriceFinal) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
-  const contractAddresses = Addresses[42161];
+  const contractAddresses = Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]];
 
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(

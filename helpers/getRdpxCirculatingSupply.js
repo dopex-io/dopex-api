@@ -1,3 +1,5 @@
+import {BLOCKCHAIN_TO_CHAIN_ID} from "./constants";
+
 const {
   ERC20__factory,
   Addresses,
@@ -26,12 +28,12 @@ module.exports = async () => {
 
   const tokenSaleEmitted = 60000;
 
-  const rdpxArb = ERC20__factory.connect(Addresses[42161].RDPX, arbProvider);
+  const rdpxArb = ERC20__factory.connect(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].RDPX, arbProvider);
 
-  const rdpxEth = ERC20__factory.connect(Addresses[1].RDPX, ethProvider);
+  const rdpxEth = ERC20__factory.connect(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ETHEREUM"]].RDPX, ethProvider);
 
   const rdpxStakingRewards = StakingRewards__factory.connect(
-    Addresses[42161].RDPXStakingRewards,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].RDPXStakingRewards,
     arbProvider
   );
 
@@ -44,11 +46,11 @@ module.exports = async () => {
     rdpxFarmBalance,
     rdpxMerkleDistributorBalance,
   ] = await Promise.all([
-    rdpxArb.balanceOf(Addresses[42161].DPXStakingRewards),
-    rdpxArb.balanceOf(Addresses[42161]["DPX-WETHStakingRewards"]),
-    rdpxArb.balanceOf(Addresses[42161]["RDPX-WETHStakingRewards"]),
+    rdpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].DPXStakingRewards),
+    rdpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["DPX-WETHStakingRewards"]),
+    rdpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["RDPX-WETHStakingRewards"]),
     rdpxStakingRewards.totalSupply(),
-    rdpxArb.balanceOf(Addresses[42161]["RDPXStakingRewards"]),
+    rdpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["RDPXStakingRewards"]),
     rdpxEth.balanceOf("0x20E3D49241A9658C36Df595437160a6F6Dc01bDe"),
   ]);
 

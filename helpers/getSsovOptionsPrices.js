@@ -3,12 +3,12 @@ const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
 const getPrice = require("./getPrice");
-import { TOKEN_TO_CG_ID } from "./constants";
+const { TOKEN_TO_CG_ID } = require("./constants");
 
-module.exports = async (token) => {
+module.exports = async (token, chainId) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
-  const contractAddresses = Addresses[42161];
+  const contractAddresses = Addresses[chainId];
 
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
