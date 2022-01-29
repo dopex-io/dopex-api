@@ -1,5 +1,9 @@
 # Dopex REST API
 
+Built with Vercel's serverless functions.
+
+Read more here - https://vercel.com/docs/serverless-functions/introduction
+
 **TVL**
 
 Endpoint: https://api.dopex.io/api/v1/tvl
