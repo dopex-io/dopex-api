@@ -233,7 +233,7 @@ module.exports = async (req, res) => {
   try {
     const asset = req.query.asset;
 
-    if (!asset) res.status(500).json({ error: "Please send the GET parameter asset" });
+    if (!asset) res.status(400).json({ error: "Missing asset parameter." });
 
     let apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
 
