@@ -1,6 +1,7 @@
 {
   "name": "rest-api",
   "version": "1.0.0",
+  "private": "true",
   "description": "A nodejs based REST API for Dopex",
   "main": "index.js",
   "author": "Dopex",
@@ -10,7 +11,7 @@
   },
   "dependencies": {
     "@0xsequence/multicall": "^0.35.1",
-    "@dopex-io/sdk": "^1.0.0-alpha.53",
+    "@dopex-io/sdk": "^1.0.0-alpha.56",
     "bignumber.js": "^9.0.1",
     "ethers": "^5.5.1",
     "node-fetch": "^2.6.1"
