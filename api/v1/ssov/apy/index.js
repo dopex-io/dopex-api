@@ -214,7 +214,7 @@ async function getEthApy() {
     .dividedBy(1e18)
     .multipliedBy(priceETH);
 
-  let rewardsEmitted = new BN("500"); // 500 DPX per month
+  let rewardsEmitted = new BN("300"); // 300 DPX per month
   rewardsEmitted = rewardsEmitted.multipliedBy(priceDPX).multipliedBy(12); // for 12 months
 
   const denominator = TVL.toNumber() + rewardsEmitted.toNumber();
@@ -244,6 +244,6 @@ module.exports = async (req, res) => {
     res.json({ apy });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong." });
+    res.status(500).json({ error: "Something went wrong.", details: err["reason"] });
   }
 };
