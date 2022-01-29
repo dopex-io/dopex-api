@@ -1,6 +1,7 @@
 {
   "name": "rest-api",
   "version": "1.0.0",
+  "private": "true",
   "description": "A nodejs based REST API for Dopex",
   "main": "index.js",
   "author": "Dopex",
