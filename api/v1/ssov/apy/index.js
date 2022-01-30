@@ -72,15 +72,30 @@ async function getGmxApy() {
     provider
   );
 
-  const gmx = new ethers.Contract(
-    "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+  const reader = new ethers.Contract(
+    "0xF09eD52638c22cc3f1D7F5583e3699A075e601B2",
     [
-      "function balanceOf(address _account) view returns (uint256)",
+      "function getTokenBalancesWithSupplies(address _account, address[] memory _tokens) public view returns (uint256[] memory)",
     ],
     provider
   );
 
-  const stakedGmxTracker = await gmx.balanceOf("0x908C4D94D34924765f1eDc22A1DD098397c59dD4");
+  const balances = await reader.getTokenBalancesWithSupplies('0x0000000000000000000000000000000000000000',
+      ['0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a', '0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA', '0x4277f8F2c384827B5273592FF7CeBd9f2C1ac258', '0x908C4D94D34924765f1eDc22A1DD098397c59dD4']
+  )
+
+  const keys = ["gmx", "esGmx", "glp", "stakedGmxTracker"]
+  const balanceData = {}
+  const supplyData = {}
+  const propsLength = 2
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    balanceData[key] = balances[i * propsLength]
+    supplyData[key] = balances[i * propsLength + 1]
+  }
+
+  const stakedGmxTracker = supplyData.stakedGmxTracker;
   const gmxPrice = (await ssov.getUsdPrice()) * 10 ** 22;
   const tokensPerInterval = 677910052910052;
   const secondsPerYear = 31536000;
@@ -94,6 +109,7 @@ async function getGmxApy() {
   const feeGmxTrackerAnnualRewardsUsd = tokensPerInterval * secondsPerYear * ethPrice / 10 ** 18;
   const gmxAprForNativeToken = feeGmxTrackerAnnualRewardsUsd * basisPointsDivisor / feeGmxSupplyUsd / 100;
   const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx;
+
   return Number((((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2));
 }
 
