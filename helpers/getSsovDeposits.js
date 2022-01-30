@@ -40,7 +40,7 @@ module.exports = async (token, chainId) => {
 
   const ssovDeposits = {};
   for (let i in strikes) {
-    const amount = BN(deposits[i].toString()).dividedBy(1e18);
+    const amount = BN(deposits[i].toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8);
     ssovDeposits[BN(strikes[i].toString()).dividedBy(1e8)] = {
       'amount': amount,
       'usd': amount.multipliedBy(tokenPrice.usd)

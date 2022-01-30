@@ -47,10 +47,10 @@ module.exports = async (token, chainId) => {
     const premium = await ssovContract.calculatePremium(strike, amount);
     const fees = await ssovContract.calculatePurchaseFees(currentPrice, strike, amount);
     optionsPrices[BN(strikes[i].toString()).dividedBy(1e8)] = {
-      'premium': BN(premium.toString()).dividedBy(1e18),
-      'fees': BN(fees.toString()).dividedBy(1e18),
-      'total': BN(premium.add(fees).toString()).dividedBy(1e18),
-      'usd': BN(premium.add(fees).toString()).dividedBy(1e18).multipliedBy(tokenPrice.usd)
+      'premium': BN(premium.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8),
+      'fees': BN(fees.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8),
+      'total': BN(premium.add(fees).toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8),
+      'usd': BN(premium.add(fees).toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8).multipliedBy(tokenPrice.usd)
     }
   }
 

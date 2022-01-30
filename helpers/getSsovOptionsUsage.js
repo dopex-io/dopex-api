@@ -41,11 +41,11 @@ module.exports = async (token, chainId) => {
   for (i in strikes) {
     const callsPurchased = epochCallsPurchased[i];
     totalCallsPurchased = callsPurchased.add(totalCallsPurchased);
-    optionsUsage[BN(strikes[i].toString()).dividedBy(1e8)] = BN(callsPurchased.toString()).dividedBy(1e18)
+    optionsUsage[BN(strikes[i].toString()).dividedBy(1e8)] = BN(callsPurchased.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8)
   }
 
   return {
-    'total': BN(totalCallsPurchased.toString()).dividedBy(1e18),
+    'total': BN(totalCallsPurchased.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8),
     'strikes': optionsUsage
   }
 };
