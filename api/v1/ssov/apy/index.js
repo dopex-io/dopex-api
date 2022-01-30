@@ -17,7 +17,7 @@ async function getBnbApy() {
   const provider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
       bscRpcUrl,
-      56
+      BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]
     )
   );
 

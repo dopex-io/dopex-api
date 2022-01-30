@@ -10,5 +10,5 @@ export const TOKEN_TO_CG_ID = {
 export const BLOCKCHAIN_TO_CHAIN_ID = {
   ETHEREUM: 1,
   ARBITRUM: 42161,
-  BNB: 56
+  BINANCE: 56
 };

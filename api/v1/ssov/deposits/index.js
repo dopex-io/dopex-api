@@ -7,7 +7,7 @@ const ASSET_TO_GETTER = {
   "ETH": { fn: getSsovDeposits, args: ["ETH", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
   "GOHM": { fn: getSsovDeposits, args: ["GOHM", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
   "GMX": { fn: getSsovDeposits, args: ["GMX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
-  "BNB": { fn: getSsovDeposits, args: ["BNB", BLOCKCHAIN_TO_CHAIN_ID["BNB"]] },
+  "BNB": { fn: getSsovDeposits, args: ["BNB", BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]] },
 };
 
 module.exports = async (req, res) => {

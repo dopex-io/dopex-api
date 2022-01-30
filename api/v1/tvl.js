@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
       "gohm-ssov": { fn: getSsovTvl, args: ["GOHM", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
       "gmx-ssov": { fn: getSsovTvl, args: ["GMX", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
       "eth-ssov": { fn: getSsovTvl, args: ["ETH", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]] },
-      "bnb-ssov": { fn: getSsovTvl, args: ["BNB", BLOCKCHAIN_TO_CHAIN_ID["BNB"]] },
+      "bnb-ssov": { fn: getSsovTvl, args: ["BNB", BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]] },
       "dpx-farm": { fn: getFarmTvl, args: ["DPX", ethPriceFinal] },
       "rdpx-farm": { fn: getFarmTvl, args: ["RDPX", ethPriceFinal] },
       "dpx-weth-farm": { fn: getFarmTvl, args: ["DPX-WETH", ethPriceFinal] },

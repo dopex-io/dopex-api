@@ -16,7 +16,7 @@ module.exports = async (token, chainId) => {
       "any"
     ) : new ethers.providers.JsonRpcProvider(
       bscRpcUrl,
-      56
+      BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]
     )
   );
 
