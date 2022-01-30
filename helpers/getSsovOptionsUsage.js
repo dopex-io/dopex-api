@@ -45,7 +45,7 @@ module.exports = async (token, chainId) => {
   }
 
   return {
-    'total': BN(totalCallsPurchased.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 :  1e8),
+    'total': BN(totalCallsPurchased.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 : 1e8),
     'strikes': optionsUsage
   }
 };
