@@ -31,13 +31,15 @@ module.exports = async (token, chainId) => {
   const allStrikesPremiums = await ssovContract.getTotalEpochPremium(epoch);
   allStrikesPremiums.map(premium => tvl = tvl.add(premium));
 
-  const converter = new ethers.Contract(
-    ssovContract.address,
-    ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
-    provider
-  );
+  if (token === 'BNB') {
+    const converter = new ethers.Contract(
+        ssovContract.address,
+        ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
+        provider
+    );
 
-  tvl = await converter.vbnbToBnb(tvl.toString());
+    tvl = await converter.vbnbToBnb(tvl.toString());
+  }
 
   return new BN(tvl.toString())
     .dividedBy(1e18)
