@@ -1,25 +1,13 @@
 const { Addresses, ERC20SSOV__factory } = require("@dopex-io/sdk");
-const { providers } = require("@0xsequence/multicall");
-const ethers = require("ethers");
 const BN = require("bignumber.js");
 const getPrice = require("./getPrice");
-const { TOKEN_TO_CG_ID, BLOCKCHAIN_TO_CHAIN_ID } = require("./constants");
+const { TOKEN_TO_CG_ID } = require("./constants");
+const getProvider = require("./getProvider");
+const { ethers } = require("ethers");
 
 module.exports = async (token, chainId) => {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-  const bscRpcUrl = process.env.BSC_RPC_URL;
-
   const contractAddresses = Addresses[chainId];
-
-  const provider = new providers.MulticallProvider(
-    chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-      "any"
-    ) : new ethers.providers.JsonRpcProvider(
-      bscRpcUrl,
-      BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]
-    )
-  );
+  const provider = getProvider(chainId);
 
   const ssovContract = ERC20SSOV__factory.connect(
     contractAddresses.SSOV[token].Vault,
@@ -39,18 +27,30 @@ module.exports = async (token, chainId) => {
 
   const optionsPrices = {};
   const currentPrice = await ssovContract.getUsdPrice();
-  const amount = "1000000000000000000"; // 1
+  const amount = 1e18;
   let i;
+
+  const converter = token === "BNB" && new ethers.Contract(
+    ssovContract.address,
+    ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
+    provider
+  );
 
   for (i in strikes) {
     const strike = strikes[i].toNumber();
-    const premium = await ssovContract.calculatePremium(strike, amount);
-    const fees = await ssovContract.calculatePurchaseFees(currentPrice, strike, amount);
+    let premium = await ssovContract.calculatePremium(strike, amount.toString());
+    let fees = await ssovContract.calculatePurchaseFees(currentPrice, strike, amount.toString());
+
+    if (token === 'BNB') {
+      premium = await converter.vbnbToBnb(premium);
+      fees = await converter.vbnbToBnb(fees);
+    }
+
     optionsPrices[BN(strikes[i].toString()).dividedBy(1e8)] = {
-      'premium': BN(premium.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 : 1e8),
-      'fees': BN(fees.toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 : 1e8),
-      'total': BN(premium.add(fees).toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 : 1e8),
-      'usd': BN(premium.add(fees).toString()).dividedBy(chainId === BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"] ? 1e18 : 1e8).multipliedBy(tokenPrice.usd)
+      'premium': BN(premium.toString()).dividedBy(1e18),
+      'fees': BN(fees.toString()).dividedBy(1e18),
+      'total': BN(premium.add(fees).toString()).dividedBy(1e18),
+      'usd': BN(premium.add(fees).toString()).dividedBy(1e18).multipliedBy(tokenPrice.usd)
     }
   }
 

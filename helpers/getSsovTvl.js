@@ -1,21 +1,14 @@
 const { Addresses, ERC20SSOV__factory } = require("@dopex-io/sdk");
-const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
 const getPrice = require("./getPrice");
+const getProvider = require("./getProvider");
 const { TOKEN_TO_CG_ID } = require("../helpers/constants");
 
 module.exports = async (token, chainId) => {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
   const contractAddresses = Addresses[chainId];
 
-  const provider = new providers.MulticallProvider(
-    new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-      "any"
-    )
-  );
+  const provider = getProvider(chainId);
 
   const ssovContract = ERC20SSOV__factory.connect(
     contractAddresses.SSOV[token].Vault,
@@ -34,8 +27,17 @@ module.exports = async (token, chainId) => {
   ]);
 
   let tvl = deposits;
+
   const allStrikesPremiums = await ssovContract.getTotalEpochPremium(epoch);
   allStrikesPremiums.map(premium => tvl = tvl.add(premium));
+
+  const converter = new ethers.Contract(
+    ssovContract.address,
+    ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
+    provider
+  );
+
+  tvl = await converter.vbnbToBnb(tvl.toString());
 
   return new BN(tvl.toString())
     .dividedBy(1e18)
