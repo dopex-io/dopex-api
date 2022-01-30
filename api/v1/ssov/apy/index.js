@@ -12,9 +12,11 @@ const getPrices = require("../../../../helpers/getPrices");
 const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../../../helpers/constants");
 
 async function getBnbApy() {
+  const bscRpcUrl = process.env.BSC_RPC_URL;
+
   const provider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
-      "https://speedy-nodes-nyc.moralis.io/5175b25bfb4a31b9ed82dc8b/bsc/mainnet/archive",
+      bscRpcUrl,
       56
     )
   );
