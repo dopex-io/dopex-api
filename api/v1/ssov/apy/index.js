@@ -9,12 +9,15 @@ const {
 } = require("@dopex-io/sdk");
 
 const getPrices = require("../../../../helpers/getPrices");
+const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../../../helpers/constants");
 
 async function getBnbApy() {
+  const bscRpcUrl = process.env.BSC_RPC_URL;
+
   const provider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
-      "https://speedy-nodes-nyc.moralis.io/5175b25bfb4a31b9ed82dc8b/bsc/mainnet/archive",
-      56
+      bscRpcUrl,
+      BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]
     )
   );
 
@@ -35,6 +38,79 @@ async function getBnbApy() {
       1) *
     100
   );
+}
+
+async function getGmxApy() {
+  const infuraProjectId = process.env.INFURA_PROJECT_ID;
+
+  const provider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      "any"
+    )
+  );
+
+  const stakingContract = new ethers.Contract(
+    "0xd2D1162512F927a7e282Ef43a362659E4F2a728F",
+    ["function totalSupply() view returns (uint256)"],
+    provider
+  );
+
+  const ssov = new ethers.Contract(
+    "0x04996AFcf40A14D0892B00C816874F9C1A52C93B",
+    [
+      "function getUsdPrice() public view returns (uint256)",
+    ],
+    provider
+  );
+
+  const ethSsov = new ethers.Contract(
+    "0x711Da677a0D61Ee855DAd4241B552A706F529C70",
+    [
+      "function getUsdPrice() view returns (uint256)",
+    ],
+    provider
+  );
+
+  const reader = new ethers.Contract(
+    "0xF09eD52638c22cc3f1D7F5583e3699A075e601B2",
+    [
+      "function getTokenBalancesWithSupplies(address _account, address[] memory _tokens) public view returns (uint256[] memory)",
+    ],
+    provider
+  );
+
+  const balances = await reader.getTokenBalancesWithSupplies('0x0000000000000000000000000000000000000000',
+      ['0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a', '0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA', '0x4277f8F2c384827B5273592FF7CeBd9f2C1ac258', '0x908C4D94D34924765f1eDc22A1DD098397c59dD4']
+  )
+
+  const keys = ["gmx", "esGmx", "glp", "stakedGmxTracker"]
+  const balanceData = {}
+  const supplyData = {}
+  const propsLength = 2
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    balanceData[key] = balances[i * propsLength]
+    supplyData[key] = balances[i * propsLength + 1]
+  }
+
+  const stakedGmxTracker = supplyData.stakedGmxTracker;
+  const gmxPrice = (await ssov.getUsdPrice()) * 10 ** 22;
+  const tokensPerInterval = 677910052910052;
+  const secondsPerYear = 31536000;
+  const stakedGmxTrackerAnnualRewardsUsd = 39776760107741941 * secondsPerYear * gmxPrice / 10 ** 18;
+  const basisPointsDivisor = 10000;
+  const feeGmxSupply = await stakingContract.totalSupply();
+  const feeGmxSupplyUsd = feeGmxSupply * gmxPrice / 10 ** 18;
+  const ethPrice = (await ethSsov.getUsdPrice()) * 10 ** 22;
+  const stakedGmxTrackerSupplyUsd = stakedGmxTracker * gmxPrice / 10 ** 18;
+  const gmxAprForEsGmx = stakedGmxTrackerAnnualRewardsUsd * basisPointsDivisor / stakedGmxTrackerSupplyUsd / 100;
+  const feeGmxTrackerAnnualRewardsUsd = tokensPerInterval * secondsPerYear * ethPrice / 10 ** 18;
+  const gmxAprForNativeToken = feeGmxTrackerAnnualRewardsUsd * basisPointsDivisor / feeGmxSupplyUsd / 100;
+  const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx;
+
+  return Number((((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2));
 }
 
 async function getGohmApy() {
@@ -80,7 +156,7 @@ async function getDopexApy(asset) {
   );
 
   const ssovContract = ERC20SSOV__factory.connect(
-    Addresses[42161].SSOV[asset].Vault,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].SSOV[asset].Vault,
     provider
   );
 
@@ -138,14 +214,15 @@ async function getEthApy() {
   );
 
   const ssovContract = NativeSSOV__factory.connect(
-    Addresses[42161].SSOV.ETH.Vault,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].SSOV.ETH.Vault,
     provider
   );
-  
+
   let epoch = await ssovContract.currentEpoch();
+
   if (epoch.isZero()) {
     epoch = 1;
-  } 
+  }
 
   const [totalEpochDeposits, [priceETH, priceDPX]] = await Promise.all([
     ssovContract.totalEpochDeposits(epoch),
@@ -156,7 +233,7 @@ async function getEthApy() {
     .dividedBy(1e18)
     .multipliedBy(priceETH);
 
-  let rewardsEmitted = new BN("500"); // 500 DPX per month
+  let rewardsEmitted = new BN("300"); // 300 DPX per month
   rewardsEmitted = rewardsEmitted.multipliedBy(priceDPX).multipliedBy(12); // for 12 months
 
   const denominator = TVL.toNumber() + rewardsEmitted.toNumber();
@@ -167,24 +244,25 @@ async function getEthApy() {
 }
 
 const ASSET_TO_GETTER = {
-  DPX: { fn: getDopexApy, args: ["DPX"] },
-  RDPX: { fn: getDopexApy, args: ["RDPX"] },
-  ETH: { fn: getEthApy, args: [] },
-  GOHM: { fn: getGohmApy, args: [] },
-  BNB: { fn: getBnbApy, args: [] },
+  "DPX": { fn: getDopexApy, args: ["DPX"] },
+  "RDPX": { fn: getDopexApy, args: ["RDPX"] },
+  "ETH": { fn: getEthApy, args: [] },
+  "GOHM": { fn: getGohmApy, args: [] },
+  "BNB": { fn: getBnbApy, args: [] },
+  "GMX": { fn: getGmxApy, args: [] },
 };
 
 module.exports = async (req, res) => {
   try {
     const asset = req.query.asset;
 
-    if (!asset) return;
+    if (!asset) res.status(400).json({ error: "Missing asset parameter." });
 
     let apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
 
     res.json({ apy });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong." });
+    res.status(500).json({ error: "Something went wrong.", details: err["reason"] });
   }
 };
