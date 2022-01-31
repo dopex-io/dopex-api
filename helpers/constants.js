@@ -4,11 +4,13 @@ export const TOKEN_TO_CG_ID = {
   GOHM: "governance-ohm",
   ETH: "ethereum",
   GMX: "gmx",
-  BNB: "binancecoin"
+  BNB: "binancecoin",
+  AVAX: "avalanche-2",
 };
 
 export const BLOCKCHAIN_TO_CHAIN_ID = {
   ETHEREUM: 1,
   ARBITRUM: 42161,
-  BINANCE: 56
+  BINANCE: 56,
+  AVAX: 43114,
 };
