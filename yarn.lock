@@ -2,45 +2,45 @@
 # yarn lockfile v1
 
 
-"@0xsequence/abi@^0.35.10":
-  version "0.35.10"
-  resolved "https://registry.yarnpkg.com/@0xsequence/abi/-/abi-0.35.10.tgz#74955dbf992d4faa830655f75e12012873119d2b"
-  integrity sha512-pvS7XgOz7y0JEPOwAbi2gvvnMl8byC3t+ldDeqNVyzCFz3TIa9dv/CJPXsFWwhGRRrsr3XzaUnnfgXOVkfnU5g==
+"@0xsequence/abi@^0.36.0":
+  version "0.36.0"
+  resolved "https://registry.yarnpkg.com/@0xsequence/abi/-/abi-0.36.0.tgz#a3b51326245e37f071566af908e9d86592d6a042"
+  integrity sha512-s55jhxN+6rCIdUt0QZ2NfndqNWvli+zq+ERICLa5mbrQBkbSnVmQgV7nHg3CFHDW/6Qubne4LArjcx9tWaMhGA==
 
-"@0xsequence/multicall@^0.35.1":
-  version "0.35.10"
-  resolved "https://registry.yarnpkg.com/@0xsequence/multicall/-/multicall-0.35.10.tgz#7bf78342a683fd2fcb20623f924586b6ba55d63a"
-  integrity sha512-Xl9BD2GcxsntH5CLQ15NOC+EvSh8ReT++qQlK/mU5HTa0FTw9Be9U3uGsQJedu5g84eTJzHnWfXF14qTGJNrAw==
+"@0xsequence/multicall@^0.36.0":
+  version "0.36.0"
+  resolved "https://registry.yarnpkg.com/@0xsequence/multicall/-/multicall-0.36.0.tgz#aeaf70da271f57c3531ab6169e6e77c0e9195318"
+  integrity sha512-mriYidxB4fzMRLdSmzArtgzx19jG9unayaiuig0VX1ZmnCjZuZ5tJSRcOWUPzHx/WJEQbxLlktcCaQEHYrrlQw==
   dependencies:
-    "@0xsequence/abi" "^0.35.10"
-    "@0xsequence/network" "^0.35.10"
-    "@0xsequence/utils" "^0.35.10"
+    "@0xsequence/abi" "^0.36.0"
+    "@0xsequence/network" "^0.36.0"
+    "@0xsequence/utils" "^0.36.0"
     "@ethersproject/providers" "^5.5.1"
     ethers "^5.5.2"
 
-"@0xsequence/network@^0.35.10":
-  version "0.35.10"
-  resolved "https://registry.yarnpkg.com/@0xsequence/network/-/network-0.35.10.tgz#6ef07adfb33f70650d73532270edfea8e6883722"
-  integrity sha512-AKsViuAeih7JKbvcyiAzegAklCobvF79OV94JZeuF0VkkvZIxXbvr5EP4s7xzBV/46e+MTX0MUbttuQLQIpPzA==
+"@0xsequence/network@^0.36.0":
+  version "0.36.0"
+  resolved "https://registry.yarnpkg.com/@0xsequence/network/-/network-0.36.0.tgz#80e3694be741bb888b15bdc47b23a1aecfd6add0"
+  integrity sha512-pcAapwwibT6KYzIEHeksYKLyvjm2aGETlaCFTd32Oz/nWKMZoHOM3JrghjG3ORL169MQORM5D6Dt4IIpWeySwQ==
   dependencies:
-    "@0xsequence/utils" "^0.35.10"
+    "@0xsequence/utils" "^0.36.0"
     "@ethersproject/providers" "^5.5.1"
     ethers "^5.5.2"
 
-"@0xsequence/utils@^0.35.10":
-  version "0.35.10"
-  resolved "https://registry.yarnpkg.com/@0xsequence/utils/-/utils-0.35.10.tgz#0ba500d19ff221d9fd5661eddedf3d3e4bafaa73"
-  integrity sha512-5CoRM+qhdB/kHc4R4xR3elF8utjQtSXoEkgoJvjcllzQVwS10F/Co8f8NFF5CrJy+W6IaPBEvq8owe0t7TM3oQ==
+"@0xsequence/utils@^0.36.0":
+  version "0.36.0"
+  resolved "https://registry.yarnpkg.com/@0xsequence/utils/-/utils-0.36.0.tgz#16ec8b70268d6bc4a5f48f8d8f188a02ad458503"
+  integrity sha512-jyxkj68ce8OUpORU+LsVTiKUbzN0i/SI5nBOdQygALYjPykss3x9PYXz6Tmxl9YalXKH6TQsvepE8kAKa/QRGQ==
   dependencies:
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/properties" "^5.5.0"
     ethers "^5.5.2"
     js-base64 "^3.7.2"
 
-"@dopex-io/sdk@^1.0.0-alpha.56":
-  version "1.0.0-alpha.58"
-  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-alpha.58.tgz#e6eaba4bb95a0640ce0bb3f70902b81f15568b59"
-  integrity sha512-ahI++q3EETG5+QAAZ+mkRAnis2m60H2oy3rFWrLuC6ktoGToutPN0T89ADYY1hadvdLj30Gl7zQKvykuPYzXgQ==
+"@dopex-io/sdk@^1.0.0-alpha.60":
+  version "1.0.0-alpha.60"
+  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-alpha.60.tgz#76cffdc4bc0d5150d6d454c5c3e50c64ea03e444"
+  integrity sha512-edyS6NEwLDDM8cJ7TkT1upvpqqp6ODMnFbcf/4ln+vhIjrbSpyUKn4tmkRY9nROQmuGdM59vSbWk0090pPdpQg==
   dependencies:
     ethers "^5.5.3"
 

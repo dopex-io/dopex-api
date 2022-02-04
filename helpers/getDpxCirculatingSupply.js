@@ -6,7 +6,8 @@ const {
 const { BigNumber } = require("bignumber.js");
 const { providers } = require("@0xsequence/multicall");
 const ethers = require("ethers");
-const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../../../helpers/constants");
+
+const { BLOCKCHAIN_TO_CHAIN_ID } = require("../helpers/constants");
 
 module.exports = async () => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
@@ -33,9 +34,18 @@ module.exports = async () => {
   const teamVestingAddress = "0x38569f73190d6d2f3927c0551526451e3af4d8d6";
   const teamVestingAllocation = 60000;
 
-  const dpxEth = ERC20__factory.connect(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ETHEREUM"]].DPX, ethProvider);
+  const teamVestingV2Address = "0x3757b49d79063e157dc376f2b409c3730fa17f61";
+  const teamVestingV2Allocation = 1750;
 
-  const dpxArb = ERC20__factory.connect(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].DPX, arbProvider);
+  const dpxEth = ERC20__factory.connect(
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ETHEREUM"]].DPX,
+    ethProvider
+  );
+
+  const dpxArb = ERC20__factory.connect(
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].DPX,
+    arbProvider
+  );
 
   const dpxStakingRewards = StakingRewards__factory.connect(
     Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].DPXStakingRewards,
@@ -51,14 +61,24 @@ module.exports = async () => {
     dpxWethFarmBalance,
     rdpxWethFarmBalance,
     rdpxFarmBalance,
+    teamVestingV2Balance,
   ] = await Promise.all([
     dpxEth.balanceOf(presaleAddress),
     dpxEth.balanceOf(teamVestingAddress),
-    dpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].DPXStakingRewards),
+    dpxArb.balanceOf(
+      Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].DPXStakingRewards
+    ),
     dpxStakingRewards.totalSupply(),
-    dpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["DPX-WETHStakingRewards"]),
-    dpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["RDPX-WETHStakingRewards"]),
-    dpxArb.balanceOf(Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["RDPXStakingRewards"]),
+    dpxArb.balanceOf(
+      Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["DPX-WETHStakingRewards"]
+    ),
+    dpxArb.balanceOf(
+      Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["RDPX-WETHStakingRewards"]
+    ),
+    dpxArb.balanceOf(
+      Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]]["RDPXStakingRewards"]
+    ),
+    dpxArb.balanceOf(teamVestingV2Address),
   ]);
 
   const presaleEmitted =
@@ -68,6 +88,10 @@ module.exports = async () => {
   const teamVestingEmitted =
     teamVestingAllocation -
     new BigNumber(teamVestingBalance.toString()).dividedBy(1e18).toNumber();
+
+  const teamVestingV2Emitted =
+    teamVestingV2Allocation -
+    new BigNumber(teamVestingV2Balance.toString()).dividedBy(1e18).toNumber();
 
   // Farming (Total Rewards - Current Rewards)
   const dpxFarmEmitted =
@@ -87,6 +111,13 @@ module.exports = async () => {
   // From operational allocation
   const sideEmitted = 925;
 
+  /**
+   * December 21 - 380 DPX
+   * January 22 - 500 DPX
+   * February 22 - 300 DPX
+   */
+  const ethSSOVRewardsEmitted = 1180;
+
   const circulatingSupply =
     presaleEmitted +
     tokenSaleEmitted +
@@ -95,6 +126,8 @@ module.exports = async () => {
     dpxWethFarmEmitted +
     rdpxWethFarmEmitted +
     rdpxFarmEmitted +
+    teamVestingV2Emitted +
+    ethSSOVRewardsEmitted +
     sideEmitted;
 
   return circulatingSupply;
