@@ -44,6 +44,5 @@ module.exports = async (req, res) => {
     ]);
     tvl = dpxTvl.plus(dpxWethTvl).plus(rdpxWethTvl).plus(rdpxTvl).toString();
   }
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
   res.json({ tvl });
 };

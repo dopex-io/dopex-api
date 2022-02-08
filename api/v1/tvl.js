@@ -40,7 +40,6 @@ module.exports = async (req, res) => {
       return acc;
     }, new BN(0));
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
     res.json({ tvl });
   } catch (err) {
     console.log(err);

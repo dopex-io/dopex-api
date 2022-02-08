@@ -18,7 +18,6 @@ module.exports = async (req, res) => {
 
     let usage = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
     res.json(usage);
   } catch (err) {
     console.log(err);
