@@ -29,19 +29,17 @@ module.exports = async (token, chainId) => {
   let tvl = deposits;
 
   const allStrikesPremiums = await ssovContract.getTotalEpochPremium(epoch);
-  allStrikesPremiums.map(premium => tvl = tvl.add(premium));
+  allStrikesPremiums.map((premium) => (tvl = tvl.add(premium)));
 
-  if (token === 'BNB') {
+  if (token === "BNB") {
     const converter = new ethers.Contract(
-        ssovContract.address,
-        ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
-        provider
+      ssovContract.address,
+      ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
+      provider
     );
 
     tvl = await converter.vbnbToBnb(tvl.toString());
   }
 
-  return new BN(tvl.toString())
-    .dividedBy(1e18)
-    .multipliedBy(tokenPrice.usd);
+  return new BN(tvl.toString()).dividedBy(1e18).multipliedBy(tokenPrice.usd);
 };
