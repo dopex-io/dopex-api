@@ -30,13 +30,15 @@ async function getBnbApy() {
   const blocksPerDay = 20 * 60 * 24;
   const supplyRatePerBlock = await vbnbContract.supplyRatePerBlock();
 
-  return (
-    (Math.pow(
-      (supplyRatePerBlock.toString() / 1e18) * blocksPerDay + 1,
-      365 - 1
-    ) -
-      1) *
-    100
+  return Number(
+    (
+      (Math.pow(
+        (supplyRatePerBlock.toString() / 1e18) * blocksPerDay + 1,
+        365 - 1
+      ) -
+        1) *
+      100
+    ).toFixed(2)
   );
 }
 
