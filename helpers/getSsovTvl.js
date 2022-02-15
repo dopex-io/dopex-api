@@ -8,7 +8,7 @@ const { TOKEN_TO_CG_ID } = require("../helpers/constants");
 module.exports = async (token, chainId) => {
   const contractAddresses = Addresses[chainId];
 
-  const provider = getProvider(chainId);
+  const provider = getProvider(Number(chainId));
 
   const ssovContract = ERC20SSOV__factory.connect(
     contractAddresses.SSOV[token].Vault,

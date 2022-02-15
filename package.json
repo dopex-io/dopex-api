@@ -14,6 +14,7 @@
     "@dopex-io/sdk": "^1.0.0-alpha.60",
     "bignumber.js": "^9.0.1",
     "ethers": "^5.5.1",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
