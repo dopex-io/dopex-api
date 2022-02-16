@@ -108,8 +108,9 @@ module.exports = async () => {
     new BigNumber(rdpxWethFarmBalance.toString()).dividedBy(1e18).toNumber();
   const rdpxFarmEmitted =
     400 - new BigNumber(rdpxFarmBalance.toString()).dividedBy(1e18).toNumber();
-  // From operational allocation
-  const sideEmitted = 925;
+
+  // Operational allocation
+  const operationalAllocationEmitted = 1713.7;
 
   /**
    * December 21 - 380 DPX
@@ -128,7 +129,7 @@ module.exports = async () => {
     rdpxFarmEmitted +
     teamVestingV2Emitted +
     ethSSOVRewardsEmitted +
-    sideEmitted;
+    operationalAllocationEmitted;
 
   return circulatingSupply;
 };
