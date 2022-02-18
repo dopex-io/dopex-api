@@ -38,9 +38,9 @@
     js-base64 "^3.7.2"
 
 "@dopex-io/sdk@^1.0.0-alpha.60":
-  version "1.0.0-alpha.63"
-  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-alpha.63.tgz#7781c5e2eb4ef787094d539554aff552fe607f7a"
-  integrity sha512-BMvRAB/zEucZd0klCbK8bb6hhS1Zmm1CQFnXTy7yOaMvZk2c9pxss8wVMydU7ZgssSyQhFvvmhRH1T8p/QIYSQ==
+  version "1.0.0-alpha.67"
+  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-alpha.67.tgz#f898ac1fd03a7a56c13819a70e33c886f6bd29c7"
+  integrity sha512-TAL6eOJNwy9frSRmugO7vJTZgXyXJcyLhbHYsedVum1PRMc6jxo8DiOlHh1u5viZvdqkP/6QwYr7/jyahpEBNg==
   dependencies:
     ethers "^5.5.3"
 
@@ -901,9 +901,9 @@ minimalistic-crypto-utils@^1.0.1:
   integrity sha1-9sAMHAsIIkblxNmd+4x8CDsrWCo=
 
 minimatch@^3.0.4:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.1.tgz#879ad447200773912898b46cd516a7abbb5e50b0"
-  integrity sha512-reLxBcKUPNBnc/sVtAbxgRVFSegoGeLaSjmphNhcwcolhYLRgtJscn5mRl6YRZNQv40Y7P6JM2YhSIsbL9OB5A==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.2.tgz#19cd194bfd3e428f049a70817c038d89ab4be35b"
+  integrity sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==
   dependencies:
     brace-expansion "^1.1.7"
 

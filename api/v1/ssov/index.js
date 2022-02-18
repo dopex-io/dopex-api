@@ -8,13 +8,13 @@ module.exports = async (req, res) => {
   try {
     const tvls = await Promise.all(
       SSOVS.map((ssov) => {
-        return getSsovTvl(ssov.name, ssov.chainId);
+        return getSsovTvl(ssov.name, ssov.type, ssov.chainId);
       })
     );
 
     const apys = await Promise.all(
       SSOVS.map((ssov) => {
-        return getSsovApy(ssov.name);
+        return getSsovApy(ssov.name, ssov.type);
       })
     );
 

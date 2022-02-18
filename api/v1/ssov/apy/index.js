@@ -333,11 +333,18 @@ module.exports = async (req, res) => {
   try {
     const asset = req.query.asset;
 
-    if (!asset) res.status(400).json({ error: "Missing asset parameter." });
+    const type = req.query.type || "call";
 
-    let apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
+    let apy;
 
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+    if (type.toLowerCase() === "put") {
+      apy = 6.64; // TODO
+    } else {
+      if (!asset) res.status(400).json({ error: "Missing asset parameter." });
+      apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
+    }
+
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
     res.json({ apy });
   } catch (err) {
     console.log(err);

@@ -86,9 +86,6 @@ export const SSOVS = [
     currentEpoch: 1,
     epochTimes: [1643483885, 1645816685],
   },
-];
-
-export const SSOV_PUTS = [
   {
     type: "put",
     name: "RDPX",

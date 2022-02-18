@@ -331,7 +331,13 @@ const ASSET_TO_GETTER = {
   AVAX: { fn: getAvaxAPY, args: [] },
 };
 
-module.exports = async (asset) => {
-  let apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
+module.exports = async (asset, type = "call") => {
+  let apy;
+  if (type === "put") {
+    apy = 6.64; // TODO
+  } else {
+    apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);
+  }
+
   return apy;
 };
