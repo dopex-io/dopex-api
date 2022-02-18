@@ -136,4 +136,14 @@ export const SSOVS = [
     currentEpoch: 1,
     epochTimes: [1643483885, 1645816685],
   },
+  {
+    type: "put",
+    name: "CRV",
+    chainId: 42161,
+    totalEpochDeposits: 0,
+    apy: 0,
+    tvl: 0,
+    currentEpoch: 1,
+    epochTimes: [1643483885, 1645816685],
+  },
 ];
