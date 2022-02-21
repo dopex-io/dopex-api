@@ -1,8 +1,8 @@
 {
-  "name": "rest-api",
+  "name": "dopex-api",
   "version": "1.0.0",
   "private": "true",
-  "description": "A nodejs based REST API for Dopex",
+  "description": "A nodejs based HTTP API for Dopex",
   "main": "index.js",
   "author": "Dopex",
   "license": "UNLICENSED",

@@ -1,4 +1,4 @@
-# Dopex REST API
+# Dopex API
 
 Built with Vercel's serverless functions.
 
@@ -23,7 +23,7 @@ Example response:
 
 Please note TVL includes both premium and deposits
 
-------------------------------------------------------------------------------------
+---
 
 **Deposits per strike price**
 
@@ -34,7 +34,7 @@ Method: GET
 Example response:
 `{"deposits":{"1700":{"amount":"184.47894697001525027","usd":"356472.3588090998684017264"},"2000":{"amount":"1045.40703925883889822","usd":"2020060.9301006395798084704"},"2500":{"amount":"1029.552413371548508863","usd":"1989424.71940611061464615216"},"3333":{"amount":"4956.786392772684006099","usd":"9578097.48248251275866521968"}}}`
 
--------------------------------------------------------------------------------------------
+---
 
 **Options prices**
 
@@ -47,7 +47,7 @@ Example response:
 
 Please note usd is the equivalent value of total in USD
 
-----------------------------------------------------------------------------------------------------------
+---
 
 **Options usage**
 
@@ -58,7 +58,7 @@ Method: GET
 Example response:
 `{"total":"4017.5099","strikes":{"1700":"184.4789","2000":"1045.391","2500":"1029.546","3333":"1758.094"}}`
 
-----------------------------------------------------------------------------------------------------------
+---
 
 **APY**
 
@@ -66,5 +66,5 @@ Endpoint: https://api.dopex.io/api/v1/ssov/apy?asset=DPX
 
 Method: GET
 
-Example response: 
+Example response:
 `{"apy":41.3}`
