@@ -23,7 +23,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 16.58,
     tvl: 15900000,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -43,7 +43,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -53,7 +53,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -63,7 +63,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -73,7 +73,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -83,7 +83,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -93,7 +93,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -103,7 +103,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -113,7 +113,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -123,7 +123,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -133,12 +133,32 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 2,
     epochTimes: [1643483885, 1645816685],
   },
   {
     type: "put",
     name: "CRV",
+    chainId: 42161,
+    totalEpochDeposits: 0,
+    apy: 0,
+    tvl: 0,
+    currentEpoch: 2,
+    epochTimes: [1643483885, 1645816685],
+  },
+  {
+    type: "put",
+    name: "DPX",
+    chainId: 42161,
+    totalEpochDeposits: 0,
+    apy: 0,
+    tvl: 0,
+    currentEpoch: 1,
+    epochTimes: [1643483885, 1645816685],
+  },
+  {
+    type: "put",
+    name: "LUNA",
     chainId: 42161,
     totalEpochDeposits: 0,
     apy: 0,
