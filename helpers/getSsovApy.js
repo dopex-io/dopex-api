@@ -335,7 +335,7 @@ const ASSET_TO_GETTER = {
   AVAX: { fn: getAvaxAPY, args: [] },
 };
 
-module.exports = async (asset, type = "call") => {
+const getSsovApy = async (asset, type = "call") => {
   let apy;
   if (type === "put") {
     apy = 6.64; // TODO
@@ -345,3 +345,5 @@ module.exports = async (asset, type = "call") => {
 
   return apy;
 };
+
+export default getSsovApy;
