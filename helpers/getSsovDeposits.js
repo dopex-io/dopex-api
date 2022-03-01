@@ -6,7 +6,7 @@ import getPrice from "./getPrice";
 import { TOKEN_TO_CG_ID } from "./constants";
 import getProvider from "./getProvider";
 
-export default async (token, chainId) => {
+const getSsovDeposits = async (token, chainId) => {
   const contractAddresses = Addresses[chainId];
   const provider = getProvider(chainId);
 
@@ -16,9 +16,12 @@ export default async (token, chainId) => {
   );
 
   let epoch = await ssovContract.currentEpoch();
+  let isEpochExpired = await ssovContract.isEpochExpired(epoch);
 
   if (epoch.isZero()) {
     epoch = 1;
+  } else if (isEpochExpired) {
+    epoch = epoch.add(1);
   }
 
   const [strikes, deposits, tokenPrice] = await Promise.all([
@@ -50,3 +53,5 @@ export default async (token, chainId) => {
 
   return ssovDeposits;
 };
+
+export default getSsovDeposits;
