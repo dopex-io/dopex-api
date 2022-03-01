@@ -5,9 +5,8 @@ const {
 } = require("@dopex-io/sdk");
 const ethers = require("ethers");
 const BN = require("bignumber.js");
-const getPrice = require("./getPrice");
+
 const getProvider = require("./getProvider");
-const { TOKEN_TO_CG_ID } = require("../helpers/constants");
 
 module.exports = async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];
@@ -63,7 +62,7 @@ module.exports = async (token, type, chainId) => {
 
     const [deposits, tokenPrice] = await Promise.all([
       ssovContract.totalEpochDeposits(epoch),
-      getPrice(TOKEN_TO_CG_ID[token]),
+      ssovContract.getUsdPrice(),
     ]);
 
     tvl = deposits;
@@ -83,7 +82,9 @@ module.exports = async (token, type, chainId) => {
       tvl = await converter.vbnbToBnb(tvl.toString());
     }
 
-    tvl = new BN(tvl.toString()).multipliedBy(tokenPrice.usd).dividedBy(1e18);
+    tvl = new BN(tvl.toString())
+      .multipliedBy(tokenPrice.toString())
+      .dividedBy(1e26);
   }
 
   return tvl;
