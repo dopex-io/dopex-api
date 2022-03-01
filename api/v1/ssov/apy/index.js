@@ -6,7 +6,7 @@ export default async (req, res) => {
 
     const type = req.query.type || "call";
 
-    const apy = getSsovApy(asset, type);
+    const apy = await getSsovApy(asset, type);
 
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
     res.json({ apy });
