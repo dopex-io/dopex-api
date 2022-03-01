@@ -1,10 +1,10 @@
-const groupBy = require("lodash/groupBy");
+import groupBy from "lodash/groupBy";
 
-const { SSOVS } = require("../../../helpers/constants");
-const getSsovApy = require("../../../helpers/getSsovApy");
-const getSsovTvl = require("../../../helpers/getSsovTvl");
+import { SSOVS } from "../../../helpers/constants";
+import getSsovApy from "../../../helpers/getSsovApy";
+import getSsovTvl from "../../../helpers/getSsovTvl";
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   try {
     const tvls = await Promise.all(
       SSOVS.map((ssov) => {

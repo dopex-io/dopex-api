@@ -1,15 +1,14 @@
-const {
+import {
   ERC20__factory,
   StakingRewards__factory,
   Addresses,
-} = require("@dopex-io/sdk");
-const { BigNumber } = require("bignumber.js");
-const { providers } = require("@0xsequence/multicall");
-const ethers = require("ethers");
+} from "@dopex-io/sdk";
+import { BigNumber } from "bignumber.js";
+import { providers } from "@0xsequence/multicall";
+import { ethers } from "ethers";
+import { BLOCKCHAIN_TO_CHAIN_ID } from "../helpers/constants";
 
-const { BLOCKCHAIN_TO_CHAIN_ID } = require("../helpers/constants");
-
-module.exports = async () => {
+export default async () => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
   const arbProvider = new providers.MulticallProvider(

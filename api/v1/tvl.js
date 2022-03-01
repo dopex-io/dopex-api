@@ -1,11 +1,11 @@
-const BN = require("bignumber.js");
+import BN from "bignumber.js";
 
-const getFarmTvl = require("../../helpers/getFarmTvl");
-const getSsovTvl = require("../../helpers/getSsovTvl");
-const getPrice = require("../../helpers/getPrice");
-const { BLOCKCHAIN_TO_CHAIN_ID } = require("../../helpers/constants");
+import getFarmTvl from "../../helpers/getFarmTvl";
+import getSsovTvl from "../../helpers/getSsovTvl";
+import getPrice from "../../helpers/getPrice";
+import { BLOCKCHAIN_TO_CHAIN_ID } from "../../helpers/constants";
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   try {
     let tvl = 0;
     const { usd: ethPriceFinal } = await getPrice("ethereum");

@@ -1,6 +1,6 @@
-const { default: fetch } = require("node-fetch");
+import fetch from "node-fetch";
 
-module.exports = async (id) => {
+export default async (id) => {
   const price = await fetch(
     `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd,eth`
   )

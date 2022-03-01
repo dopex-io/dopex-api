@@ -1,15 +1,16 @@
-const {
+import {
   ERC20__factory,
   UniswapPair__factory,
   Addresses,
   StakingRewards__factory,
-} = require("@dopex-io/sdk");
-const { providers } = require("@0xsequence/multicall");
-const ethers = require("ethers");
-const BN = require("bignumber.js");
-const { BLOCKCHAIN_TO_CHAIN_ID } = require("../helpers/constants");
+} from "@dopex-io/sdk";
+import { providers } from "@0xsequence/multicall";
+import { ethers } from "ethers";
+import BN from "bignumber.js";
 
-module.exports = async (token, ethPriceFinal) => {
+import { BLOCKCHAIN_TO_CHAIN_ID } from "../helpers/constants";
+
+const getFarmTvl = async (token, ethPriceFinal) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
   const contractAddresses = Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]];
@@ -107,3 +108,5 @@ module.exports = async (token, ethPriceFinal) => {
 
   return totalSupply.multipliedBy(priceLP).dividedBy(1e18);
 };
+
+export default getFarmTvl;

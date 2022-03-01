@@ -1,15 +1,15 @@
-const { providers } = require("@0xsequence/multicall");
-const ethers = require("ethers");
-const BN = require("bignumber.js");
-const {
+import { providers } from "@0xsequence/multicall";
+import { ethers } from "ethers";
+import BN from "bignumber.js";
+import {
   NativeSSOV__factory,
   Addresses,
   ERC20SSOV__factory,
   StakingRewards__factory,
-} = require("@dopex-io/sdk");
+} from "@dopex-io/sdk";
 
-const getPrices = require("./getPrices");
-const { BLOCKCHAIN_TO_CHAIN_ID } = require("./constants");
+import getPrices from "./getPrices";
+import { BLOCKCHAIN_TO_CHAIN_ID } from "./constants";
 
 async function getBnbApy() {
   const bscRpcUrl = process.env.BSC_RPC_URL;

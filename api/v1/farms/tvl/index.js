@@ -1,6 +1,6 @@
-const getTvl = require("../../../../helpers/getFarmTvl");
-const fetch = require("node-fetch");
-const getPrice = require("../../../../helpers/getPrice");
+import getTvl from "../../../../helpers/getFarmTvl";
+import fetch from "node-fetch";
+import getPrice from "../../../../helpers/getPrice";
 
 const isValidQuery = (query) => {
   const upperCasedQuery = query.pool.toUpperCase();
@@ -15,7 +15,7 @@ const isValidQuery = (query) => {
   return true;
 };
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   let tvl = 0;
   if (req.query.pool) {
     if (isValidQuery(req.query)) {
@@ -44,6 +44,6 @@ module.exports = async (req, res) => {
     ]);
     tvl = dpxTvl.plus(dpxWethTvl).plus(rdpxWethTvl).plus(rdpxTvl).toString();
   }
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
   res.json({ tvl });
 };

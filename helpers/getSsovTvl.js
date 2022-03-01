@@ -1,14 +1,14 @@
-const {
+import {
   Addresses,
   ERC20SSOV__factory,
   Curve2PoolSsovPut__factory,
-} = require("@dopex-io/sdk");
-const ethers = require("ethers");
-const BN = require("bignumber.js");
+} from "@dopex-io/sdk";
+import { ethers } from "ethers";
+import BN from "bignumber.js";
 
-const getProvider = require("./getProvider");
+import getProvider from "./getProvider";
 
-module.exports = async (token, type, chainId) => {
+export default async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];
 
   const provider = getProvider(Number(chainId));

@@ -1,8 +1,8 @@
-const getPrice = require("../../../helpers/getPrice");
+import getPrice from "../../../helpers/getPrice";
 
-module.exports = async (_req, res) => {
+export default async (_req, res) => {
   const dpxPrice = await getPrice("dopex");
 
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
   res.json({ price: { ...dpxPrice } });
 };

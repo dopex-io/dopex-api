@@ -1,11 +1,12 @@
-const { Addresses, ERC20SSOV__factory } = require("@dopex-io/sdk");
-const BN = require("bignumber.js");
-const getPrice = require("./getPrice");
-const { TOKEN_TO_CG_ID } = require("./constants");
-const getProvider = require("./getProvider");
-const { ethers } = require("ethers");
+import { Addresses, ERC20SSOV__factory } from "@dopex-io/sdk";
+import BN from "bignumber.js";
+import { ethers } from "ethers";
 
-module.exports = async (token, chainId) => {
+import getPrice from "./getPrice";
+import { TOKEN_TO_CG_ID } from "./constants";
+import getProvider from "./getProvider";
+
+export default async (token, chainId) => {
   const contractAddresses = Addresses[chainId];
   const provider = getProvider(chainId);
 
@@ -26,20 +27,26 @@ module.exports = async (token, chainId) => {
     getPrice(TOKEN_TO_CG_ID[token]),
   ]);
 
-  const converter = token === "BNB" && new ethers.Contract(
-    ssovContract.address,
-    ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
-    provider
-  );
+  const converter =
+    token === "BNB" &&
+    new ethers.Contract(
+      ssovContract.address,
+      ["function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)"],
+      provider
+    );
 
   const ssovDeposits = {};
   for (let i in strikes) {
-    const amount = token === "BNB" ? await converter.vbnbToBnb(deposits[i]) : deposits[i];
+    const amount =
+      token === "BNB" ? await converter.vbnbToBnb(deposits[i]) : deposits[i];
     ssovDeposits[BN(strikes[i].toString()).dividedBy(1e8)] = {
-      'amount': BN(amount.toString()).dividedBy(1e18).toString(),
-      'usd': BN(amount.toString()).multipliedBy(tokenPrice.usd).dividedBy(1e18).toString()
+      amount: BN(amount.toString()).dividedBy(1e18).toString(),
+      usd: BN(amount.toString())
+        .multipliedBy(tokenPrice.usd)
+        .dividedBy(1e18)
+        .toString(),
     };
   }
 
-  return ssovDeposits
+  return ssovDeposits;
 };

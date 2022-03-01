@@ -1,8 +1,8 @@
-const ethers = require("ethers");
-const { providers } = require("@0xsequence/multicall");
-const { BLOCKCHAIN_TO_CHAIN_ID } = require("../helpers/constants");
+import { ethers } from "ethers";
+import { providers } from "@0xsequence/multicall";
+import { BLOCKCHAIN_TO_CHAIN_ID } from "../helpers/constants";
 
-module.exports = (chainId) => {
+export default (chainId) => {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
   const bscRpcUrl = process.env.BSC_RPC_URL;
   const avaxRpxUrl = process.env.AVAX_RPC_URL;
