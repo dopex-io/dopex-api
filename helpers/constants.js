@@ -23,8 +23,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "call",
@@ -33,7 +32,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
+    currentEpoch: 0,
     epochTimes: [1643483885, 1645816685],
   },
   {
@@ -43,8 +42,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "call",
@@ -53,8 +51,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "call",
@@ -63,8 +60,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "call",
@@ -73,8 +69,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "call",
@@ -83,8 +78,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -93,8 +87,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -103,8 +96,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -113,8 +105,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -123,8 +114,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -133,8 +123,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -143,8 +132,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 2,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -153,8 +141,7 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
   {
     type: "put",
@@ -163,7 +150,6 @@ export const SSOVS = [
     totalEpochDeposits: 0,
     apy: 0,
     tvl: 0,
-    currentEpoch: 1,
-    epochTimes: [1643483885, 1645816685],
+    currentEpoch: 0,
   },
 ];
