@@ -32,6 +32,9 @@ export default async (req, res) => {
         apy: apys[index],
         currentEpoch: data[index].currentEpoch,
         totalEpochDeposits: data[index].totalEpochDeposits,
+        epochStartDate: data[index].epochStartDate,
+        epochEndDate: data[index].epochEndDate,
+        underlyingPrice: data[index].underlyingPrice
       };
     });
 

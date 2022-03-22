@@ -1,19 +1,27 @@
-import { Addresses, ERC20SSOV__factory } from "@dopex-io/sdk";
+import { Addresses, Curve2PoolSsovPut__factory } from "@dopex-io/sdk";
 import BN from "bignumber.js";
 import { ethers } from "ethers";
 
 import getProvider from "./getProvider";
 
-export default async (token, chainId) => {
+export default async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];
   const provider = getProvider(chainId);
 
-  const ssovContract = ERC20SSOV__factory.connect(
-    contractAddresses.SSOV[token].Vault,
-    provider
-  );
+  const ssovAddress =
+    type === "put"
+      ? contractAddresses["2CRV-SSOV-P"][token].Vault
+      : contractAddresses.SSOV[token].Vault;
+
+  let ssovContract;
+
+  if (type === 'call')
+    ssovContract = ERC20SSOV__factory.connect(ssovAddress, provider);
+  else
+    ssovContract = Curve2PoolSsovPut__factory.connect(ssovAddress, provider);
 
   let epoch = await ssovContract.currentEpoch();
+
   let isEpochExpired = await ssovContract.isEpochExpired(epoch);
 
   if (epoch.isZero()) {
@@ -25,10 +33,14 @@ export default async (token, chainId) => {
   const strikes = await ssovContract.getEpochStrikes(epoch);
 
   const optionsUsage = {};
-  let totalCallsPurchased = 0;
-  const epochCallsPurchased = await ssovContract.getTotalEpochCallsPurchased(
-    epoch
-  );
+  let totalOptionsPurchased = 0;
+  let epochOptionsPurchased;
+
+  if (type === 'call')
+    epochOptionsPurchased = await ssovContract.getTotalEpochCallsPurchased(epoch);
+  else
+    epochOptionsPurchased = await ssovContract.getTotalEpochPutsPurchased(epoch);
+
   let i;
 
   const converter =
@@ -40,18 +52,18 @@ export default async (token, chainId) => {
     );
 
   for (i in strikes) {
-    const callsPurchased =
-      token === "BNB"
+    const optionsPurchased =
+      token === "BNB" && type === "CALL"
         ? await converter.vbnbToBnb(epochCallsPurchased[i].toString())
-        : epochCallsPurchased[i];
-    totalCallsPurchased = callsPurchased.add(totalCallsPurchased);
+        : epochOptionsPurchased[i];
+    totalOptionsPurchased = optionsPurchased.add(totalOptionsPurchased);
     optionsUsage[BN(strikes[i].toString()).dividedBy(1e8)] = BN(
-      callsPurchased.toString()
+      optionsPurchased.toString()
     ).dividedBy(1e18);
   }
 
   return {
-    total: BN(totalCallsPurchased.toString()).dividedBy(1e18),
+    total: BN(totalOptionsPurchased.toString()).dividedBy(1e18),
     strikes: optionsUsage,
   };
 };
