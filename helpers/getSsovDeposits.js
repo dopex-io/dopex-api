@@ -6,14 +6,16 @@ import getPrice from "./getPrice";
 import { TOKEN_TO_CG_ID } from "./constants";
 import getProvider from "./getProvider";
 
-const getSsovDeposits = async (token, chainId) => {
+const getSsovDeposits = async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];
   const provider = getProvider(chainId);
 
-  const ssovContract = ERC20SSOV__factory.connect(
-    contractAddresses.SSOV[token].Vault,
-    provider
-  );
+  const ssovAddress =
+    type === "put"
+      ? contractAddresses["2CRV-SSOV-P"][token].Vault
+      : contractAddresses.SSOV[token].Vault;
+
+  const ssovContract = ERC20SSOV__factory.connect(ssovAddress, provider);
 
   let epoch = await ssovContract.currentEpoch();
   let isEpochExpired = await ssovContract.isEpochExpired(epoch);
@@ -41,7 +43,7 @@ const getSsovDeposits = async (token, chainId) => {
   const ssovDeposits = {};
   for (let i in strikes) {
     const amount =
-      token === "BNB" ? await converter.vbnbToBnb(deposits[i]) : deposits[i];
+      token === "BNB" && type === "call" ? await converter.vbnbToBnb(deposits[i]) : deposits[i];
     ssovDeposits[BN(strikes[i].toString()).dividedBy(1e8)] = {
       amount: BN(amount.toString()).dividedBy(1e18).toString(),
       usd: BN(amount.toString())

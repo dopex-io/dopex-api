@@ -55,7 +55,7 @@ const ASSET_TO_GETTER = {
 export default async (req, res) => {
   try {
     const asset = req.query.asset;
-    const type = req.query.type;
+    const type = (req.query.type || "CALL").toUpperCase();
 
     if (!asset) res.status(400).json({ error: "Missing asset parameter." });
     if (!type) res.status(400).json({ error: "Missing type parameter." });

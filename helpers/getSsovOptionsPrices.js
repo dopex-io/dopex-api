@@ -6,14 +6,16 @@ import { TOKEN_TO_CG_ID } from "./constants";
 import getProvider from "./getProvider";
 import getPrice from "./getPrice";
 
-export default async (token, chainId) => {
+export default async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];
   const provider = getProvider(chainId);
 
-  const ssovContract = ERC20SSOV__factory.connect(
-    contractAddresses.SSOV[token].Vault,
-    provider
-  );
+  const ssovAddress =
+    type === "put"
+      ? contractAddresses["2CRV-SSOV-P"][token].Vault
+      : contractAddresses.SSOV[token].Vault;
+
+  const ssovContract = ERC20SSOV__factory.connect(ssovAddress, provider);
 
   let epoch = await ssovContract.currentEpoch();
   let isEpochExpired = await ssovContract.isEpochExpired(epoch);
@@ -54,7 +56,7 @@ export default async (token, chainId) => {
       amount.toString()
     );
 
-    if (token === "BNB") {
+    if (token === "BNB" && type === "CALL") {
       premium = await converter.vbnbToBnb(premium);
       fees = await converter.vbnbToBnb(fees);
     }
