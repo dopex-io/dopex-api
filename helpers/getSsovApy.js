@@ -161,6 +161,10 @@ async function getGohmApy() {
 async function getDopexApy(asset) {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
+  if (asset === "RDPX") {
+    return "20";
+  }
+
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
       `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
