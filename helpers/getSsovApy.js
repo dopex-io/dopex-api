@@ -341,7 +341,7 @@ const ASSET_TO_GETTER = {
   BNB: { fn: getBnbApy, args: [] },
   GMX: { fn: getGmxApy, args: [] },
   AVAX: { fn: getAvaxAPY, args: [] },
-  Metis: { fn: getMetisApy, args: [] },
+  METIS: { fn: getMetisApy, args: [] },
 };
 
 const getSsovApy = async (asset, type = 'call') => {

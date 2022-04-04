@@ -80,7 +80,7 @@ export const SSOVS = [
   },
   {
     type: 'call',
-    name: 'Metis',
+    name: 'METIS',
     chainId: 1088,
     underlyingDecimals: 18,
     totalEpochDeposits: 0,

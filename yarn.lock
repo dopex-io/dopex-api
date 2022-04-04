@@ -37,10 +37,10 @@
     ethers "^5.5.2"
     js-base64 "^3.7.2"
 
-"@dopex-io/sdk@^1.0.0-alpha.86":
-  version "1.0.0-alpha.86"
-  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-alpha.86.tgz#12d778d19ec55f2ba74a5db303f36f640c58482f"
-  integrity sha512-LfmgHwlUzH66TfllxiYYt+YXJ9rJ4GszmNuQtpOoQmMzCx+dvKWFWFlENRQLOmdKPVdd/kRQiPxYuDpCQX1A2A==
+"@dopex-io/sdk@^1.0.0-alpha.87":
+  version "1.0.0-alpha.87"
+  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-alpha.87.tgz#b58227b85520dcb1bb01b234be8c5726f7e24075"
+  integrity sha512-xO4WTepUqXdJwZ2dQoD535j5K7pOn2Pt10Kaa/41sPTRTWEDKOd8LLP29muNAhT16enT+2GlfXAYlwbskkYdow==
   dependencies:
     ethers "^5.6.2"
 
