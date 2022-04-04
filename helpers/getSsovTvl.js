@@ -2,11 +2,11 @@ import {
   Addresses,
   ERC20SSOV__factory,
   Curve2PoolSsovPut__factory,
-} from "@dopex-io/sdk";
-import { ethers } from "ethers";
-import BN from "bignumber.js";
+} from '@dopex-io/sdk';
+import { ethers } from 'ethers';
+import BN from 'bignumber.js';
 
-import getProvider from "./getProvider";
+import getProvider from './getProvider';
 
 export default async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];
@@ -15,8 +15,8 @@ export default async (token, type, chainId) => {
 
   let tvl;
 
-  if (type === "put") {
-    const ssovAddress = contractAddresses["2CRV-SSOV-P"][token].Vault;
+  if (type === 'put') {
+    const ssovAddress = contractAddresses['2CRV-SSOV-P'][token].Vault;
 
     const ssovContract = Curve2PoolSsovPut__factory.connect(
       ssovAddress,
@@ -70,11 +70,11 @@ export default async (token, type, chainId) => {
     const allStrikesPremiums = await ssovContract.getTotalEpochPremium(epoch);
     allStrikesPremiums.map((premium) => (tvl = tvl.add(premium)));
 
-    if (token === "BNB") {
+    if (token === 'BNB') {
       const converter = new ethers.Contract(
         ssovContract.address,
         [
-          "function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)",
+          'function vbnbToBnb(uint256 vbnbAmount) public view returns (uint256)',
         ],
         provider
       );

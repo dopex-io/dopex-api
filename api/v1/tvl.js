@@ -35,6 +35,10 @@ export default async (req, res) => {
         fn: getSsovTvl,
         args: ["BNB", "call", BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]],
       },
+      "metis-ssov": {
+        fn: getSsovTvl,
+        args: ["METIS", "call", BLOCKCHAIN_TO_CHAIN_ID["METIS"]],
+      },
       "dpx-farm": { fn: getFarmTvl, args: ["DPX", ethPriceFinal] },
       "rdpx-farm": { fn: getFarmTvl, args: ["RDPX", ethPriceFinal] },
       "dpx-weth-farm": { fn: getFarmTvl, args: ["DPX-WETH", ethPriceFinal] },
