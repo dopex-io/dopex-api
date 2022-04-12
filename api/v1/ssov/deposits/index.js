@@ -10,10 +10,6 @@ const ASSET_TO_GETTER = {
     fn: getSsovDeposits,
     args: ["RDPX", "call", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]],
   },
-  "ETH-CALL": {
-    fn: getSsovDeposits,
-    args: ["ETH", "call", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]],
-  },
   "GOHM-CALL": {
     fn: getSsovDeposits,
     args: ["GOHM", "call", BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]],
@@ -60,7 +56,9 @@ export default async (req, res) => {
     if (!asset) res.status(400).json({ error: "Missing asset parameter." });
     if (!type) res.status(400).json({ error: "Missing type parameter." });
 
-    let deposits = await ASSET_TO_GETTER[`${asset}-${type}`].fn(...ASSET_TO_GETTER[`${asset}-${type}`].args);
+    let deposits = await ASSET_TO_GETTER[`${asset}-${type}`].fn(
+      ...ASSET_TO_GETTER[`${asset}-${type}`].args
+    );
 
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
     res.json({ deposits });

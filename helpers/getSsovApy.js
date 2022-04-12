@@ -1,15 +1,15 @@
-import { providers } from "@0xsequence/multicall";
-import { ethers } from "ethers";
-import BN from "bignumber.js";
+import { providers } from '@0xsequence/multicall';
+import { ethers } from 'ethers';
+import BN from 'bignumber.js';
 import {
   NativeSSOV__factory,
   Addresses,
   ERC20SSOV__factory,
   StakingRewards__factory,
-} from "@dopex-io/sdk";
+} from '@dopex-io/sdk';
 
-import getPrices from "./getPrices";
-import { BLOCKCHAIN_TO_CHAIN_ID } from "./constants";
+import getPrices from './getPrices';
+import { BLOCKCHAIN_TO_CHAIN_ID } from './constants';
 
 async function getBnbApy() {
   const bscRpcUrl = process.env.BSC_RPC_URL;
@@ -17,13 +17,13 @@ async function getBnbApy() {
   const provider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
       bscRpcUrl,
-      BLOCKCHAIN_TO_CHAIN_ID["BINANCE"]
+      BLOCKCHAIN_TO_CHAIN_ID['BINANCE']
     )
   );
 
   const vbnbContract = new ethers.Contract(
-    "0xA07c5b74C9B40447a954e1466938b865b6BBea36",
-    ["function supplyRatePerBlock() external view returns (uint)"],
+    '0xA07c5b74C9B40447a954e1466938b865b6BBea36',
+    ['function supplyRatePerBlock() external view returns (uint)'],
     provider
   );
 
@@ -48,47 +48,47 @@ async function getGmxApy() {
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
       `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-      "any"
+      'any'
     )
   );
 
   const stakingContract = new ethers.Contract(
-    "0xd2D1162512F927a7e282Ef43a362659E4F2a728F",
-    ["function totalSupply() view returns (uint256)"],
+    '0xd2D1162512F927a7e282Ef43a362659E4F2a728F',
+    ['function totalSupply() view returns (uint256)'],
     provider
   );
 
   const ssov = new ethers.Contract(
-    "0x04996AFcf40A14D0892B00C816874F9C1A52C93B",
-    ["function getUsdPrice() public view returns (uint256)"],
+    '0x04996AFcf40A14D0892B00C816874F9C1A52C93B',
+    ['function getUsdPrice() public view returns (uint256)'],
     provider
   );
 
   const ethSsov = new ethers.Contract(
-    "0x711Da677a0D61Ee855DAd4241B552A706F529C70",
-    ["function getUsdPrice() view returns (uint256)"],
+    '0x711Da677a0D61Ee855DAd4241B552A706F529C70',
+    ['function getUsdPrice() view returns (uint256)'],
     provider
   );
 
   const reader = new ethers.Contract(
-    "0xF09eD52638c22cc3f1D7F5583e3699A075e601B2",
+    '0xF09eD52638c22cc3f1D7F5583e3699A075e601B2',
     [
-      "function getTokenBalancesWithSupplies(address _account, address[] memory _tokens) public view returns (uint256[] memory)",
+      'function getTokenBalancesWithSupplies(address _account, address[] memory _tokens) public view returns (uint256[] memory)',
     ],
     provider
   );
 
   const balances = await reader.getTokenBalancesWithSupplies(
-    "0x0000000000000000000000000000000000000000",
+    '0x0000000000000000000000000000000000000000',
     [
-      "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
-      "0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA",
-      "0x4277f8F2c384827B5273592FF7CeBd9f2C1ac258",
-      "0x908C4D94D34924765f1eDc22A1DD098397c59dD4",
+      '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a',
+      '0xf42Ae1D54fd613C9bb14810b0588FaAa09a426cA',
+      '0x4277f8F2c384827B5273592FF7CeBd9f2C1ac258',
+      '0x908C4D94D34924765f1eDc22A1DD098397c59dD4',
     ]
   );
 
-  const keys = ["gmx", "esGmx", "glp", "stakedGmxTracker"];
+  const keys = ['gmx', 'esGmx', 'glp', 'stakedGmxTracker'];
   const balanceData = {};
   const supplyData = {};
   const propsLength = 2;
@@ -129,21 +129,21 @@ async function getGmxApy() {
 async function getGohmApy() {
   const mainnetProvider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
-      "https://eth-mainnet.gateway.pokt.network/v1/lb/61ceae3bb86d760039e05c85",
+      'https://eth-mainnet.gateway.pokt.network/v1/lb/61ceae3bb86d760039e05c85',
       1
     )
   );
 
   const stakingContract = new ethers.Contract(
-    "0xB63cac384247597756545b500253ff8E607a8020",
+    '0xB63cac384247597756545b500253ff8E607a8020',
     [
-      "function epoch() view returns (uint256 length, uint256 number, uint256 end, uint256 distribute)",
+      'function epoch() view returns (uint256 length, uint256 number, uint256 end, uint256 distribute)',
     ],
     mainnetProvider
   );
   const sohmMainContract = new ethers.Contract(
-    "0x04906695D6D12CF5459975d7C3C03356E4Ccd460",
-    ["function circulatingSupply() view returns (uint256)"],
+    '0x04906695D6D12CF5459975d7C3C03356E4Ccd460',
+    ['function circulatingSupply() view returns (uint256)'],
     mainnetProvider
   );
 
@@ -161,20 +161,24 @@ async function getGohmApy() {
 async function getDopexApy(asset) {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
+  if (asset === 'RDPX') {
+    return '20';
+  }
+
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
       `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-      "any"
+      'any'
     )
   );
 
   const ssovContract = ERC20SSOV__factory.connect(
-    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].SSOV[asset].Vault,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV[asset].Vault,
     provider
   );
 
   const stakingRewardsAddress = await ssovContract.getAddress(
-    "0x5374616b696e6752657761726473000000000000000000000000000000000000" // StakingRewards
+    '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
   );
   const stakingRewardsContract = StakingRewards__factory.connect(
     stakingRewardsAddress,
@@ -188,10 +192,10 @@ async function getDopexApy(asset) {
     stakingRewardsContract.rewardRateDPX(),
     stakingRewardsContract.rewardRateRDPX(),
     stakingRewardsContract.totalSupply(),
-    getPrices(["dopex", "dopex-rebate-token"]),
+    getPrices(['dopex', 'dopex-rebate-token']),
   ]);
 
-  const assetPrice = asset === "DPX" ? priceDPX : priceRDPX;
+  const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX;
 
   const TVL = new BN(totalSupply.toString())
     .multipliedBy(assetPrice)
@@ -222,12 +226,12 @@ async function getEthApy() {
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
       `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-      "any"
+      'any'
     )
   );
 
   const ssovContract = NativeSSOV__factory.connect(
-    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].SSOV.ETH.Vault,
+    Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV.ETH.Vault,
     provider
   );
 
@@ -242,14 +246,14 @@ async function getEthApy() {
 
   const [totalEpochDeposits, [priceETH, priceDPX]] = await Promise.all([
     ssovContract.totalEpochDeposits(epoch),
-    getPrices(["ethereum", "dopex"]),
+    getPrices(['ethereum', 'dopex']),
   ]);
 
   const TVL = new BN(totalEpochDeposits.toString())
     .dividedBy(1e18)
     .multipliedBy(priceETH);
 
-  let rewardsEmitted = new BN("300"); // 300 DPX per month
+  let rewardsEmitted = new BN('200'); // 300 DPX per month
   rewardsEmitted = rewardsEmitted.multipliedBy(priceDPX).multipliedBy(12); // for 12 months
 
   const denominator = TVL.toNumber() + rewardsEmitted.toNumber();
@@ -265,22 +269,22 @@ async function getAvaxAPY() {
   const provider = new providers.MulticallProvider(
     new ethers.providers.JsonRpcProvider(
       AvaxRpcUrl,
-      BLOCKCHAIN_TO_CHAIN_ID["AVAX"]
+      BLOCKCHAIN_TO_CHAIN_ID['AVAX']
     )
   );
 
   const rewardDistributorContract = new ethers.Contract(
-    "0x45B2C4139d96F44667577C0D7F7a7D170B420324",
-    ["function rewardSupplySpeeds(uint8 ,address) view returns (uint256)"],
+    '0x45B2C4139d96F44667577C0D7F7a7D170B420324',
+    ['function rewardSupplySpeeds(uint8 ,address) view returns (uint256)'],
     provider
   );
 
   const JAvaxContract = new ethers.Contract(
-    "0xC22F01ddc8010Ee05574028528614634684EC29e",
+    '0xC22F01ddc8010Ee05574028528614634684EC29e',
     [
-      "function supplyRatePerSecond() view returns (uint256)",
-      "function totalSupply() view returns (uint256)",
-      "function exchangeRateStored() view returns (uint256)",
+      'function supplyRatePerSecond() view returns (uint256)',
+      'function totalSupply() view returns (uint256)',
+      'function exchangeRateStored() view returns (uint256)',
     ],
     provider
   );
@@ -297,9 +301,9 @@ async function getAvaxAPY() {
     JAvaxContract.exchangeRateStored(),
     rewardDistributorContract.rewardSupplySpeeds(
       0,
-      "0xC22F01ddc8010Ee05574028528614634684EC29e"
+      '0xC22F01ddc8010Ee05574028528614634684EC29e'
     ),
-    getPrices(["avalanche-2", "joe"]),
+    getPrices(['avalanche-2', 'joe']),
   ]);
 
   const AvaxRewards =
@@ -325,19 +329,24 @@ async function getAvaxAPY() {
   return (Number(joeRewards) + Number(AvaxRewards)).toFixed(2);
 }
 
+const getMetisApy = () => {
+  return '1.7';
+};
+
 const ASSET_TO_GETTER = {
-  DPX: { fn: getDopexApy, args: ["DPX"] },
-  RDPX: { fn: getDopexApy, args: ["RDPX"] },
+  DPX: { fn: getDopexApy, args: ['DPX'] },
+  RDPX: { fn: getDopexApy, args: ['RDPX'] },
   ETH: { fn: getEthApy, args: [] },
   GOHM: { fn: getGohmApy, args: [] },
   BNB: { fn: getBnbApy, args: [] },
   GMX: { fn: getGmxApy, args: [] },
   AVAX: { fn: getAvaxAPY, args: [] },
+  METIS: { fn: getMetisApy, args: [] },
 };
 
-const getSsovApy = async (asset, type = "call") => {
+const getSsovApy = async (asset, type = 'call') => {
   let apy;
-  if (type === "put") {
+  if (type === 'put') {
     apy = 6.64; // TODO
   } else {
     apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args);

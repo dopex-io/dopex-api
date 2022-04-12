@@ -10,14 +10,14 @@
     "dev": "vc dev"
   },
   "dependencies": {
-    "@0xsequence/multicall": "^0.36.0",
-    "@dopex-io/sdk": "^1.0.0-alpha.77",
+    "@0xsequence/multicall": "^0.36.9",
+    "@dopex-io/sdk": "1.0.0-alpha.93",
     "bignumber.js": "^9.0.1",
     "ethers": "^5.5.1",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "eslint": "^8.2.0"
+    "eslint": "^8.13.0"
   }
 }
