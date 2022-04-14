@@ -1,4 +1,8 @@
-import { Addresses, Curve2PoolSsovPut__factory } from "@dopex-io/sdk";
+import {
+  Addresses,
+  Curve2PoolSsovPut__factory,
+  ERC20SSOV__factory,
+} from "@dopex-io/sdk";
 import BN from "bignumber.js";
 import { ethers } from "ethers";
 
@@ -15,10 +19,9 @@ export default async (token, type, chainId) => {
 
   let ssovContract;
 
-  if (type === 'call')
+  if (type === "call")
     ssovContract = ERC20SSOV__factory.connect(ssovAddress, provider);
-  else
-    ssovContract = Curve2PoolSsovPut__factory.connect(ssovAddress, provider);
+  else ssovContract = Curve2PoolSsovPut__factory.connect(ssovAddress, provider);
 
   let epoch = await ssovContract.currentEpoch();
 
@@ -36,10 +39,14 @@ export default async (token, type, chainId) => {
   let totalOptionsPurchased = 0;
   let epochOptionsPurchased;
 
-  if (type === 'call')
-    epochOptionsPurchased = await ssovContract.getTotalEpochCallsPurchased(epoch);
+  if (type === "call")
+    epochOptionsPurchased = await ssovContract.getTotalEpochCallsPurchased(
+      epoch
+    );
   else
-    epochOptionsPurchased = await ssovContract.getTotalEpochPutsPurchased(epoch);
+    epochOptionsPurchased = await ssovContract.getTotalEpochPutsPurchased(
+      epoch
+    );
 
   let i;
 
