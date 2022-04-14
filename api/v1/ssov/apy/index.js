@@ -4,7 +4,7 @@ export default async (req, res) => {
   try {
     const asset = req.query.asset;
 
-    const type = req.query.type || "call";
+    const type = (req.query.type || "CALL").toUpperCase();
 
     const apy = await getSsovApy(asset, type);
 

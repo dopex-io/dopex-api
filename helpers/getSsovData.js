@@ -15,6 +15,8 @@ export default async (token, type, chainId) => {
 
   let epoch = await ssovContract.currentEpoch();
   const isEpochExpired = await ssovContract.isEpochExpired(epoch);
+  const epochTimes = await ssovContract.getEpochTimes(epoch);
+  const underlyingPrice = await ssovContract.getUsdPrice();
 
   if (epoch.isZero()) {
     epoch = 1;
@@ -27,5 +29,8 @@ export default async (token, type, chainId) => {
   return {
     currentEpoch: Number(epoch.toString()),
     totalEpochDeposits: totalEpochDeposits.toString(),
+    epochStartDate: epochTimes[0].toString(),
+    epochEndDate: epochTimes[1].toString(),
+    underlyingPrice: underlyingPrice.toNumber() / 10 ** 8
   };
 };
