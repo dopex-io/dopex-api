@@ -162,7 +162,7 @@ async function getDopexApy(asset) {
   const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
   if (asset === 'RDPX') {
-    return '20';
+    return '0';
   }
 
   const provider = new providers.MulticallProvider(
