@@ -3,9 +3,8 @@
     "version": "1.0.0",
     "private": "true",
     "description": "A nodejs based HTTP API for Dopex",
-    "main": "index.js",
     "author": "Dopex",
-    "license": "UNLICENSED",
+    "license": "MIT",
     "scripts": {
         "dev": "vc dev --listen 5001",
         "test": "jest"

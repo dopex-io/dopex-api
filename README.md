@@ -17,3 +17,7 @@ This will begin the vercel dev server on port 5001.
 ## Endpoints
 
 [V1](/docs/v1/ENDPOINTS.md)
+
+## License
+
+[This project is licensed under the MIT License - Copyright (c) 2022 Dopex](/LICENSE)
