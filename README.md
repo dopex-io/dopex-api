@@ -13,3 +13,7 @@ yarn dev
 ```
 
 This will begin the vercel dev server on port 5001.
+
+## Endpoints
+
+[V1](/docs/v1/ENDPOINTS.md)
