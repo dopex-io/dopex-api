@@ -27,6 +27,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "call",
@@ -37,6 +38,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "call",
@@ -47,6 +49,18 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
+  },
+  {
+    type: "call",
+    name: "ETH-WEEKLY",
+    chainId: 42161,
+    underlyingDecimals: 18,
+    totalEpochDeposits: 0,
+    apy: 0,
+    tvl: 0,
+    currentEpoch: 0,
+    duration: 'weekly'
   },
   {
     type: "call",
@@ -57,6 +71,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "call",
@@ -67,6 +82,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "call",
@@ -77,6 +93,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "call",
@@ -87,6 +104,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -97,6 +115,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -107,6 +126,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -117,6 +137,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -127,6 +148,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -137,6 +159,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -147,6 +170,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -157,6 +181,7 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
   {
     type: "put",
@@ -167,5 +192,6 @@ export const SSOVS = [
     apy: 0,
     tvl: 0,
     currentEpoch: 0,
+    duration: 'monthly'
   },
 ];

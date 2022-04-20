@@ -10,7 +10,7 @@ export default async (req, res) => {
     const [tvls, apys, data] = await Promise.all([
       Promise.all(
         SSOVS.map((ssov) => {
-          return getSsovTvl(ssov.name, ssov.type, ssov.chainId);
+          return getSsovTvl(ssov.name, ssov.type, ssov.chainId, ssov.duration);
         })
       ),
       Promise.all(
@@ -20,7 +20,7 @@ export default async (req, res) => {
       ),
       Promise.all(
         SSOVS.map((ssov) => {
-          return getSsovData(ssov.name, ssov.type, ssov.chainId);
+          return getSsovData(ssov.name, ssov.type, ssov.chainId, ssov.duration);
         })
       ),
     ]);

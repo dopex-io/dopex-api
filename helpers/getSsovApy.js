@@ -6,6 +6,7 @@ import {
   Addresses,
   ERC20SSOV__factory,
   StakingRewards__factory,
+  SsovV3__factory
 } from '@dopex-io/sdk';
 
 import getPrices from './getPrices';
@@ -171,7 +172,6 @@ async function getDopexApy(asset) {
       'any'
     )
   );
-
   const ssovContract = ERC20SSOV__factory.connect(
     Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV[asset].Vault,
     provider
@@ -263,6 +263,47 @@ async function getEthApy() {
   return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2));
 }
 
+async function getEthWeeklyApy() {
+  const infuraProjectId = process.env.INFURA_PROJECT_ID;
+
+  const provider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      'any'
+    )
+  );
+
+  const ssovContract = SsovV3__factory.connect(
+    '0x376bEcbc031dd53Ffc62192043dE43bf491988FD',
+    provider
+  );
+
+  const epoch = await ssovContract.currentEpoch();
+  const epochData = await ssovContract.getEpochData(epoch);
+  const totalEpochDeposits = epochData['totalCollateralBalance'];
+  const priceETH = await ssovContract.getUnderlyingPrice();
+
+  const dpxSsovContract = ERC20SSOV__factory.connect(
+      '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
+      provider
+  );
+
+  const priceDPX = await dpxSsovContract.getUsdPrice();
+
+  const TVL = new BN(totalEpochDeposits.toString())
+    .dividedBy(1e18)
+    .multipliedBy(priceETH);
+
+  let rewardsEmitted = new BN('25'); // 25 DPX per week
+  rewardsEmitted = rewardsEmitted.multipliedBy(priceDPX).multipliedBy(4).multipliedBy(12); // for 4 weeks for 12 months
+
+  const denominator = TVL.toNumber() + rewardsEmitted.toNumber();
+
+  let APR = (denominator / TVL.toNumber() - 1) * 100;
+
+  return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2));
+}
+
 async function getAvaxAPY() {
   const AvaxRpcUrl = process.env.AVAX_RPC_URL;
 
@@ -337,6 +378,7 @@ const ASSET_TO_GETTER = {
   DPX: { fn: getDopexApy, args: ['DPX'] },
   RDPX: { fn: getDopexApy, args: ['RDPX'] },
   ETH: { fn: getEthApy, args: [] },
+  "ETH-WEEKLY": { fn: getEthWeeklyApy, args: [] },
   GOHM: { fn: getGohmApy, args: [] },
   BNB: { fn: getBnbApy, args: [] },
   GMX: { fn: getGmxApy, args: [] },
