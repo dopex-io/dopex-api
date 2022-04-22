@@ -41,6 +41,7 @@ Returns data about the Dopex SSOVs
                 "apy": 0.51,
                 "tvl": "233162.44467339824577091596",
                 "currentEpoch": 2,
+                "duration":"monthly",
                 "epochStartDate": "1645914824",
                 "epochEndDate": "1648195200",
                 "underlyingPrice": 405.68298959
@@ -56,6 +57,7 @@ Returns data about the Dopex SSOVs
                 "apy": 25.99,
                 "tvl": "74385261.91304584805492648375",
                 "currentEpoch": 2,
+                "duration":"monthly",
                 "epochStartDate": "1645913155",
                 "epochEndDate": "1648195200",
                 "underlyingPrice": 1259.08995812
@@ -69,6 +71,7 @@ Returns data about the Dopex SSOVs
                 "apy": 19.34,
                 "tvl": "23358485.27234615851825536192",
                 "currentEpoch": 1,
+                "duration":"monthly",
                 "epochStartDate": "1645913891",
                 "epochEndDate": "1648195200",
                 "underlyingPrice": 148.39541578

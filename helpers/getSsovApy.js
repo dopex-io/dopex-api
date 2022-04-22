@@ -1,12 +1,13 @@
 import { providers } from '@0xsequence/multicall';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import BN from 'bignumber.js';
 import {
   NativeSSOV__factory,
   Addresses,
   ERC20SSOV__factory,
   StakingRewards__factory,
-  SsovV3__factory
+  SsovV3__factory,
+  SsovV3Viewer__factory
 } from '@dopex-io/sdk';
 
 import getPrices from './getPrices';
@@ -278,9 +279,12 @@ async function getEthWeeklyApy() {
     provider
   );
 
+  const ssovViewerContract = SsovV3Viewer__factory.connect(
+      '0x426eDe8BF1A523d288470e245a343B599c2128da',
+      provider
+    );
+
   const epoch = await ssovContract.currentEpoch();
-  const epochData = await ssovContract.getEpochData(epoch);
-  const totalEpochDeposits = epochData['totalCollateralBalance'];
   const priceETH = await ssovContract.getUnderlyingPrice();
 
   const dpxSsovContract = ERC20SSOV__factory.connect(
@@ -290,18 +294,44 @@ async function getEthWeeklyApy() {
 
   const priceDPX = await dpxSsovContract.getUsdPrice();
 
-  const TVL = new BN(totalEpochDeposits.toString())
-    .dividedBy(1e18)
-    .multipliedBy(priceETH);
+  const [
+      totalEpochStrikeDeposits,
+    ] = await Promise.all([
+      ssovViewerContract.getTotalEpochStrikeDeposits(
+        epoch,
+        ssovContract.address
+      ),
+      ssovViewerContract.getTotalEpochOptionsPurchased(
+        epoch,
+        ssovContract.address
+      ),
+      ssovViewerContract.getTotalEpochPremium(
+        epoch,
+        ssovContract.address
+      ),
+      ssovContract.getEpochData(epoch),
+      ssovViewerContract.getEpochStrikeTokens(
+        epoch,
+        ssovContract.address
+      ),
+    ]);
 
-  let rewardsEmitted = new BN('25'); // 25 DPX per week
-  rewardsEmitted = rewardsEmitted.multipliedBy(priceDPX).multipliedBy(4).multipliedBy(12); // for 4 weeks for 12 months
+    const totalEpochDeposits = totalEpochStrikeDeposits.reduce(
+      (acc, deposit) => {
+        return acc.add(deposit);
+      },
+      BigNumber.from(0)
+    );
 
-  const denominator = TVL.toNumber() + rewardsEmitted.toNumber();
+    const totalRewardsInUSD = priceDPX.mul(BigNumber.from(Math.round(2.5 * 365))).toString() / 10 ** (8);
 
-  let APR = (denominator / TVL.toNumber() - 1) * 100;
+    const totalEpochDepositsInUSD = totalEpochDeposits.mul(priceETH).toString() / 10 ** (18 + 8);
 
-  return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2));
+    return (
+      (Math.abs(totalEpochDepositsInUSD - totalRewardsInUSD) /
+        totalEpochDepositsInUSD) *
+      100
+    ).toFixed(2);
 }
 
 async function getAvaxAPY() {

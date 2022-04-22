@@ -3,8 +3,9 @@ import {
   ERC20SSOV__factory,
   Curve2PoolSsovPut__factory,
   SsovV3__factory,
+  SsovV3Viewer__factory
 } from '@dopex-io/sdk';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import BN from 'bignumber.js';
 
 import getProvider from './getProvider';
@@ -90,26 +91,58 @@ export default async (token, type, chainId, duration) => {
   } else {
     const infuraProjectId = process.env.INFURA_PROJECT_ID;
 
-    const provider = new providers.MulticallProvider(
-      new ethers.getDefaultProvider(
-        `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-        'any'
-      )
-    );
+  const provider = new providers.MulticallProvider(
+    new ethers.getDefaultProvider(
+      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      'any'
+    )
+  );
 
-    const ssovContract = SsovV3__factory.connect(
-      '0x376bEcbc031dd53Ffc62192043dE43bf491988FD',
+  const ssovContract = SsovV3__factory.connect(
+    '0x376bEcbc031dd53Ffc62192043dE43bf491988FD',
+    provider
+  );
+
+  const ssovViewerContract = SsovV3Viewer__factory.connect(
+      '0x426eDe8BF1A523d288470e245a343B599c2128da',
       provider
     );
 
-    const epoch = await ssovContract.currentEpoch();
-    const epochData = await ssovContract.getEpochData(epoch);
-    const totalEpochDeposits = epochData['totalCollateralBalance'];
-    const priceETH = await ssovContract.getUnderlyingPrice();
+  const epoch = await ssovContract.currentEpoch();
+  const priceETH = await ssovContract.getUnderlyingPrice();
 
-    tvl = new BN(totalEpochDeposits.toString())
-      .dividedBy(1e18)
-      .multipliedBy(priceETH);
+  const [
+      totalEpochStrikeDeposits,
+    ] = await Promise.all([
+      ssovViewerContract.getTotalEpochStrikeDeposits(
+        epoch,
+        ssovContract.address
+      ),
+      ssovViewerContract.getTotalEpochOptionsPurchased(
+        epoch,
+        ssovContract.address
+      ),
+      ssovViewerContract.getTotalEpochPremium(
+        epoch,
+        ssovContract.address
+      ),
+      ssovContract.getEpochData(epoch),
+      ssovViewerContract.getEpochStrikeTokens(
+        epoch,
+        ssovContract.address
+      ),
+    ]);
+
+    const totalEpochDeposits = totalEpochStrikeDeposits.reduce(
+      (acc, deposit) => {
+        return acc.add(deposit);
+      },
+      BigNumber.from(0)
+    );
+
+    const totalEpochDepositsInUSD = totalEpochDeposits.mul(priceETH).toString() / 10 ** (18 + 8);
+
+    return totalEpochDepositsInUSD;
   }
 
   return tvl;
