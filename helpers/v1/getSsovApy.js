@@ -1,17 +1,15 @@
 import { providers } from '@0xsequence/multicall';
-import { ethers, BigNumber } from 'ethers';
+import { ethers } from 'ethers';
 import BN from 'bignumber.js';
 import {
   NativeSSOV__factory,
   Addresses,
   ERC20SSOV__factory,
   StakingRewards__factory,
-  SsovV3__factory,
-  SsovV3Viewer__factory
 } from '@dopex-io/sdk';
 
-import getPrices from './getPrices';
-import { BLOCKCHAIN_TO_CHAIN_ID } from './constants';
+import getPrices from '../getPrices';
+import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants';
 
 async function getBnbApy() {
   const bscRpcUrl = process.env.BSC_RPC_URL;
@@ -173,6 +171,7 @@ async function getDopexApy(asset) {
       'any'
     )
   );
+
   const ssovContract = ERC20SSOV__factory.connect(
     Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV[asset].Vault,
     provider
@@ -264,76 +263,6 @@ async function getEthApy() {
   return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2));
 }
 
-async function getEthWeeklyApy() {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
-  const provider = new providers.MulticallProvider(
-    new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-      'any'
-    )
-  );
-
-  const ssovContract = SsovV3__factory.connect(
-    '0x376bEcbc031dd53Ffc62192043dE43bf491988FD',
-    provider
-  );
-
-  const ssovViewerContract = SsovV3Viewer__factory.connect(
-      '0x426eDe8BF1A523d288470e245a343B599c2128da',
-      provider
-    );
-
-  const epoch = await ssovContract.currentEpoch();
-  const priceETH = await ssovContract.getUnderlyingPrice();
-
-  const dpxSsovContract = ERC20SSOV__factory.connect(
-      '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
-      provider
-  );
-
-  const priceDPX = await dpxSsovContract.getUsdPrice();
-
-  const [
-      totalEpochStrikeDeposits,
-    ] = await Promise.all([
-      ssovViewerContract.getTotalEpochStrikeDeposits(
-        epoch,
-        ssovContract.address
-      ),
-      ssovViewerContract.getTotalEpochOptionsPurchased(
-        epoch,
-        ssovContract.address
-      ),
-      ssovViewerContract.getTotalEpochPremium(
-        epoch,
-        ssovContract.address
-      ),
-      ssovContract.getEpochData(epoch),
-      ssovViewerContract.getEpochStrikeTokens(
-        epoch,
-        ssovContract.address
-      ),
-    ]);
-
-    const totalEpochDeposits = totalEpochStrikeDeposits.reduce(
-      (acc, deposit) => {
-        return acc.add(deposit);
-      },
-      BigNumber.from(0)
-    );
-
-    const totalRewardsInUSD = priceDPX.mul(BigNumber.from(Math.round(2.5 * 365))).toString() / 10 ** (8);
-
-    const totalEpochDepositsInUSD = totalEpochDeposits.mul(priceETH).toString() / 10 ** (18 + 8);
-
-    return (
-      (Math.abs(totalEpochDepositsInUSD - totalRewardsInUSD) /
-        totalEpochDepositsInUSD) *
-      100
-    ).toFixed(2);
-}
-
 async function getAvaxAPY() {
   const AvaxRpcUrl = process.env.AVAX_RPC_URL;
 
@@ -408,7 +337,6 @@ const ASSET_TO_GETTER = {
   DPX: { fn: getDopexApy, args: ['DPX'] },
   RDPX: { fn: getDopexApy, args: ['RDPX'] },
   ETH: { fn: getEthApy, args: [] },
-  "ETH-WEEKLY": { fn: getEthWeeklyApy, args: [] },
   GOHM: { fn: getGohmApy, args: [] },
   BNB: { fn: getBnbApy, args: [] },
   GMX: { fn: getGmxApy, args: [] },

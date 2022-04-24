@@ -1,21 +1,22 @@
 const fetch = require('node-fetch')
 
-const BASE_URL = 'http://localhost:5001/api/v1'
+const BASE_URL = 'http://localhost:5001/api'
 
 const ENDPOINTS = [
-    '/ssov',
-    '/dpx/price',
-    '/dpx/market-cap',
-    '/dpx/supply',
-    '/rdpx/price',
-    '/rdpx/market-cap',
-    '/rdpx/supply',
-    '/farms/tvl',
-    '/ssov/apy?asset=DPX',
-    '/ssov/deposits?asset=DPX',
-    '/ssov/options/usage?asset=DPX',
-    '/ssov/options/prices?asset=DPX',
-    '/tvl',
+    '/v2/ssov',
+    '/v1/ssov',
+    '/v1/dpx/price',
+    '/v1/dpx/market-cap',
+    '/v1/dpx/supply',
+    '/v1/rdpx/price',
+    '/v1/rdpx/market-cap',
+    '/v1/rdpx/supply',
+    '/v1/farms/tvl',
+    '/v1/ssov/apy?asset=DPX',
+    '/v1/ssov/deposits?asset=DPX',
+    '/v1/ssov/options/usage?asset=DPX',
+    '/v1/ssov/options/prices?asset=DPX',
+    '/v1/tvl',
 ]
 
 it('Tests all endpoints', async () => {
