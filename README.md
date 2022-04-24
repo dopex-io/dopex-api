@@ -16,7 +16,8 @@ This will begin the vercel dev server on port 5001.
 
 ## Endpoints
 
-[V1](/docs/v1/ENDPOINTS.md)
+-   [V1](/docs/v1/ENDPOINTS.md)
+-   [V2](/docs/v2/ENDPOINTS.md)
 
 ## License
 
