@@ -1,6 +1,6 @@
 import { Addresses, ERC20SSOV__factory } from "@dopex-io/sdk";
 
-import getProvider from "./getProvider";
+import getProvider from "../getProvider";
 
 export default async (token, type, chainId) => {
   const contractAddresses = Addresses[chainId];

@@ -1,16 +1,21 @@
 import groupBy from 'lodash/groupBy'
 
-import { SSOVS } from '../../../helpers/v1/constants'
-import getSsovApy from '../../../helpers/v1/getSsovApy'
-import getSsovTvl from '../../../helpers/v1/getSsovTvl'
-import getSsovData from '../../../helpers/v1/getSsovData'
+import { SSOVS } from '../../../helpers/v2/constants'
+import getSsovApy from '../../../helpers/v2/getSsovApy'
+import getSsovTvl from '../../../helpers/v2/getSsovTvl'
+import getSsovData from '../../../helpers/v2/getSsovData'
 
-export default async (_req, res) => {
+export default async (req, res) => {
     try {
         const [tvls, apys, data] = await Promise.all([
             Promise.all(
                 SSOVS.map((ssov) => {
-                    return getSsovTvl(ssov.name, ssov.type, ssov.chainId)
+                    return getSsovTvl(
+                        ssov.name,
+                        ssov.type,
+                        ssov.chainId,
+                        ssov.duration
+                    )
                 })
             ),
             Promise.all(
@@ -20,7 +25,12 @@ export default async (_req, res) => {
             ),
             Promise.all(
                 SSOVS.map((ssov) => {
-                    return getSsovData(ssov.name, ssov.type, ssov.chainId)
+                    return getSsovData(
+                        ssov.name,
+                        ssov.type,
+                        ssov.chainId,
+                        ssov.duration
+                    )
                 })
             ),
         ])

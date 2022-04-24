@@ -8,8 +8,8 @@ import {
   StakingRewards__factory,
 } from '@dopex-io/sdk';
 
-import getPrices from './getPrices';
-import { BLOCKCHAIN_TO_CHAIN_ID } from './constants';
+import getPrices from '../getPrices';
+import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants';
 
 async function getBnbApy() {
   const bscRpcUrl = process.env.BSC_RPC_URL;
