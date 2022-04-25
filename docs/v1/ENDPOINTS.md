@@ -101,6 +101,8 @@ Gets the APY for the requested SSOV
 
     -   **Required:** <br />
         `asset=[string]`
+    -   **Optional:** <br />
+        `type=[call or put]`
 
 -   **Success response:**
 
