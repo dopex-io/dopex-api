@@ -291,7 +291,7 @@ async function getEthWeeklyApy(name) {
     const totalEpochDepositsInUSD = totalEpochDeposits.div('1000000000000000000').toNumber() * priceETH;
 
     return (
-        (totalRewardsInUSD / totalEpochDepositsInUSD) * 52 * 4.5 * 100 / 7
+        (totalRewardsInUSD / totalEpochDepositsInUSD) * 52 * 100
     ).toFixed(2)
 }
 
