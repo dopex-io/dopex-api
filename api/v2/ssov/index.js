@@ -5,32 +5,22 @@ import getSsovApy from '../../../helpers/v2/getSsovApy'
 import getSsovTvl from '../../../helpers/v2/getSsovTvl'
 import getSsovData from '../../../helpers/v2/getSsovData'
 
-export default async (req, res) => {
+export default async (_req, res) => {
     try {
         const [tvls, apys, data] = await Promise.all([
             Promise.all(
                 SSOVS.map((ssov) => {
-                    return getSsovTvl(
-                        ssov.name,
-                        ssov.type,
-                        ssov.chainId,
-                        ssov.duration
-                    )
+                    return getSsovTvl(ssov)
                 })
             ),
             Promise.all(
                 SSOVS.map((ssov) => {
-                    return getSsovApy(ssov.name, ssov.type)
+                    return getSsovApy(ssov)
                 })
             ),
             Promise.all(
                 SSOVS.map((ssov) => {
-                    return getSsovData(
-                        ssov.name,
-                        ssov.type,
-                        ssov.chainId,
-                        ssov.duration
-                    )
+                    return getSsovData(ssov)
                 })
             ),
         ])

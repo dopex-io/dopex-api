@@ -1,5 +1,5 @@
 import { providers } from '@0xsequence/multicall'
-import { ethers, BigNumber } from 'ethers'
+import { ethers } from 'ethers'
 import BN from 'bignumber.js'
 import {
     NativeSSOV__factory,
@@ -7,7 +7,6 @@ import {
     ERC20SSOV__factory,
     StakingRewards__factory,
     SsovV3__factory,
-    SsovV3Viewer__factory,
 } from '@dopex-io/sdk'
 
 import getPrices from '../getPrices'
@@ -265,7 +264,7 @@ async function getEthApy() {
     return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2))
 }
 
-async function getEthWeeklyApy() {
+async function getEthWeeklyApy(name) {
     const infuraProjectId = process.env.INFURA_PROJECT_ID
 
     const provider = new providers.MulticallProvider(
@@ -276,51 +275,23 @@ async function getEthWeeklyApy() {
     )
 
     const ssovContract = SsovV3__factory.connect(
-        '0x376bEcbc031dd53Ffc62192043dE43bf491988FD',
-        provider
-    )
-
-    const ssovViewerContract = SsovV3Viewer__factory.connect(
-        '0x426eDe8BF1A523d288470e245a343B599c2128da',
+        Addresses[42161]['SSOV-V3'].VAULTS[name],
         provider
     )
 
     const epoch = await ssovContract.currentEpoch()
-    const priceETH = await ssovContract.getUnderlyingPrice()
 
-    const dpxSsovContract = ERC20SSOV__factory.connect(
-        '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
-        provider
-    )
+    const [priceDPX, priceETH] = await getPrices(['dopex', 'ethereum'])
 
-    const priceDPX = await dpxSsovContract.getUsdPrice()
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
 
-    const [totalEpochStrikeDeposits] = await Promise.all([
-        ssovViewerContract.getTotalEpochStrikeDeposits(
-            epoch,
-            ssovContract.address
-        ),
-        ssovViewerContract.getTotalEpochOptionsPurchased(
-            epoch,
-            ssovContract.address
-        ),
-        ssovViewerContract.getTotalEpochPremium(epoch, ssovContract.address),
-        ssovContract.getEpochData(epoch),
-        ssovViewerContract.getEpochStrikeTokens(epoch, ssovContract.address),
-    ])
-
-    const totalEpochDeposits = totalEpochStrikeDeposits.reduce(
-        (acc, deposit) => {
-            return acc.add(deposit)
-        },
-        BigNumber.from(0)
-    )
-
-    const totalRewardsInUSD =
-        priceDPX.mul(BigNumber.from(Math.round(2.5 * 365))).toString() / 10 ** 8
+    // 25 DPX per 7 days
+    const totalRewardsInUSD = priceDPX * Math.round(3.57 * 365)
 
     const totalEpochDepositsInUSD =
-        totalEpochDeposits.mul(priceETH).toString() / 10 ** (18 + 8)
+        totalEpochDeposits.div('1000000000000000000').toNumber() * priceETH
 
     return (
         (Math.abs(totalEpochDepositsInUSD - totalRewardsInUSD) /
@@ -402,11 +373,18 @@ const getMetisApy = () => {
     return '1.7'
 }
 
-const ASSET_TO_GETTER = {
+const NAME_TO_GETTER = {
     DPX: { fn: getDopexApy, args: ['DPX'] },
     RDPX: { fn: getDopexApy, args: ['RDPX'] },
     ETH: { fn: getEthApy, args: [] },
-    'ETH-WEEKLY': { fn: getEthWeeklyApy, args: [] },
+    'ETH-WEEKLY-CALLS-SSOV-V3-2': {
+        fn: getEthWeeklyApy,
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-2'],
+    },
+    'ETH-WEEKLY-CALLS-SSOV-V3': {
+        fn: getEthWeeklyApy,
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3'],
+    },
     GOHM: { fn: getGohmApy, args: [] },
     BNB: { fn: getBnbApy, args: [] },
     GMX: { fn: getGmxApy, args: [] },
@@ -414,12 +392,18 @@ const ASSET_TO_GETTER = {
     METIS: { fn: getMetisApy, args: [] },
 }
 
-const getSsovApy = async (asset, type = 'call') => {
+const getSsovApy = async (ssov) => {
+    const { symbol, underlyingTokenSymbol, type, version } = ssov
     let apy
     if (type === 'put') {
         apy = 6.64 // TODO
     } else {
-        apy = await ASSET_TO_GETTER[asset].fn(...ASSET_TO_GETTER[asset].args)
+        let name = underlyingTokenSymbol
+
+        if (version === 3) {
+            name = symbol
+        }
+        apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
     }
 
     return apy

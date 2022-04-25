@@ -1,16 +1,18 @@
 import { Addresses, ERC20SSOV__factory, SsovV3__factory } from '@dopex-io/sdk'
+import { utils as ethersUtils } from 'ethers'
 
 import getProvider from '../getProvider'
 
-export default async (token, type, chainId, duration) => {
+export default async (ssov) => {
+    const { underlyingTokenSymbol, symbol, type, chainId, version } = ssov
     const contractAddresses = Addresses[chainId]
     const provider = getProvider(chainId)
 
-    if (duration === 'monthly') {
+    if (version === 2) {
         const ssovAddress =
             type === 'put'
-                ? contractAddresses['2CRV-SSOV-P'][token].Vault
-                : contractAddresses.SSOV[token].Vault
+                ? contractAddresses['2CRV-SSOV-P'][underlyingTokenSymbol].Vault
+                : contractAddresses.SSOV[underlyingTokenSymbol].Vault
 
         const ssovContract = ERC20SSOV__factory.connect(ssovAddress, provider)
 
@@ -34,24 +36,29 @@ export default async (token, type, chainId, duration) => {
             epochEndDate: epochTimes[1].toString(),
             underlyingPrice: underlyingPrice.toNumber() / 10 ** 8,
         }
-    } else if (duration === 'weekly') {
-        const ssovAddress = '0x376bEcbc031dd53Ffc62192043dE43bf491988FD'
+    } else {
+        const ssovAddress = Addresses[chainId]['SSOV-V3'].VAULTS[symbol]
 
         const ssovContract = SsovV3__factory.connect(ssovAddress, provider)
 
         let epoch = await ssovContract.currentEpoch()
 
-        const epochData = await ssovContract.getEpochData(epoch)
-        const totalEpochDeposits = epochData['totalCollateralBalance']
-        const underlyingPrice = await ssovContract.getUnderlyingPrice()
-        const epochTimes = await ssovContract.getEpochTimes(epoch)
+        if (epoch.isZero()) {
+            epoch = 1
+        }
+
+        const [epochData, underlyingPrice, epochTimes] = await Promise.all([
+            ssovContract.getEpochData(epoch),
+            ssovContract.getUnderlyingPrice(),
+            ssovContract.getEpochTimes(epoch),
+        ])
 
         return {
             currentEpoch: Number(epoch.toString()),
-            totalEpochDeposits: totalEpochDeposits.toString(),
+            totalEpochDeposits: epochData['totalCollateralBalance'],
             epochStartDate: epochTimes[0].toString(),
             epochEndDate: epochTimes[1].toString(),
-            underlyingPrice: underlyingPrice.toNumber() / 10 ** 8,
+            underlyingPrice: ethersUtils.formatUnits(underlyingPrice, 8),
         }
     }
 }
