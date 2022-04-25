@@ -286,15 +286,12 @@ async function getEthWeeklyApy(name) {
     ]
 
     // 25 DPX per 7 days
-    const totalRewardsInUSD = priceDPX * Math.round(3.57 * 365)
+    const totalRewardsInUSD = priceDPX * 25;
 
-    const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() * priceETH
+    const totalEpochDepositsInUSD = totalEpochDeposits.div('1000000000000000000').toNumber() * priceETH;
 
     return (
-        (Math.abs(totalEpochDepositsInUSD - totalRewardsInUSD) /
-            totalEpochDepositsInUSD) *
-        100
+        (totalRewardsInUSD / totalEpochDepositsInUSD) * 52 * 100
     ).toFixed(2)
 }
 
