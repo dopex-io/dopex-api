@@ -28,12 +28,10 @@ export default async (_req, res) => {
         const ssovArray = SSOVS.map((item, index) => {
             return {
                 ...item,
-                tvl: tvls[index].toString(),
+                tvl: tvls[index],
                 apy: apys[index],
                 currentEpoch: data[index].currentEpoch,
                 totalEpochDeposits: data[index].totalEpochDeposits,
-                epochStartDate: data[index].epochStartDate,
-                epochEndDate: data[index].epochEndDate,
                 underlyingPrice: data[index].underlyingPrice,
             }
         })

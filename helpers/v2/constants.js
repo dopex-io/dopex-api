@@ -1,7 +1,7 @@
 export const SSOVS = [
     {
         type: 'call',
-        underlyingTokenSymbol: 'DPX',
+        underlyingSymbol: 'DPX',
         symbol: 'DPX-CALLS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -12,7 +12,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'RDPX',
+        underlyingSymbol: 'RDPX',
         symbol: 'RDPX-CALLS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -22,7 +22,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'ETH',
+        underlyingSymbol: 'ETH',
         symbol: 'ETH-CALLS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -33,7 +33,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'GOHM',
+        underlyingSymbol: 'GOHM',
         symbol: 'GOHM-CALLS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -44,7 +44,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'GMX',
+        underlyingSymbol: 'GMX',
         symbol: 'GMX-CALLS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -55,7 +55,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'AVAX',
+        underlyingSymbol: 'AVAX',
         symbol: 'AVAX-CALLS-SSOV-V2',
         version: 2,
         chainId: 43114,
@@ -66,7 +66,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'BNB',
+        underlyingSymbol: 'BNB',
         symbol: 'BNB-CALLS-SSOV-V2',
         version: 2,
         chainId: 56,
@@ -77,7 +77,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'DPX',
+        underlyingSymbol: 'DPX',
         symbol: 'DPX-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -88,7 +88,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'RDPX',
+        underlyingSymbol: 'RDPX',
         symbol: 'RDPX-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -99,7 +99,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'ETH',
+        underlyingSymbol: 'ETH',
         symbol: 'ETH-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -110,7 +110,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'GOHM',
+        underlyingSymbol: 'GOHM',
         symbol: 'GOHM-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -121,7 +121,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'GMX',
+        underlyingSymbol: 'GMX',
         symbol: 'GMX-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -132,7 +132,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'BTC',
+        underlyingSymbol: 'BTC',
         symbol: 'BTC-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -143,7 +143,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'CRV',
+        underlyingSymbol: 'CRV',
         symbol: 'CRV-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -154,7 +154,7 @@ export const SSOVS = [
     },
     {
         type: 'put',
-        underlyingTokenSymbol: 'LUNA',
+        underlyingSymbol: 'LUNA',
         symbol: 'LUNA-PUTS-SSOV-V2',
         version: 2,
         chainId: 42161,
@@ -165,7 +165,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'ETH',
+        underlyingSymbol: 'ETH',
         symbol: 'ETH-WEEKLY-CALLS-SSOV-V3',
         version: 3,
         chainId: 42161,
@@ -176,7 +176,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingTokenSymbol: 'ETH',
+        underlyingSymbol: 'ETH',
         symbol: 'ETH-WEEKLY-CALLS-SSOV-V3-2',
         version: 3,
         chainId: 42161,

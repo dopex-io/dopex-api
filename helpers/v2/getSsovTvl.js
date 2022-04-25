@@ -12,7 +12,7 @@ import getProvider from '../getProvider'
 
 export default async (ssov) => {
     const {
-        underlyingTokenSymbol,
+        underlyingSymbol,
         symbol,
         type,
         chainId,
@@ -28,7 +28,7 @@ export default async (ssov) => {
     if (version === 2) {
         if (type === 'put') {
             const ssovAddress =
-                contractAddresses['2CRV-SSOV-P'][underlyingTokenSymbol].Vault
+                contractAddresses['2CRV-SSOV-P'][underlyingSymbol].Vault
 
             const ssovContract = Curve2PoolSsovPut__factory.connect(
                 ssovAddress,
@@ -61,8 +61,7 @@ export default async (ssov) => {
                 .multipliedBy(namePrice.toString())
                 .dividedBy(1e36)
         } else if (type === 'call') {
-            const ssovAddress =
-                contractAddresses.SSOV[underlyingTokenSymbol].Vault
+            const ssovAddress = contractAddresses.SSOV[underlyingSymbol].Vault
 
             const ssovContract = ERC20SSOV__factory.connect(
                 ssovAddress,
@@ -90,7 +89,7 @@ export default async (ssov) => {
             )
             allStrikesPremiums.map((premium) => (tvl = tvl.add(premium)))
 
-            if (underlyingTokenSymbol === 'BNB') {
+            if (underlyingSymbol === 'BNB') {
                 const converter = new ethers.Contract(
                     ssovContract.address,
                     [
@@ -105,6 +104,7 @@ export default async (ssov) => {
             tvl = new BN(tvl.toString())
                 .multipliedBy(namePrice.toString())
                 .dividedBy(1e26)
+                .toString()
         }
     } else {
         const infuraProjectId = process.env.INFURA_PROJECT_ID
@@ -130,7 +130,7 @@ export default async (ssov) => {
 
         const totalEpochDepositsInUSD = ethers.utils.formatUnits(
             totalEpochDeposits.mul(underlyingPrice),
-            collateralDecimals
+            collateralDecimals + 8
         )
 
         return totalEpochDepositsInUSD

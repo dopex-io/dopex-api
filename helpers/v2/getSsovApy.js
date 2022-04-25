@@ -31,16 +31,14 @@ async function getBnbApy() {
     const blocksPerDay = 20 * 60 * 24
     const supplyRatePerBlock = await vbnbContract.supplyRatePerBlock()
 
-    return Number(
-        (
-            (Math.pow(
-                (supplyRatePerBlock.toString() / 1e18) * blocksPerDay + 1,
-                365 - 1
-            ) -
-                1) *
-            100
-        ).toFixed(2)
-    )
+    return (
+        (Math.pow(
+            (supplyRatePerBlock.toString() / 1e18) * blocksPerDay + 1,
+            365 - 1
+        ) -
+            1) *
+        100
+    ).toFixed(2)
 }
 
 async function getGmxApy() {
@@ -124,7 +122,7 @@ async function getGmxApy() {
         100
     const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx
 
-    return Number((((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2))
+    return (((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2)
 }
 
 async function getGohmApy() {
@@ -157,7 +155,7 @@ async function getGohmApy() {
         Number(epoch.distribute.toString()) /
         Number(circulatingSupply.toString())
 
-    return Number(((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(0))
+    return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
 }
 
 async function getDopexApy(asset) {
@@ -218,7 +216,7 @@ async function getDopexApy(asset) {
 
     let APR = (denominator / TVL.toNumber() - 1) * 100
 
-    return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2))
+    return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
 }
 
 async function getEthApy() {
@@ -261,7 +259,7 @@ async function getEthApy() {
 
     let APR = (denominator / TVL.toNumber() - 1) * 100
 
-    return Number((((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2))
+    return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
 }
 
 async function getEthWeeklyApy(name) {
@@ -393,12 +391,12 @@ const NAME_TO_GETTER = {
 }
 
 const getSsovApy = async (ssov) => {
-    const { symbol, underlyingTokenSymbol, type, version } = ssov
+    const { symbol, underlyingSymbol, type, version } = ssov
     let apy
     if (type === 'put') {
-        apy = 6.64 // TODO
+        apy = '6.64' // TODO
     } else {
-        let name = underlyingTokenSymbol
+        let name = underlyingSymbol
 
         if (version === 3) {
             name = symbol
