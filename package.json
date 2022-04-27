@@ -10,7 +10,7 @@
         "test": "jest"
     },
     "dependencies": {
-        "@0xsequence/multicall": "^0.36.9",
+        "@0xsequence/multicall": "^0.36.12",
         "@dopex-io/sdk": "1.0.0-alpha.94",
         "bignumber.js": "^9.0.1",
         "ethers": "^5.6.4",
@@ -21,7 +21,7 @@
     "devDependencies": {
         "eslint": "^8.13.0",
         "eslint-plugin-jest": "^26.1.4",
-        "jest": "^27.5.1",
+        "jest": "^28.0.1",
         "vercel": "^24.1.0"
     }
 }
