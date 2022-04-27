@@ -279,19 +279,31 @@ async function getEthWeeklyApy(name) {
 
     const epoch = await ssovContract.currentEpoch()
 
+    const epochTimes = await ssovContract.getEpochTimes(epoch)
+
     const [priceDPX, priceETH] = await getPrices(['dopex', 'ethereum'])
+
+    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
+
+    const effectivePeriod =
+        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
 
     const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
         'totalCollateralBalance'
     ]
 
     // 25 DPX per 7 days
-    const totalRewardsInUSD = priceDPX * 25;
+    const totalRewardsInUSD = priceDPX * 25
 
-    const totalEpochDepositsInUSD = totalEpochDeposits.div('1000000000000000000').toNumber() * priceETH;
+    const totalEpochDepositsInUSD =
+        totalEpochDeposits.div('1000000000000000000').toNumber() * priceETH
 
     return (
-        (totalRewardsInUSD / totalEpochDepositsInUSD) * 52 * 100
+        ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+            52 *
+            100 *
+            effectivePeriod) /
+        totalPeriod
     ).toFixed(2)
 }
 

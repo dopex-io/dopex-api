@@ -3,10 +3,13 @@ import getSsovApy from '../../../helpers/v2/getSsovApy'
 
 export default async (req, res) => {
     try {
+        res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
         const symbol = req.query.symbol
 
         if (!symbol) {
-            res.status(500).json({ error: 'Symbol query param required.' })
+            return res
+                .status(400)
+                .json({ error: 'Symbol query param required.' })
         }
 
         const ssov = SSOVS.find((ssov) => {
@@ -16,23 +19,22 @@ export default async (req, res) => {
         })
 
         if (!ssov) {
-            res.status(500).json({
+            return res.status(404).json({
                 error: 'No ssov found.',
             })
         }
 
-        res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
-
         if (ssov.retired) {
-            res.json({ apy: 0 })
+            return res.json({ apy: 0 })
         }
 
         const apy = await getSsovApy(ssov)
 
-        res.json({ apy })
+        return res.json({ apy })
     } catch (err) {
         console.log(err)
-        res.status(500).json({
+
+        return res.status(500).json({
             error: 'Something went wrong.',
             details: err['reason'],
         })
