@@ -6,6 +6,8 @@ Read more here - https://vercel.com/docs/concepts/functions/serverless-functions
 
 ## Development
 
+Setup a `.env` file similar to `.env.sample`.
+
 To start the server, run:
 
 ```
