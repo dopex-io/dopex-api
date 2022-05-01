@@ -7,7 +7,7 @@ export const SSOVS = [
         chainId: 42161,
         collateralDecimals: 18,
         duration: 'monthly',
-        retired: false,
+        retired: true,
         address: '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
     },
     {
@@ -17,7 +17,7 @@ export const SSOVS = [
         version: 2,
         chainId: 42161,
         duration: 'monthly',
-        retired: false,
+        retired: true,
         address: '0xA206a0531299821294A9BBa48726022D429c6892',
     },
     {
@@ -28,7 +28,7 @@ export const SSOVS = [
         chainId: 42161,
         collateralDecimals: 18,
         duration: 'monthly',
-        retired: false,
+        retired: true,
         address: '0x2c9C1E9b4BDf6Bf9CB59C77e0e8C0892cE3A9d5f',
     },
     {
@@ -39,7 +39,7 @@ export const SSOVS = [
         chainId: 42161,
         collateralDecimals: 18,
         duration: 'monthly',
-        retired: false,
+        retired: true,
         address: '0x54552CB564F4675bCEda644e47dE3E35D1c88E1b',
     },
     {
