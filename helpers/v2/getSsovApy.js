@@ -388,7 +388,7 @@ const getSsovApy = async (ssov) => {
     const { symbol, underlyingSymbol, type, version } = ssov
     let apy
     if (type === 'put') {
-        return '8';
+        apy = '6.64' // TODO
     } else {
         let name = underlyingSymbol;
 
