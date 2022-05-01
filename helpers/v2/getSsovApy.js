@@ -231,7 +231,7 @@ async function getDopexApy(name, asset) {
 
         return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
     } else {
-        const totalRewardsInUSD = priceUnderlying * 3500;
+        const totalRewardsInUSD = priceUnderlying * 3000;
 
         return Math.max((
             ((totalRewardsInUSD / totalEpochDepositsInUSD) *
