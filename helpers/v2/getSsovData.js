@@ -53,7 +53,11 @@ export default async (ssov) => {
         let epoch = await ssovContract.currentEpoch()
 
         if (epoch.isZero()) {
-            epoch = 1
+            return {
+                currentEpoch: epoch.toString(),
+                totalEpochDeposits: '0',
+                underlyingPrice: '0',
+            }
         }
 
         const [epochData, underlyingPrice] = await Promise.all([

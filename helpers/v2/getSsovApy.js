@@ -279,6 +279,8 @@ async function getEthWeeklyApy(name) {
 
     const epoch = await ssovContract.currentEpoch()
 
+    if (epoch.isZero()) return '0'
+
     const epochTimes = await ssovContract.getEpochTimes(epoch)
 
     const [priceDPX, priceETH] = await getPrices(['dopex', 'ethereum'])
@@ -376,6 +378,10 @@ async function getAvaxAPY() {
     return (Number(joeRewards) + Number(AvaxRewards)).toFixed(2)
 }
 
+const getZeroApy = () => {
+    return '0'
+}
+
 const getMetisApy = () => {
     return '1.7'
 }
@@ -391,6 +397,26 @@ const NAME_TO_GETTER = {
     'ETH-WEEKLY-CALLS-SSOV-V3': {
         fn: getEthWeeklyApy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3'],
+    },
+    'ETH-WEEKLY-CALLS-SSOV-V3-3': {
+        fn: getEthWeeklyApy,
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-3'],
+    },
+    'ETH-MONTHLY-CALLS-SSOV-V3': {
+        fn: getZeroApy,
+        args: [],
+    },
+    'DPX-MONTHLY-CALLS-SSOV-V3': {
+        fn: getZeroApy,
+        args: [],
+    },
+    'rDPX-MONTHLY-CALLS-SSOV-V3': {
+        fn: getZeroApy,
+        args: [],
+    },
+    'gOHM-MONTHLY-CALLS-SSOV-V3': {
+        fn: getZeroApy,
+        args: [],
     },
     GOHM: { fn: getGohmApy, args: [] },
     BNB: { fn: getBnbApy, args: [] },

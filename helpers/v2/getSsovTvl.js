@@ -122,6 +122,11 @@ export default async (ssov) => {
         )
 
         const epoch = await ssovContract.currentEpoch()
+
+        if (epoch.isZero()) {
+            return '0'
+        }
+
         const underlyingPrice = await ssovContract.getUnderlyingPrice()
 
         const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
