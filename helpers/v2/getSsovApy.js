@@ -158,12 +158,8 @@ async function getGohmApy() {
     return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
 }
 
-async function getDopexApy(asset) {
+async function getDopexApy(name, asset) {
     const infuraProjectId = process.env.INFURA_PROJECT_ID
-
-    if (asset === 'RDPX') {
-        return '20'
-    }
 
     const provider = new providers.MulticallProvider(
         new ethers.getDefaultProvider(
@@ -171,55 +167,83 @@ async function getDopexApy(asset) {
             'any'
         )
     )
-    const ssovContract = ERC20SSOV__factory.connect(
-        Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV[asset].Vault,
+
+    const ssovContract = SsovV3__factory.connect(
+        Addresses[42161]['SSOV-V3'].VAULTS[name],
         provider
     )
 
-    const stakingRewardsAddress = await ssovContract.getAddress(
-        '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
-    )
-    const stakingRewardsContract = StakingRewards__factory.connect(
-        stakingRewardsAddress,
-        provider
-    )
+    const epoch = await ssovContract.currentEpoch()
 
-    let DPXemitted
-    let RDPXemitted
+    if (epoch.isZero()) return '0'
 
-    let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all([
-        stakingRewardsContract.rewardRateDPX(),
-        stakingRewardsContract.rewardRateRDPX(),
-        stakingRewardsContract.totalSupply(),
-        getPrices(['dopex', 'dopex-rebate-token']),
-    ])
+    const epochTimes = await ssovContract.getEpochTimes(epoch)
 
-    const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX
+    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
 
-    const TVL = new BN(totalSupply.toString())
-        .multipliedBy(assetPrice)
-        .dividedBy(1e18)
+    const effectivePeriod =
+        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
 
-    const rewardsDuration = new BN(86400 * 365)
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
 
-    DPXemitted = new BN(DPX.toString())
-        .multipliedBy(rewardsDuration)
-        .multipliedBy(priceDPX)
-        .dividedBy(1e18)
-    RDPXemitted = new BN(RDPX.toString())
-        .multipliedBy(rewardsDuration)
-        .multipliedBy(priceRDPX)
-        .dividedBy(1e18)
+    const priceUnderlying = (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8;
 
-    const denominator =
-        TVL.toNumber() + DPXemitted.toNumber() + RDPXemitted.toNumber()
+    const totalEpochDepositsInUSD =
+            totalEpochDeposits.div('1000000000000000000').toNumber() * priceUnderlying;
 
-    let APR = (denominator / TVL.toNumber() - 1) * 100
+    if (asset === 'DPX') {
+        const oldSsovContract = ERC20SSOV__factory.connect(
+            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV["DPX"].Vault,
+            provider
+          );
 
-    return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
+        const stakingRewardsAddress = await oldSsovContract.getAddress(
+            '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
+        )
+        const stakingRewardsContract = StakingRewards__factory.connect(
+            stakingRewardsAddress,
+            provider
+        )
+
+        let DPXemitted
+        let RDPXemitted
+
+        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all([
+            stakingRewardsContract.rewardRateDPX(),
+            stakingRewardsContract.rewardRateRDPX(),
+            stakingRewardsContract.totalSupply(),
+            getPrices(['dopex', 'dopex-rebate-token']),
+        ])
+
+        const rewardsDuration = new BN(86400 * 365);
+
+        DPXemitted = new BN(DPX.toString())
+            .multipliedBy(rewardsDuration)
+            .multipliedBy(priceDPX)
+            .dividedBy(1e18)
+
+        const denominator =
+            totalEpochDepositsInUSD + DPXemitted.toNumber();
+
+        let APR = (denominator / totalEpochDepositsInUSD - 1) * 100
+
+        return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
+    } else {
+        const totalRewardsInUSD = priceUnderlying * 3500;
+
+        return Math.max((
+            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                52 *
+                100 *
+                effectivePeriod) /
+            totalPeriod
+        ).toFixed(2), 0);
+    }
 }
 
-async function getSsovV3Apy(name, dpxRewards) {
+async function getEthSsovV3Apy(name, dpxRewards) {
     const infuraProjectId = process.env.INFURA_PROJECT_ID
 
     const provider = new providers.MulticallProvider(
@@ -346,32 +370,32 @@ const getMetisApy = () => {
 }
 
 const NAME_TO_GETTER = {
-    DPX: { fn: getDopexApy, args: ['DPX'] },
-    RDPX: { fn: getDopexApy, args: ['RDPX'] },
+    DPX: { fn: getZeroApy, args: [] },
+    RDPX: { fn: getZeroApy, args: [] },
     ETH: { fn: getZeroApy, args: [] },
     'ETH-WEEKLY-CALLS-SSOV-V3-2': {
-        fn: getSsovV3Apy,
+        fn: getEthSsovV3Apy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3-2', 25],
     },
     'ETH-WEEKLY-CALLS-SSOV-V3': {
-        fn: getSsovV3Apy,
+        fn: getEthSsovV3Apy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3', 25],
     },
     'ETH-WEEKLY-CALLS-SSOV-V3-3': {
-        fn: getSsovV3Apy,
+        fn: getEthSsovV3Apy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3-3', 25],
     },
     'ETH-MONTHLY-CALLS-SSOV-V3': {
-        fn: getSsovV3Apy,
+        fn: getEthSsovV3Apy,
         args: ['ETH-MONTHLY-CALLS-SSOV-V3', 150],
     },
     'DPX-MONTHLY-CALLS-SSOV-V3': {
-        fn: getSsovV3Apy,
-        args: ["DPX-MONTHLY-CALLS-SSOV-V3", 150],
+        fn: getDopexApy,
+        args: ["DPX-MONTHLY-CALLS-SSOV-V3", "DPX"],
     },
     'rDPX-MONTHLY-CALLS-SSOV-V3': {
-        fn: getSsovV3Apy,
-        args: ["rDPX-MONTHLY-CALLS-SSOV-V3", 100],
+        fn: getDopexApy,
+        args: ["rDPX-MONTHLY-CALLS-SSOV-V3", "RDPX"],
     },
     'gOHM-MONTHLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
