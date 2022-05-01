@@ -57,9 +57,7 @@ export default async (ssov) => {
 
             tvl = tvl.add(allStrikesPremiums)
 
-            tvl = new BN(tvl.toString())
-                .multipliedBy(namePrice.toString())
-                .dividedBy(1e36)
+            tvl = new BN(tvl.toString()).dividedBy(1e36)
         } else if (type === 'call') {
             const ssovAddress = contractAddresses.SSOV[underlyingSymbol].Vault
 
