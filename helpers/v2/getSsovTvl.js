@@ -57,7 +57,9 @@ export default async (ssov) => {
 
             tvl = tvl.add(allStrikesPremiums)
 
-            tvl = new BN(tvl.toString()).dividedBy(1e36)
+            tvl = new BN(tvl.toString())
+                .multipliedBy(namePrice.toString())
+                .dividedBy(1e36)
         } else if (type === 'call') {
             const ssovAddress = contractAddresses.SSOV[underlyingSymbol].Vault
 
@@ -131,10 +133,10 @@ export default async (ssov) => {
             'totalCollateralBalance'
         ]
 
-        const totalEpochDepositsInUSD = ethers.utils.formatUnits(
+        const totalEpochDepositsInUSD = type === 'CALL' ? ethers.utils.formatUnits(
             totalEpochDeposits.mul(underlyingPrice),
             collateralDecimals + 8
-        )
+        ) : ethers.utils.formatUnits(totalEpochDeposits, 18);
 
         return totalEpochDepositsInUSD
     }
