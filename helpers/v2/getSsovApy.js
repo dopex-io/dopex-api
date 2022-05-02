@@ -2,7 +2,6 @@ import { providers } from '@0xsequence/multicall'
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
 import {
-    NativeSSOV__factory,
     Addresses,
     ERC20SSOV__factory,
     StakingRewards__factory,
@@ -188,16 +187,18 @@ async function getDopexApy(name, asset) {
         'totalCollateralBalance'
     ]
 
-    const priceUnderlying = (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8;
+    const priceUnderlying =
+        (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
 
     const totalEpochDepositsInUSD =
-            totalEpochDeposits.div('1000000000000000000').toNumber() * priceUnderlying;
+        totalEpochDeposits.div('1000000000000000000').toNumber() *
+        priceUnderlying
 
     if (asset === 'DPX') {
         const oldSsovContract = ERC20SSOV__factory.connect(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV["DPX"].Vault,
+            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV['DPX'].Vault,
             provider
-          );
+        )
 
         const stakingRewardsAddress = await oldSsovContract.getAddress(
             '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
@@ -210,36 +211,48 @@ async function getDopexApy(name, asset) {
         let DPXemitted
         let RDPXemitted
 
-        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all([
-            stakingRewardsContract.rewardRateDPX(),
-            stakingRewardsContract.rewardRateRDPX(),
-            stakingRewardsContract.totalSupply(),
-            getPrices(['dopex', 'dopex-rebate-token']),
-        ])
+        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all(
+            [
+                stakingRewardsContract.rewardRateDPX(),
+                stakingRewardsContract.rewardRateRDPX(),
+                stakingRewardsContract.totalSupply(),
+                getPrices(['dopex', 'dopex-rebate-token']),
+            ]
+        )
+        const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX
 
-        const rewardsDuration = new BN(86400 * 365);
+        const TVL = new BN(totalSupply.toString())
+            .multipliedBy(assetPrice)
+            .dividedBy(1e18)
+
+        const rewardsDuration = new BN(86400 * 365)
 
         DPXemitted = new BN(DPX.toString())
             .multipliedBy(rewardsDuration)
             .multipliedBy(priceDPX)
             .dividedBy(1e18)
+        RDPXemitted = new BN(RDPX.toString())
+            .multipliedBy(rewardsDuration)
+            .multipliedBy(priceRDPX)
+            .dividedBy(1e18)
 
         const denominator =
-            totalEpochDepositsInUSD + DPXemitted.toNumber();
+            TVL.toNumber() + DPXemitted.toNumber() + RDPXemitted.toNumber()
 
-        let APR = (denominator / totalEpochDepositsInUSD - 1) * 100
-
-        return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
+        return ((denominator / TVL.toNumber() - 1) * 100).toFixed(2)
     } else {
-        const totalRewardsInUSD = priceUnderlying * 3000;
+        const totalRewardsInUSD = priceUnderlying * 3000
 
-        return Math.max((
-            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                52 *
-                100 *
-                effectivePeriod) /
-            totalPeriod
-        ).toFixed(2), 0);
+        return Math.max(
+            (
+                ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                    52 *
+                    100 *
+                    effectivePeriod) /
+                totalPeriod
+            ).toFixed(2),
+            0
+        ).toFixed(2)
     }
 }
 
@@ -275,21 +288,25 @@ async function getEthSsovV3Apy(name, dpxRewards) {
         'totalCollateralBalance'
     ]
 
-    const priceUnderlying = (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8;
+    const priceUnderlying =
+        (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
 
-    // dpxRewards DPX per 7 days
     const totalRewardsInUSD = priceDPX * dpxRewards
 
     const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() * priceUnderlying
+        totalEpochDeposits.div('1000000000000000000').toNumber() *
+        priceUnderlying
 
-    return Math.max((
-        ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-            52 *
-            100 *
-            effectivePeriod) /
-        totalPeriod
-    ).toFixed(2), 0);
+    return Math.max(
+        (
+            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                52 *
+                100 *
+                effectivePeriod) /
+            totalPeriod
+        ).toFixed(2),
+        0
+    ).toFixed(2)
 }
 
 async function getSsovPutApy(name) {
@@ -313,7 +330,7 @@ async function getSsovPutApy(name) {
 
     const epochTimes = await ssovContract.getEpochTimes(epoch)
 
-    const [priceDPX] = await getPrices(['dopex', 'ethereum'])
+    const [priceDPX] = await getPrices(['dopex'])
 
     const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
 
@@ -324,21 +341,23 @@ async function getSsovPutApy(name) {
         'totalCollateralBalance'
     ]
 
-    const priceUnderlying = (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8;
+    const totalRewardsInUSD = priceDPX * 1.25
 
-    // dpxRewards DPX per 7 days
-    const totalRewardsInUSD = priceDPX * 10
+    const totalEpochDepositsInUSD = totalEpochDeposits
+        .div('1000000000000000000')
+        .toNumber()
 
-    const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() * priceUnderlying
-
-    return Math.max((
-        (6.8 + ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-            52 *
-            100 *
-            effectivePeriod) /
-        totalPeriod)
-    ).toFixed(2), 0);
+    return Math.max(
+        (
+            4 +
+            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                52 *
+                100 *
+                effectivePeriod) /
+                totalPeriod
+        ).toFixed(2),
+        0
+    ).toFixed(2)
 }
 
 async function getAvaxAPY() {
@@ -440,11 +459,11 @@ const NAME_TO_GETTER = {
     },
     'DPX-MONTHLY-CALLS-SSOV-V3': {
         fn: getDopexApy,
-        args: ["DPX-MONTHLY-CALLS-SSOV-V3", "DPX"],
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3', 'DPX'],
     },
     'rDPX-MONTHLY-CALLS-SSOV-V3': {
         fn: getDopexApy,
-        args: ["rDPX-MONTHLY-CALLS-SSOV-V3", "RDPX"],
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3', 'RDPX'],
     },
     'gOHM-MONTHLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
@@ -490,18 +509,19 @@ const NAME_TO_GETTER = {
 }
 
 const getSsovApy = async (ssov) => {
-    const { symbol, underlyingSymbol, type, version } = ssov
+    const { symbol, underlyingSymbol, version, type } = ssov
     let apy
-    let name = underlyingSymbol;
-
+    let name = underlyingSymbol
     if (version === 3) {
         name = symbol
     }
-
+    if (version === 2 && type === 'PUT') {
+        apy = 4
+    }
     try {
         apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
-    } catch(err) {
-        apy = getZeroApy();
+    } catch (err) {
+        apy = getZeroApy()
     }
 
     return apy
