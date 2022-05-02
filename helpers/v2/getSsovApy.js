@@ -246,7 +246,7 @@ async function getDopexApy(name, asset) {
         return Math.max(
             (
                 ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                    52 *
+                    12 *
                     100 *
                     effectivePeriod) /
                 totalPeriod
