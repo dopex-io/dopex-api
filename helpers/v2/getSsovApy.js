@@ -494,7 +494,7 @@ const NAME_TO_GETTER = {
         args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
     },
     GOHM: { fn: getGohmApy, args: [] },
-    BNB: { fn: getBnbApy, args: [] },
+    BNB: { fn: getZeroApy, args: [] },
     GMX: { fn: getGmxApy, args: [] },
     AVAX: { fn: getZeroApy, args: [] },
     METIS: { fn: getMetisApy, args: [] },

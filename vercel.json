@@ -9,7 +9,7 @@
         },
         {
           "key": "Cache-Control",
-          "value": "s-maxage=60, stale-while-revalidate"
+          "value": "s-maxage=6000, stale-while-revalidate"
         }
       ]
     }
