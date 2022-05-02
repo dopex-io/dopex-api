@@ -18,7 +18,7 @@ export default async () => {
 
   const ethProvider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
-      `https://mainnet.infura.io/v3/${infuraProjectId}`,
+      `https://rpc.ankr.com/ethereum/${process.env.ANKR_KEY}`,
       "any"
     )
   );
