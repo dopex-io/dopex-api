@@ -133,7 +133,7 @@ export default async (ssov) => {
             'totalCollateralBalance'
         ]
 
-        const totalEpochDepositsInUSD = symbol.includes('CALL') ? ethers.utils.formatUnits(
+        const totalEpochDepositsInUSD = type === 'CALL' ? ethers.utils.formatUnits(
             totalEpochDeposits.mul(underlyingPrice),
             collateralDecimals + 8
         ) : ethers.utils.formatUnits(totalEpochDeposits, 18);
