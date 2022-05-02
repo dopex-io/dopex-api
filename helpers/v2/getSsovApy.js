@@ -231,7 +231,7 @@ async function getDopexApy(name, asset) {
 
         return (((1 + APR / 365 / 100) ** 365 - 1) * 100).toFixed(2)
     } else {
-        const totalRewardsInUSD = priceUnderlying * 3500;
+        const totalRewardsInUSD = priceUnderlying * 3000;
 
         return Math.max((
             ((totalRewardsInUSD / totalEpochDepositsInUSD) *
@@ -289,6 +289,55 @@ async function getEthSsovV3Apy(name, dpxRewards) {
             100 *
             effectivePeriod) /
         totalPeriod
+    ).toFixed(2), 0);
+}
+
+async function getSsovPutApy(name) {
+    const infuraProjectId = process.env.INFURA_PROJECT_ID
+
+    const provider = new providers.MulticallProvider(
+        new ethers.getDefaultProvider(
+            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+            'any'
+        )
+    )
+
+    const ssovContract = SsovV3__factory.connect(
+        Addresses[42161]['SSOV-V3'].VAULTS[name],
+        provider
+    )
+
+    const epoch = await ssovContract.currentEpoch()
+
+    if (epoch.isZero()) return '0'
+
+    const epochTimes = await ssovContract.getEpochTimes(epoch)
+
+    const [priceDPX] = await getPrices(['dopex', 'ethereum'])
+
+    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
+
+    const effectivePeriod =
+        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
+
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
+
+    const priceUnderlying = (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8;
+
+    // dpxRewards DPX per 7 days
+    const totalRewardsInUSD = priceDPX * 10
+
+    const totalEpochDepositsInUSD =
+        totalEpochDeposits.div('1000000000000000000').toNumber() * priceUnderlying
+
+    return Math.max((
+        (6.8 + ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+            52 *
+            100 *
+            effectivePeriod) /
+        totalPeriod)
     ).toFixed(2), 0);
 }
 
@@ -399,7 +448,39 @@ const NAME_TO_GETTER = {
     },
     'gOHM-MONTHLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
-        args: [],
+        args: ['gOHM-MONTHLY-CALLS-SSOV-V3'],
+    },
+    'ETH-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['ETH-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'DPX-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['DPX-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'rDPX-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['rDPX-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'BTC-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['BTC-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'gOHM-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['gOHM-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'GMX-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['GMX-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'CRV-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['CRV-WEEKLY-PUTS-SSOV-V3'],
+    },
+    'LUNA-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
     },
     GOHM: { fn: getGohmApy, args: [] },
     BNB: { fn: getBnbApy, args: [] },
@@ -411,16 +492,16 @@ const NAME_TO_GETTER = {
 const getSsovApy = async (ssov) => {
     const { symbol, underlyingSymbol, type, version } = ssov
     let apy
-    if (type === 'put') {
-        apy = '6.64' // TODO
-    } else {
-        let name = underlyingSymbol;
+    let name = underlyingSymbol;
 
-        if (version === 3) {
-            name = symbol
-        }
+    if (version === 3) {
+        name = symbol
+    }
 
+    try {
         apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
+    } catch(err) {
+        apy = getZeroApy();
     }
 
     return apy
