@@ -353,76 +353,72 @@ async function getSsovPutApy(name) {
 }
 
 async function getAvaxAPY() {
-    try {
-        const AvaxRpcUrl = process.env.AVAX_RPC_URL
+    const AvaxRpcUrl = process.env.AVAX_RPC_URL
 
-        const provider = new providers.MulticallProvider(
-            new ethers.providers.JsonRpcProvider(
-                AvaxRpcUrl,
-                BLOCKCHAIN_TO_CHAIN_ID['AVAX']
-            )
+    const provider = new providers.MulticallProvider(
+        new ethers.providers.JsonRpcProvider(
+            AvaxRpcUrl,
+            BLOCKCHAIN_TO_CHAIN_ID['AVAX']
         )
+    )
 
-        const rewardDistributorContract = new ethers.Contract(
-            '0x45B2C4139d96F44667577C0D7F7a7D170B420324',
-            ['function rewardSupplySpeeds(uint8 ,address) view returns (uint256)'],
-            provider
-        )
+    const rewardDistributorContract = new ethers.Contract(
+        '0x45B2C4139d96F44667577C0D7F7a7D170B420324',
+        ['function rewardSupplySpeeds(uint8 ,address) view returns (uint256)'],
+        provider
+    )
 
-        const JAvaxContract = new ethers.Contract(
-            '0xC22F01ddc8010Ee05574028528614634684EC29e',
-            [
-                'function supplyRatePerSecond() view returns (uint256)',
-                'function totalSupply() view returns (uint256)',
-                'function exchangeRateStored() view returns (uint256)',
-            ],
-            provider
-        )
+    const JAvaxContract = new ethers.Contract(
+        '0xC22F01ddc8010Ee05574028528614634684EC29e',
+        [
+            'function supplyRatePerSecond() view returns (uint256)',
+            'function totalSupply() view returns (uint256)',
+            'function exchangeRateStored() view returns (uint256)',
+        ],
+        provider
+    )
 
-        const [
-            supplyRatePerSecond,
-            totalSupply,
-            exchangeRateStored,
-            rewardSupplySpeeds,
-            [avaxPrice, joePrice],
-        ] = await Promise.all([
-            JAvaxContract.supplyRatePerSecond(),
-            JAvaxContract.totalSupply(),
-            JAvaxContract.exchangeRateStored(),
-            rewardDistributorContract.rewardSupplySpeeds(
-                0,
-                '0xC22F01ddc8010Ee05574028528614634684EC29e'
-            ),
-            getPrices(['avalanche-2', 'joe']),
-        ])
+    const [
+        supplyRatePerSecond,
+        totalSupply,
+        exchangeRateStored,
+        rewardSupplySpeeds,
+        [avaxPrice, joePrice],
+    ] = await Promise.all([
+        JAvaxContract.supplyRatePerSecond(),
+        JAvaxContract.totalSupply(),
+        JAvaxContract.exchangeRateStored(),
+        rewardDistributorContract.rewardSupplySpeeds(
+            0,
+            '0xC22F01ddc8010Ee05574028528614634684EC29e'
+        ),
+        getPrices(['avalanche-2', 'joe']),
+    ])
 
-        const AvaxRewards =
-            (Math.pow(
-                (supplyRatePerSecond.toString() / 1e18) * 86400 + 1,
-                365 - 1
-                ) -
-                1) *
-            100
+    const AvaxRewards =
+        (Math.pow(
+            (supplyRatePerSecond.toString() / 1e18) * 86400 + 1,
+            365 - 1
+        ) -
+            1) *
+        100
 
-        const JoeRewardsUSD = new BN(rewardSupplySpeeds.toString())
-            .multipliedBy(86400)
-            .multipliedBy(365)
-            .multipliedBy(joePrice)
-            .dividedBy(1e18)
-            .toNumber()
+    const JoeRewardsUSD = new BN(rewardSupplySpeeds.toString())
+        .multipliedBy(86400)
+        .multipliedBy(365)
+        .multipliedBy(joePrice)
+        .dividedBy(1e18)
+        .toNumber()
 
-        const totalReserveUSD = new BN(totalSupply.toString())
-            .multipliedBy(exchangeRateStored.toString())
-            .multipliedBy(avaxPrice)
-            .dividedBy(1e36)
-            .toNumber()
+    const totalReserveUSD = new BN(totalSupply.toString())
+        .multipliedBy(exchangeRateStored.toString())
+        .multipliedBy(avaxPrice)
+        .dividedBy(1e36)
+        .toNumber()
 
-        const joeRewards = (JoeRewardsUSD / totalReserveUSD) * 100
+    const joeRewards = (JoeRewardsUSD / totalReserveUSD) * 100
 
-        return (Number(joeRewards) + Number(AvaxRewards)).toFixed(2)
-    } catch(err) {
-        return '0'
-    }
+    return (Number(joeRewards) + Number(AvaxRewards)).toFixed(2)
 }
 
 const getZeroApy = () => {
@@ -500,7 +496,7 @@ const NAME_TO_GETTER = {
     GOHM: { fn: getGohmApy, args: [] },
     BNB: { fn: getBnbApy, args: [] },
     GMX: { fn: getGmxApy, args: [] },
-    AVAX: { fn: getAvaxAPY, args: [] },
+    AVAX: { fn: getZeroApy, args: [] },
     METIS: { fn: getMetisApy, args: [] },
 }
 
