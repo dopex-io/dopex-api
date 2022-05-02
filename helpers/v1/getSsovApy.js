@@ -43,11 +43,9 @@ async function getBnbApy() {
 }
 
 async function getGmxApy() {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
       'any'
     )
   );
@@ -159,15 +157,13 @@ async function getGohmApy() {
 }
 
 async function getDopexApy(asset) {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
   if (asset === 'RDPX') {
     return '20';
   }
 
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
       'any'
     )
   );
@@ -221,11 +217,9 @@ async function getDopexApy(asset) {
 }
 
 async function getEthApy() {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
       'any'
     )
   );

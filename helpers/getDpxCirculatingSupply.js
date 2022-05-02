@@ -9,11 +9,9 @@ import { ethers } from "ethers";
 import { BLOCKCHAIN_TO_CHAIN_ID } from "../helpers/constants";
 
 export default async () => {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
   const arbProvider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
       "any"
     )
   );

@@ -41,11 +41,9 @@ async function getBnbApy() {
 }
 
 async function getGmxApy() {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
     const provider = new providers.MulticallProvider(
         new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+            `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
             'any'
         )
     )
@@ -158,11 +156,9 @@ async function getGohmApy() {
 }
 
 async function getDopexApy(name, asset) {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
     const provider = new providers.MulticallProvider(
         new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+            `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
             'any'
         )
     )
@@ -257,11 +253,9 @@ async function getDopexApy(name, asset) {
 }
 
 async function getEthSsovV3Apy(name, dpxRewards) {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
     const provider = new providers.MulticallProvider(
         new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+            `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
             'any'
         )
     )
@@ -310,11 +304,9 @@ async function getEthSsovV3Apy(name, dpxRewards) {
 }
 
 async function getSsovPutApy(name) {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
     const provider = new providers.MulticallProvider(
         new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+            `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
             'any'
         )
     )

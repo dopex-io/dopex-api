@@ -107,11 +107,9 @@ export default async (ssov) => {
                 .toString()
         }
     } else {
-        const infuraProjectId = process.env.INFURA_PROJECT_ID
-
         const provider = new providers.MulticallProvider(
             new ethers.getDefaultProvider(
-                `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+                `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
                 'any'
             )
         )

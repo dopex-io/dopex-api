@@ -11,13 +11,11 @@ import BN from "bignumber.js";
 import { BLOCKCHAIN_TO_CHAIN_ID } from "../helpers/constants";
 
 const getFarmTvl = async (token, ethPriceFinal) => {
-  const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
   const contractAddresses = Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]];
 
   const provider = new providers.MulticallProvider(
     new ethers.getDefaultProvider(
-      `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
+      `https://rpc.ankr.com/arbitrum/${process.env.ANKR_KEY}`,
       "any"
     )
   );
