@@ -7,7 +7,8 @@
     "license": "MIT",
     "scripts": {
         "dev": "vc dev --listen 5001",
-        "test": "jest"
+        "test": "jest",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@0xsequence/multicall": "^0.36.12",
@@ -21,6 +22,7 @@
     "devDependencies": {
         "eslint": "^8.13.0",
         "eslint-plugin-jest": "^26.1.4",
+        "husky": "^7.0.4",
         "jest": "^28.0.1",
         "vercel": "^24.1.0"
     }
