@@ -12,7 +12,7 @@ export default (chainId) => {
         return new providers.MulticallProvider(
             new ethers.providers.InfuraProvider(chainId, infuraProjectId)
         )
-    else if (chainId === BLOCKCHAIN_TO_CHAIN_ID['BINANCE'])
+    else if (chainId === BLOCKCHAIN_TO_CHAIN_ID['BSC'])
         return new providers.MulticallProvider(
             new ethers.providers.StaticJsonRpcProvider(bscRpcUrl, chainId)
         )

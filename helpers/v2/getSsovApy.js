@@ -1,4 +1,3 @@
-import { providers } from '@0xsequence/multicall'
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
 import {
@@ -9,17 +8,11 @@ import {
 } from '@dopex-io/sdk'
 
 import getPrices from '../getPrices'
+import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
 
 async function getBnbApy() {
-    const bscRpcUrl = process.env.BSC_RPC_URL
-
-    const provider = new providers.MulticallProvider(
-        new ethers.providers.JsonRpcProvider(
-            bscRpcUrl,
-            BLOCKCHAIN_TO_CHAIN_ID['BINANCE']
-        )
-    )
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.BSC)
 
     const vbnbContract = new ethers.Contract(
         '0xA07c5b74C9B40447a954e1466938b865b6BBea36',
@@ -41,14 +34,7 @@ async function getBnbApy() {
 }
 
 async function getGmxApy() {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
-    const provider = new providers.MulticallProvider(
-        new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-            'any'
-        )
-    )
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const stakingContract = new ethers.Contract(
         '0xd2D1162512F927a7e282Ef43a362659E4F2a728F',
@@ -125,12 +111,7 @@ async function getGmxApy() {
 }
 
 async function getGohmApy() {
-    const mainnetProvider = new providers.MulticallProvider(
-        new ethers.providers.JsonRpcProvider(
-            'https://eth-mainnet.gateway.pokt.network/v1/lb/61ceae3bb86d760039e05c85',
-            1
-        )
-    )
+    const mainnetProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ETHEREUM)
 
     const stakingContract = new ethers.Contract(
         '0xB63cac384247597756545b500253ff8E607a8020',
@@ -158,14 +139,7 @@ async function getGohmApy() {
 }
 
 async function getDopexApy(name, asset) {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
-    const provider = new providers.MulticallProvider(
-        new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-            'any'
-        )
-    )
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
         Addresses[42161]['SSOV-V3'].VAULTS[name],
@@ -257,14 +231,7 @@ async function getDopexApy(name, asset) {
 }
 
 async function getEthSsovV3Apy(name, dpxRewards) {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
-    const provider = new providers.MulticallProvider(
-        new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-            'any'
-        )
-    )
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
         Addresses[42161]['SSOV-V3'].VAULTS[name],
@@ -310,14 +277,7 @@ async function getEthSsovV3Apy(name, dpxRewards) {
 }
 
 async function getSsovPutApy(name) {
-    const infuraProjectId = process.env.INFURA_PROJECT_ID
-
-    const provider = new providers.MulticallProvider(
-        new ethers.getDefaultProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-            'any'
-        )
-    )
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
         Addresses[42161]['SSOV-V3'].VAULTS[name],
@@ -361,14 +321,7 @@ async function getSsovPutApy(name) {
 }
 
 async function getAvaxAPY() {
-    const AvaxRpcUrl = process.env.AVAX_RPC_URL
-
-    const provider = new providers.MulticallProvider(
-        new ethers.providers.JsonRpcProvider(
-            AvaxRpcUrl,
-            BLOCKCHAIN_TO_CHAIN_ID['AVAX']
-        )
-    )
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.AVAX)
 
     const rewardDistributorContract = new ethers.Contract(
         '0x45B2C4139d96F44667577C0D7F7a7D170B420324',

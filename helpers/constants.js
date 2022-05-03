@@ -12,7 +12,7 @@ export const TOKEN_TO_CG_ID = {
 export const BLOCKCHAIN_TO_CHAIN_ID = {
     ETHEREUM: 1,
     ARBITRUM: 42161,
-    BINANCE: 56,
+    BSC: 56,
     AVAX: 43114,
     METIS: 1088,
 }

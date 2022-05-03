@@ -33,7 +33,7 @@ export default async (req, res) => {
             },
             'bnb-ssov': {
                 fn: getSsovTvl,
-                args: ['BNB', 'call', BLOCKCHAIN_TO_CHAIN_ID['BINANCE']],
+                args: ['BNB', 'call', BLOCKCHAIN_TO_CHAIN_ID['BSC']],
             },
             'metis-ssov': {
                 fn: getSsovTvl,

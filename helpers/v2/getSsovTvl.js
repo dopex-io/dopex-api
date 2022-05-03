@@ -6,9 +6,9 @@ import {
 } from '@dopex-io/sdk'
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
-import { providers } from '@0xsequence/multicall'
 
 import getProvider from '../getProvider'
+import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
 
 export default async (ssov) => {
     const {
@@ -107,14 +107,7 @@ export default async (ssov) => {
                 .toString()
         }
     } else {
-        const infuraProjectId = process.env.INFURA_PROJECT_ID
-
-        const provider = new providers.MulticallProvider(
-            new ethers.getDefaultProvider(
-                `https://arbitrum-mainnet.infura.io/v3/${infuraProjectId}`,
-                'any'
-            )
-        )
+        const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
         const ssovContract = SsovV3__factory.connect(
             Addresses[chainId]['SSOV-V3'].VAULTS[symbol],
@@ -133,10 +126,12 @@ export default async (ssov) => {
             'totalCollateralBalance'
         ]
 
-        const totalEpochDepositsInUSD = symbol.includes('CALL') ? ethers.utils.formatUnits(
-            totalEpochDeposits.mul(underlyingPrice),
-            collateralDecimals + 8
-        ) : ethers.utils.formatUnits(totalEpochDeposits, 18);
+        const totalEpochDepositsInUSD = symbol.includes('CALL')
+            ? ethers.utils.formatUnits(
+                  totalEpochDeposits.mul(underlyingPrice),
+                  collateralDecimals + 8
+              )
+            : ethers.utils.formatUnits(totalEpochDeposits, 18)
 
         return totalEpochDepositsInUSD
     }
