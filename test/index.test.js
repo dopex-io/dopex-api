@@ -24,6 +24,7 @@ it('Tests all endpoints', async () => {
     for (let i = 0; i < ENDPOINTS.length; i++) {
         const endpoint = ENDPOINTS[i]
         const response = await fetch(`${BASE_URL}${endpoint}`)
+        console.log('Testing ', endpoint)
         expect(response.status).toBe(200)
     }
 })
