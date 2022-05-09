@@ -11,8 +11,8 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@0xsequence/multicall": "^0.36.12",
-        "@dopex-io/sdk": "1.0.0-alpha.97",
+        "@0xsequence/multicall": "^0.37.1",
+        "@dopex-io/sdk": "1.0.0-alpha.99",
         "bignumber.js": "^9.0.1",
         "ethers": "^5.6.4",
         "lodash": "^4.17.21",
@@ -22,7 +22,7 @@
     "devDependencies": {
         "eslint": "^8.13.0",
         "eslint-plugin-jest": "^26.1.4",
-        "husky": "^7.0.4",
+        "husky": "^8.0.1",
         "jest": "^28.0.1",
         "vercel": "^24.1.0"
     }

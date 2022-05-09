@@ -328,4 +328,15 @@ export const SSOVS = [
         retired: false,
         address: '0x29A1D81D7f3F3dC20E81Fe875012B7bED4011602',
     },
+    {
+        type: 'call',
+        underlyingSymbol: 'METIS',
+        symbol: 'Metis-MONTHLY-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 1088,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: false,
+        address: '0x9791c3A9A95b0a61e2FD43162E8077e2843dB16d',
+    },
 ]

@@ -8,7 +8,6 @@ import { ethers } from 'ethers'
 import BN from 'bignumber.js'
 
 import getProvider from '../getProvider'
-import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
 
 export default async (ssov) => {
     const {
@@ -107,8 +106,6 @@ export default async (ssov) => {
                 .toString()
         }
     } else {
-        const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
-
         const ssovContract = SsovV3__factory.connect(
             Addresses[chainId]['SSOV-V3'].VAULTS[symbol],
             provider
