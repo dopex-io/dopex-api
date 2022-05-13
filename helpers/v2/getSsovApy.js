@@ -244,7 +244,7 @@ async function getEthSsovV3Apy(name, dpxRewards) {
 
     const epochTimes = await ssovContract.getEpochTimes(epoch)
 
-    const [priceDPX] = await getPrices(['dopex', 'ethereum'])
+    const [priceDPX] = await getPrices(['dopex'])
 
     const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
 
@@ -386,8 +386,50 @@ const getZeroApy = () => {
     return '0'
 }
 
-const getMetisApy = () => {
-    return '1.7'
+const getMetisApy = async () => {
+    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
+
+    const ssovContract = SsovV3__factory.connect(
+        Addresses[1088]['SSOV-V3'].VAULTS['Metis-WEEKLY-PUTS-SSOV-V3'],
+        provider
+    )
+
+    const epoch = await ssovContract.currentEpoch()
+
+    if (epoch.isZero()) return '0'
+
+    const epochTimes = await ssovContract.getEpochTimes(epoch)
+
+    const [priceMETIS] = await getPrices(['metis-token'])
+
+    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
+
+    const effectivePeriod =
+        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
+
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
+
+    const priceUnderlying =
+        (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
+
+    const totalRewardsInUSD = priceMETIS * 200
+
+    const totalEpochDepositsInUSD =
+        totalEpochDeposits.div('1000000000000000000').toNumber() *
+        priceUnderlying
+
+    return Math.max(
+        (
+            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                52 *
+                100 *
+                effectivePeriod) /
+            totalPeriod
+        ).toFixed(2),
+        0
+    ).toFixed(2)
 }
 
 const NAME_TO_GETTER = {
@@ -454,11 +496,14 @@ const NAME_TO_GETTER = {
         fn: getSsovPutApy,
         args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
     },
+    'Metis-MONTHLY-CALLS-SSOV-V3': {
+        fn: getMetisApy,
+        args: [],
+    },
     GOHM: { fn: getGohmApy, args: [] },
     BNB: { fn: getBnbApy, args: [] },
     GMX: { fn: getGmxApy, args: [] },
     AVAX: { fn: getAvaxAPY, args: [] },
-    METIS: { fn: getMetisApy, args: [] },
 }
 
 const getSsovApy = async (ssov) => {
@@ -469,7 +514,7 @@ const getSsovApy = async (ssov) => {
         name = symbol
     }
     if (version === 2 && type === 'PUT') {
-        apy = 4
+        apy = '3.7'
     }
     try {
         apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
