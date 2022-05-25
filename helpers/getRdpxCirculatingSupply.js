@@ -75,6 +75,7 @@ export default async () => {
             .minus(rdpxFarmTotalSupply.toString())
             .dividedBy(1e18)
             .toNumber()
+
     // For bootstrapping liquidity
     const sideEmitted = 21200
 
@@ -84,6 +85,11 @@ export default async () => {
             .dividedBy(1e18)
             .toNumber()
 
+    const rdpxFarm2Emitted = 8000
+
+    // For the April 2022 epoch
+    const rdpxSsovEmitted = 1200
+
     const circulatingSupply =
         tokenSaleEmitted +
         dpxFarmEmitted +
@@ -91,7 +97,9 @@ export default async () => {
         rdpxWethFarmEmitted +
         rdpxFarmEmitted +
         sideEmitted +
-        airdropEmitted
+        airdropEmitted +
+        rdpxSsovEmitted +
+        rdpxFarm2Emitted
 
     return circulatingSupply
 }

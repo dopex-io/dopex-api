@@ -103,14 +103,9 @@ export default async () => {
         new BigNumber(rdpxFarmBalance.toString()).dividedBy(1e18).toNumber()
 
     // Operational allocation
-    const operationalAllocationEmitted = 1713.7
+    const operationalAllocationEmitted = 1714.7
 
-    /**
-     * December 21 - 380 DPX
-     * January 22 - 500 DPX
-     * February 22 - 300 DPX
-     */
-    const ethSSOVRewardsEmitted = 1180
+    const ssovRewardsEmitted = 1992.5
 
     const circulatingSupply =
         presaleEmitted +
@@ -121,7 +116,7 @@ export default async () => {
         rdpxWethFarmEmitted +
         rdpxFarmEmitted +
         teamVestingV2Emitted +
-        ethSSOVRewardsEmitted +
+        ssovRewardsEmitted +
         operationalAllocationEmitted
 
     return circulatingSupply
