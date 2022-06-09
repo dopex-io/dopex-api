@@ -7,29 +7,17 @@ import getIRVaultData from '../../../helpers/v2/getIRVaultData'
 
 export default async (_req, res) => {
     try {
-        const [tvls, apys, data] = await Promise.all([
-            Promise.all(
-                VAULTS.map((vault) => {
-                    return getIRVaultTvl(vault)
-                })
-            ),
-            Promise.all(
-                VAULTS.map((vault) => {
-                    return getIRVaultApy(vault)
-                })
-            ),
-            Promise.all(
+        const [data] = await Promise.all(
                 VAULTS.map((vault) => {
                     return getIRVaultData(vault)
                 })
-            ),
-        ])
+            );
 
         const vaultArray = VAULTS.map((item, index) => {
             return {
                 ...item,
-                tvl: tvls[index],
-                apy: apys[index],
+                tvl: data[index].tvl,
+                rate: data[index].rate,
                 currentEpoch: data[index].currentEpoch,
                 totalEpochDeposits: data[index].totalEpochDeposits,
                 underlyingPrice: data[index].underlyingPrice,
