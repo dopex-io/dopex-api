@@ -325,7 +325,7 @@ export const SSOVS = [
         chainId: 42161,
         collateralDecimals: 18,
         duration: 'weekly',
-        retired: false,
+        retired: true,
         address: '0x29A1D81D7f3F3dC20E81Fe875012B7bED4011602',
     },
     {
