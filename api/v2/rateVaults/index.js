@@ -1,26 +1,26 @@
 import groupBy from 'lodash/groupBy'
 
 import { VAULTS } from '../../../helpers/v2/constants'
-import getVaultApy from '../../../helpers/v2/getVaultApy'
-import getVaultTvl from '../../../helpers/v2/getVaultTvl'
-import getVaultData from '../../../helpers/v2/getVaultData'
+import getIRVaultApy from '../../../helpers/v2/getIRVaultApy'
+import getIRVaultTvl from '../../../helpers/v2/getIRVaultTvl'
+import getIRVaultData from '../../../helpers/v2/getIRVaultData'
 
 export default async (_req, res) => {
     try {
         const [tvls, apys, data] = await Promise.all([
             Promise.all(
                 VAULTS.map((vault) => {
-                    return getVaultTvl(vault)
+                    return getIRVaultTvl(vault)
                 })
             ),
             Promise.all(
                 VAULTS.map((vault) => {
-                    return getVaultApy(vault)
+                    return getIRVaultApy(vault)
                 })
             ),
             Promise.all(
                 VAULTS.map((vault) => {
-                    return getVaultData(vault)
+                    return getIRVaultData(vault)
                 })
             ),
         ])

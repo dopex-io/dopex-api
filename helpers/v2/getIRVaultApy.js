@@ -6,7 +6,7 @@ const NAME_TO_GETTER = {
     'MIM3CRV': getZeroApy
 }
 
-const getVaultApy = async (vault) => {
+const getIRVaultApy = async (vault) => {
     const { symbol} = vault
     let apy
     try {
@@ -18,4 +18,4 @@ const getVaultApy = async (vault) => {
     return apy
 }
 
-export default getVaultApy
+export default getIRVaultApy
