@@ -22,7 +22,6 @@ export default async (vault) => {
 
     return {
         currentEpoch: currentEpoch.toString(),
-        totalEpochDeposits: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']),
-        underlyingPrice: ethersUtils.formatUnits(1, 18),
+        totalEpochDeposits: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits'])
     }
 }
