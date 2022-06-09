@@ -340,3 +340,17 @@ export const SSOVS = [
         address: '0x9791c3A9A95b0a61e2FD43162E8077e2843dB16d',
     },
 ]
+
+export const VAULTS = [
+    {
+        type: 'call',
+        underlyingSymbol: '2CRV',
+        symbol: 'MIM3CRV',
+        version: 1,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: false,
+        address: '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
+    }
+]
