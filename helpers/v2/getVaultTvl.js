@@ -23,13 +23,6 @@ export default async (vault) => {
 
     let totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
 
-    const isEpochExpired = totalEpochData['isEpochExpired']
-
-    if (isEpochExpired && currentEpoch.toNumber() > 0) {
-        currentEpoch = currentEpoch.toNumber() + 1;
-        totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
-    }
-
     const tvl = totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']).add(totalEpochData['epochCallsPremium']).add(totalEpochData['epochPutsPremium'])
 
     return tvl
