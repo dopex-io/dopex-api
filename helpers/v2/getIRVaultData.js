@@ -21,8 +21,6 @@ export default async (vault) => {
 
     let rate = await rateVaultContract.getCurrentRate()
 
-    console.log(totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']))
-
     return {
         currentEpoch: currentEpoch.toString(),
         totalEpochDeposits: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']),
