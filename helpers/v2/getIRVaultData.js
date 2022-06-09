@@ -1,5 +1,4 @@
 import {Addresses, RateVault__factory} from '@dopex-io/sdk'
-import { utils as ethersUtils } from 'ethers'
 
 import getProvider from '../getProvider'
 
@@ -22,10 +21,12 @@ export default async (vault) => {
 
     let rate = await rateVaultContract.getCurrentRate()
 
+    console.log(totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']))
+
     return {
         currentEpoch: currentEpoch.toString(),
         totalEpochDeposits: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']),
         rate: rate,
-        tvl: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']).add(totalEpochData['totalCallsPremiums']).add(totalEpochData['totalPutsPremiums'])
+        tvl: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']).add(totalEpochData['epochCallsPremium']).add(totalEpochData['epochPutsPremium'])
     }
 }
