@@ -1,8 +1,6 @@
 import groupBy from 'lodash/groupBy'
 
 import { VAULTS } from '../../../helpers/v2/constants'
-import getIRVaultApy from '../../../helpers/v2/getIRVaultApy'
-import getIRVaultTvl from '../../../helpers/v2/getIRVaultTvl'
 import getIRVaultData from '../../../helpers/v2/getIRVaultData'
 
 export default async (_req, res) => {
