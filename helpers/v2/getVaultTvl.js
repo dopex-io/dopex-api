@@ -26,7 +26,7 @@ export default async (vault) => {
     const isEpochExpired = totalEpochData['isEpochExpired']
 
     if (isEpochExpired) {
-        currentEpoch += 1
+        currentEpoch = currentEpoch.toNumber() + 1;
         totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
     }
 
