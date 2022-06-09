@@ -8,6 +8,7 @@ The base URL for a hosted version of this API is `https://api.dopex.io/api/v2`
 
 1. [GET SSOVs](#ssovs)
 2. [GET SSOV APYs](#ssov-apys)
+3. [GET IR VAULTs](#ssovs)
 
 ## SSOVs
 
@@ -50,6 +51,26 @@ Gets the APY for the requested SSOV
 
     ```bash
     curl --location --request GET 'https://api.dopex.io/api/v2/ssov/apy?symbol=DPX-CALLS-SSOV-V2'
+    ```
+
+---
+
+## IR Vaults
+
+Returns data about the Dopex IR Vaults
+
+-   **URL**
+
+    `/rateVaults`
+
+-   **Method:**
+
+    `GET`
+
+-   **Sample call:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/api/v2/rateVaults'
     ```
 
 ---
