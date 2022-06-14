@@ -18,7 +18,13 @@ export default async (vault) => {
 
     let totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
 
-    let rate = await rateVaultContract.getCurrentRate()
+    let rate;
+
+    try {
+        await rateVaultContract.getCurrentRate()
+    } catch(err) {
+        rate = 0;
+    }
 
     return {
         currentEpoch: currentEpoch.toString(),
