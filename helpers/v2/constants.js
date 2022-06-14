@@ -348,7 +348,6 @@ export const VAULTS = [
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
-        duration: 'monthly',
         retired: false,
         address: '0x3BBCbe743AbeD14072EC26dABc4663Fa850f38D5',
     },
@@ -358,7 +357,6 @@ export const VAULTS = [
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
-        duration: 'monthly',
         retired: false,
         address: '0xdb2825f2A6c141A86862cCd5D4A86B18a436dd41',
     },
@@ -368,7 +366,6 @@ export const VAULTS = [
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
-        duration: 'monthly',
         retired: true,
         address: '0x602B9f9B7126DEce2b9a589B49Fe5947c903A156',
     }

@@ -1,8 +1,9 @@
 import groupBy from 'lodash/groupBy'
+import {utils as ethersUtils} from "ethers/lib/ethers";
 
 import { VAULTS } from '../../../helpers/v2/constants'
 import getIRVaultData from '../../../helpers/v2/getIRVaultData'
-import {utils as ethersUtils} from "ethers/lib/ethers";
+
 
 export default async (_req, res) => {
     try {
@@ -16,7 +17,7 @@ export default async (_req, res) => {
             return {
                 ...item,
                 tvl: ethersUtils.formatUnits(data[index].tvl, 18),
-                rate: (data[index].rate.toNumber() / 10 ** 8).toString(),
+                rate: ethersUtils.formatUnits(data[index].rate, 8).toString(),
                 currentEpoch: data[index].currentEpoch,
                 totalEpochDeposits: ethersUtils.formatUnits(data[index].totalEpochDeposits, 18)
             }
