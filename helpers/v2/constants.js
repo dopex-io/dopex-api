@@ -344,7 +344,7 @@ export const SSOVS = [
 export const VAULTS = [
     {
         underlyingSymbol: '2CRV',
-        symbol: 'MIM3CRV',
+        symbol: 'MIM3CRV-2',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
@@ -364,7 +364,7 @@ export const VAULTS = [
     },
     {
         underlyingSymbol: '2CRV',
-        symbol: 'MIM3CRV-LEGACY-1',
+        symbol: 'MIM3CRV-1',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
