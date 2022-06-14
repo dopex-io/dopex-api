@@ -1,17 +1,16 @@
-import {Addresses, RateVault__factory} from '@dopex-io/sdk'
+import {RateVault__factory} from '@dopex-io/sdk'
 
 import getProvider from '../getProvider'
 
 export default async (vault) => {
     const {
-        symbol,
-        chainId
+        chainId,
+        address
     } = vault
-    const contractAddresses = Addresses[chainId]['RATE-VAULTS']
     const provider = getProvider(chainId)
 
     const rateVaultContract = RateVault__factory.connect(
-        contractAddresses[symbol],
+        address,
         provider
     )
 
