@@ -1,4 +1,5 @@
 import {RateVault__factory} from '@dopex-io/sdk'
+import {BigNumber} from "ethers";
 
 import getProvider from '../getProvider'
 
@@ -14,22 +15,24 @@ export default async (vault) => {
         provider
     )
 
-    let currentEpoch = await rateVaultContract.currentEpoch()
-
-    let totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
-
-    let rate;
+    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl;
 
     try {
-        await rateVaultContract.getCurrentRate()
+        currentEpoch = await rateVaultContract.currentEpoch()
+        totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
+        rate = await rateVaultContract.getCurrentRate()
+        totalEpochDeposits = totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits'])
+        tvl = totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']).add(totalEpochData['epochCallsPremium']).add(totalEpochData['epochPutsPremium'])
     } catch(err) {
-        rate = 0;
+        rate = BigNumber.from('0')
+        tvl = BigNumber.from('0')
+        totalEpochDeposits = BigNumber.from('0')
     }
 
     return {
         currentEpoch: currentEpoch.toString(),
-        totalEpochDeposits: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']),
+        totalEpochDeposits: totalEpochDeposits,
         rate: rate,
-        tvl: totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']).add(totalEpochData['epochCallsPremium']).add(totalEpochData['epochPutsPremium'])
+        tvl: tvl
     }
 }
