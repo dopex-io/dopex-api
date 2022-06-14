@@ -369,7 +369,7 @@ export const VAULTS = [
         chainId: 42161,
         collateralDecimals: 18,
         duration: 'monthly',
-        retired: false,
+        retired: true,
         address: '0x602B9f9B7126DEce2b9a589B49Fe5947c903A156',
     }
 ]
