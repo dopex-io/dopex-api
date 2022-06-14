@@ -343,7 +343,6 @@ export const SSOVS = [
 
 export const VAULTS = [
     {
-        type: 'call',
         underlyingSymbol: '2CRV',
         symbol: 'MIM3CRV',
         version: 1,
@@ -352,5 +351,25 @@ export const VAULTS = [
         duration: 'monthly',
         retired: false,
         address: '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
+    },
+    {
+        underlyingSymbol: '2CRV',
+        symbol: 'PUSD3CRV',
+        version: 1,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: false,
+        address: '0xdb2825f2A6c141A86862cCd5D4A86B18a436dd41',
+    },
+    {
+        underlyingSymbol: '2CRV',
+        symbol: 'MIM3CRV-LEGACY-1',
+        version: 1,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: false,
+        address: '0x602B9f9B7126DEce2b9a589B49Fe5947c903A156',
     }
 ]
