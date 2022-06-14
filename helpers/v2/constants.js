@@ -350,7 +350,7 @@ export const VAULTS = [
         collateralDecimals: 18,
         duration: 'monthly',
         retired: false,
-        address: '0xbB741dC1A519995eac67Ec1f2bfEecbe5C02f46e',
+        address: '0x3BBCbe743AbeD14072EC26dABc4663Fa850f38D5',
     },
     {
         underlyingSymbol: '2CRV',
