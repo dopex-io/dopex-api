@@ -341,16 +341,7 @@ export const SSOVS = [
     },
 ]
 
-export const VAULTS = [
-    {
-        underlyingSymbol: '2CRV',
-        symbol: 'MIM3CRV-2',
-        version: 1,
-        chainId: 42161,
-        collateralDecimals: 18,
-        retired: false,
-        address: '0x3BBCbe743AbeD14072EC26dABc4663Fa850f38D5',
-    },
+export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
         symbol: 'PUSD3CRV',
@@ -362,11 +353,20 @@ export const VAULTS = [
     },
     {
         underlyingSymbol: '2CRV',
+        symbol: 'MIM3CRV-2',
+        version: 1,
+        chainId: 42161,
+        collateralDecimals: 18,
+        retired: true,
+        address: '0x3BBCbe743AbeD14072EC26dABc4663Fa850f38D5',
+    },
+    {
+        underlyingSymbol: '2CRV',
         symbol: 'MIM3CRV-1',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
         retired: true,
         address: '0x602B9f9B7126DEce2b9a589B49Fe5947c903A156',
-    }
+    },
 ]
