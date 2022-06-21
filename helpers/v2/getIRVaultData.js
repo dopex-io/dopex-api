@@ -14,7 +14,6 @@ export default async (vault) => {
     try {
         currentEpoch = await rateVaultContract.currentEpoch()
         totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
-        rate = await rateVaultContract.getCurrentRate()
         totalEpochDeposits = totalEpochData['totalCallsDeposits'].add(
             totalEpochData['totalPutsDeposits']
         )
@@ -22,10 +21,15 @@ export default async (vault) => {
             .add(totalEpochData['totalPutsDeposits'])
             .add(totalEpochData['epochCallsPremium'])
             .add(totalEpochData['epochPutsPremium'])
-    } catch (err) {
-        rate = BigNumber.from('0')
+    } catch(err) {
         tvl = BigNumber.from('0')
         totalEpochDeposits = BigNumber.from('0')
+    }
+
+    try {
+        rate = await rateVaultContract.getCurrentRate()
+    } catch(err) {
+        rate = BigNumber.from('0')
     }
 
     return {
