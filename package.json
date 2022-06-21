@@ -16,8 +16,7 @@
         "bignumber.js": "^9.0.1",
         "ethers": "^5.6.4",
         "lodash": "^4.17.21",
-        "node-fetch": "^2.6.1",
-        "npm-run-all": "^4.1.5"
+        "node-fetch": "^2.6.1"
     },
     "devDependencies": {
         "eslint": "^8.13.0",
