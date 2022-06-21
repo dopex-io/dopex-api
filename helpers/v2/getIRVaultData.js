@@ -1,21 +1,15 @@
-import {RateVault__factory} from '@dopex-io/sdk'
-import {BigNumber} from "ethers";
+import { RateVault__factory } from '@dopex-io/sdk'
+import { BigNumber } from 'ethers';
 
 import getProvider from '../getProvider'
 
 export default async (vault) => {
-    const {
-        chainId,
-        address
-    } = vault
+    const { chainId, address } = vault
     const provider = getProvider(chainId)
 
-    const rateVaultContract = RateVault__factory.connect(
-        address,
-        provider
-    )
+    const rateVaultContract = RateVault__factory.connect(address, provider)
 
-    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl;
+    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl
 
     try {
         currentEpoch = await rateVaultContract.currentEpoch()
@@ -37,6 +31,6 @@ export default async (vault) => {
         currentEpoch: currentEpoch.toString(),
         totalEpochDeposits: totalEpochDeposits,
         rate: rate,
-        tvl: tvl
+        tvl: tvl,
     }
 }
