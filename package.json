@@ -16,14 +16,13 @@
         "bignumber.js": "^9.0.1",
         "ethers": "^5.6.4",
         "lodash": "^4.17.21",
-        "node-fetch": "^2.6.1",
-        "npm-run-all": "^4.1.5"
+        "node-fetch": "^2.6.1"
     },
     "devDependencies": {
         "eslint": "^8.13.0",
         "eslint-plugin-jest": "^26.1.4",
         "husky": "^8.0.1",
         "jest": "^28.0.1",
-        "vercel": "^24.1.0"
+        "vercel": "^25.1.0"
     }
 }
