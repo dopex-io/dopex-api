@@ -1,5 +1,5 @@
 import { RateVault__factory } from '@dopex-io/sdk'
-import { BigNumber } from 'ethers';
+import { BigNumber } from 'ethers'
 
 import getProvider from '../getProvider'
 
@@ -14,8 +14,13 @@ export default async (vault) => {
     try {
         currentEpoch = await rateVaultContract.currentEpoch()
         totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
-        totalEpochDeposits = totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits'])
-        tvl = totalEpochData['totalCallsDeposits'].add(totalEpochData['totalPutsDeposits']).add(totalEpochData['epochCallsPremium']).add(totalEpochData['epochPutsPremium'])
+        totalEpochDeposits = totalEpochData['totalCallsDeposits'].add(
+            totalEpochData['totalPutsDeposits']
+        )
+        tvl = totalEpochData['totalCallsDeposits']
+            .add(totalEpochData['totalPutsDeposits'])
+            .add(totalEpochData['epochCallsPremium'])
+            .add(totalEpochData['epochPutsPremium'])
     } catch(err) {
         tvl = BigNumber.from('0')
         totalEpochDeposits = BigNumber.from('0')
