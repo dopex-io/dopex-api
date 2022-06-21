@@ -1,25 +1,27 @@
 import groupBy from 'lodash/groupBy'
-import {utils as ethersUtils} from "ethers/lib/ethers";
+import { utils as ethersUtils } from 'ethers/lib/ethers'
 
-import { VAULTS } from '../../../helpers/v2/constants'
+import { IR_VAULTS } from '../../../helpers/v2/constants'
 import getIRVaultData from '../../../helpers/v2/getIRVaultData'
-
 
 export default async (_req, res) => {
     try {
         const data = await Promise.all(
-                VAULTS.map((vault) => {
-                    return getIRVaultData(vault)
-                })
-            );
+            IR_VAULTS.map((vault) => {
+                return getIRVaultData(vault)
+            })
+        )
 
-        const vaultArray = VAULTS.map((item, index) => {
+        const vaultArray = IR_VAULTS.map((item, index) => {
             return {
                 ...item,
                 tvl: ethersUtils.formatUnits(data[index].tvl, 18),
                 rate: ethersUtils.formatUnits(data[index].rate, 8).toString(),
                 currentEpoch: data[index].currentEpoch,
-                totalEpochDeposits: ethersUtils.formatUnits(data[index].totalEpochDeposits, 18)
+                totalEpochDeposits: ethersUtils.formatUnits(
+                    data[index].totalEpochDeposits,
+                    18
+                ),
             }
         })
 
