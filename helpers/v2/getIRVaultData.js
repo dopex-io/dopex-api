@@ -15,7 +15,7 @@ export default async (vault) => {
         currentEpoch = await rateVaultContract.currentEpoch()
         totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
         if (totalEpochData[9]) {
-            currentEpoch += 1
+            currentEpoch = currentEpoch.toNumber() + 1
             totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
         }
         totalEpochDeposits = totalEpochData['totalCallsDeposits'].add(
