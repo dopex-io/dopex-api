@@ -1,8 +1,4 @@
-import {
-    ERC20__factory,
-    StakingRewards__factory,
-    Addresses,
-} from '@dopex-io/sdk'
+import { ERC20__factory, Addresses } from '@dopex-io/sdk'
 import { BigNumber } from 'bignumber.js'
 
 import { BLOCKCHAIN_TO_CHAIN_ID } from '../helpers/constants'
@@ -33,43 +29,13 @@ export default async () => {
         arbProvider
     )
 
-    const dpxStakingRewards = StakingRewards__factory.connect(
-        Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].DPXStakingRewards,
-        arbProvider
-    )
-
     // Async call of all promises
-    const [
-        presaleBalance,
-        teamVestingBalance,
-        dpxFarmBalance,
-        dpxFarmTotalSupply,
-        dpxWethFarmBalance,
-        rdpxWethFarmBalance,
-        rdpxFarmBalance,
-        teamVestingV2Balance,
-    ] = await Promise.all([
-        dpxEth.balanceOf(presaleAddress),
-        dpxEth.balanceOf(teamVestingAddress),
-        dpxArb.balanceOf(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].DPXStakingRewards
-        ),
-        dpxStakingRewards.totalSupply(),
-        dpxArb.balanceOf(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']][
-                'DPX-WETHStakingRewards'
-            ]
-        ),
-        dpxArb.balanceOf(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']][
-                'RDPX-WETHStakingRewards'
-            ]
-        ),
-        dpxArb.balanceOf(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']]['RDPXStakingRewards']
-        ),
-        dpxArb.balanceOf(teamVestingV2Address),
-    ])
+    const [presaleBalance, teamVestingBalance, teamVestingV2Balance] =
+        await Promise.all([
+            dpxEth.balanceOf(presaleAddress),
+            dpxEth.balanceOf(teamVestingAddress),
+            dpxArb.balanceOf(teamVestingV2Address),
+        ])
 
     const presaleEmitted =
         presaleAllocation -
@@ -86,21 +52,8 @@ export default async () => {
             .toNumber()
 
     // Farming (Total Rewards - Current Rewards)
-    const dpxFarmEmitted =
-        15000 -
-        new BigNumber(dpxFarmBalance.toString())
-            .minus(dpxFarmTotalSupply.toString())
-            .dividedBy(1e18)
-            .toNumber()
-    const dpxWethFarmEmitted =
-        45000 -
-        new BigNumber(dpxWethFarmBalance.toString()).dividedBy(1e18).toNumber()
-    const rdpxWethFarmEmitted =
-        15000 -
-        new BigNumber(rdpxWethFarmBalance.toString()).dividedBy(1e18).toNumber()
-    const rdpxFarmEmitted =
-        400 -
-        new BigNumber(rdpxFarmBalance.toString()).dividedBy(1e18).toNumber()
+    // TODO: MAKE DYNAMIC
+    const farmsEmitted = 40000
 
     // Operational allocation
     const operationalAllocationEmitted = 1714.7
@@ -111,10 +64,7 @@ export default async () => {
         presaleEmitted +
         tokenSaleEmitted +
         teamVestingEmitted +
-        dpxFarmEmitted +
-        dpxWethFarmEmitted +
-        rdpxWethFarmEmitted +
-        rdpxFarmEmitted +
+        farmsEmitted +
         teamVestingV2Emitted +
         ssovRewardsEmitted +
         operationalAllocationEmitted
