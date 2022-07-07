@@ -345,6 +345,7 @@ export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
         symbol: 'PUSD3CRV-BIWEEKLY-1',
+        duration: 'biweekly',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
@@ -354,6 +355,7 @@ export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
         symbol: 'PUSD3CRV-2',
+        duration: 'weekly',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
@@ -363,6 +365,7 @@ export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
         symbol: 'PUSD3CRV-1',
+        duration: 'weekly',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
@@ -372,6 +375,7 @@ export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
         symbol: 'MIM3CRV-2',
+        duration: 'weekly',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
@@ -381,6 +385,7 @@ export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
         symbol: 'MIM3CRV-1',
+        duration: 'weekly',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
