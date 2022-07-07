@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const axios = require('axios')
 
 const BASE_URL = 'http://localhost:5001/api'
 
@@ -23,7 +23,7 @@ const ENDPOINTS = [
 it('Tests all endpoints', async () => {
     for (let i = 0; i < ENDPOINTS.length; i++) {
         const endpoint = ENDPOINTS[i]
-        const response = await fetch(`${BASE_URL}${endpoint}`)
+        const response = await axios.get(`${BASE_URL}${endpoint}`)
         console.log('Testing ', endpoint)
         expect(response.status).toBe(200)
     }
