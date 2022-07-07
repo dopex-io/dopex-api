@@ -344,7 +344,7 @@ export const SSOVS = [
 export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
-        symbol: 'PUSD3CRV-BIWEEKLY',
+        symbol: 'PUSD3CRV-BIWEEKLY-1',
         version: 1,
         chainId: 42161,
         collateralDecimals: 18,
