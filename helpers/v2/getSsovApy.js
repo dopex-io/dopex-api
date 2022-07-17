@@ -169,53 +169,20 @@ async function getDopexApy(name, asset) {
         priceUnderlying
 
     if (asset === 'DPX') {
-        const oldSsovContract = ERC20SSOV__factory.connect(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV['DPX'].Vault,
-            provider
-        )
+        const totalRewardsInUSD = priceUnderlying * 60
 
-        const stakingRewardsAddress = await oldSsovContract.getAddress(
-            '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
-        )
-        const stakingRewardsContract = StakingRewards__factory.connect(
-            stakingRewardsAddress,
-            provider
-        )
-
-        let DPXemitted
-        let RDPXemitted
-
-        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all(
-            [
-                stakingRewardsContract.rewardRateDPX(),
-                stakingRewardsContract.rewardRateRDPX(),
-                stakingRewardsContract.totalSupply(),
-                getPrices(['dopex', 'dopex-rebate-token']),
-            ]
-        )
-        const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX
-
-        const TVL = new BN(totalSupply.toString())
-            .multipliedBy(assetPrice)
-            .dividedBy(1e18)
-
-        const rewardsDuration = new BN(86400 * 365)
-
-        DPXemitted = new BN(DPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceDPX)
-            .dividedBy(1e18)
-        RDPXemitted = new BN(RDPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceRDPX)
-            .dividedBy(1e18)
-
-        const denominator =
-            TVL.toNumber() + DPXemitted.toNumber() + RDPXemitted.toNumber()
-
-        return ((denominator / TVL.toNumber() - 1) * 100).toFixed(2)
+        return Math.max(
+            (
+                ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                    12 *
+                    100 *
+                    effectivePeriod) /
+                totalPeriod
+            ).toFixed(2),
+            0
+        ).toFixed(2)
     } else {
-        const totalRewardsInUSD = priceUnderlying * 3000
+        const totalRewardsInUSD = priceUnderlying * 1500
 
         return Math.max(
             (
@@ -448,53 +415,53 @@ const NAME_TO_GETTER = {
         fn: getEthSsovV3Apy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3-3', 25],
     },
-    'ETH-MONTHLY-CALLS-SSOV-V3': {
+    'ETH-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getEthSsovV3Apy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3', 150],
+        args: ['ETH-MONTHLY-CALLS-SSOV-V3-2', 75],
     },
-    'DPX-MONTHLY-CALLS-SSOV-V3': {
+    'DPX-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getDopexApy,
-        args: ['DPX-MONTHLY-CALLS-SSOV-V3', 'DPX'],
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3-2', 'DPX'],
     },
-    'rDPX-MONTHLY-CALLS-SSOV-V3': {
+    'rDPX-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getDopexApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3', 'RDPX'],
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-2', 'RDPX'],
     },
     'gOHM-MONTHLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
-        args: ['gOHM-MONTHLY-CALLS-SSOV-V3'],
+        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-WEEKLY-PUTS-SSOV-V3': {
+    'ETH-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['ETH-WEEKLY-PUTS-SSOV-V3'],
+        args: ['ETH-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'DPX-WEEKLY-PUTS-SSOV-V3': {
+    'DPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['DPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['DPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'rDPX-WEEKLY-PUTS-SSOV-V3': {
+    'rDPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['rDPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['rDPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'BTC-WEEKLY-PUTS-SSOV-V3': {
+    'BTC-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['BTC-WEEKLY-PUTS-SSOV-V3'],
+        args: ['BTC-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'gOHM-WEEKLY-PUTS-SSOV-V3': {
+    'gOHM-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['gOHM-WEEKLY-PUTS-SSOV-V3'],
+        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'GMX-WEEKLY-PUTS-SSOV-V3': {
+    'GMX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['GMX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['GMX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'CRV-WEEKLY-PUTS-SSOV-V3': {
+    'CRV-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['CRV-WEEKLY-PUTS-SSOV-V3'],
+        args: ['CRV-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'LUNA-WEEKLY-PUTS-SSOV-V3': {
+    'LUNA-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
+        args: ['LUNA-WEEKLY-PUTS-SSOV-V3-2'],
     },
     'Metis-MONTHLY-CALLS-SSOV-V3': {
         fn: getMetisApy,
