@@ -484,10 +484,8 @@ const getSsovApy = async (ssov) => {
         apy = '3.7'
     }
     try {
-        console.log(name);
         apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
     } catch (err) {
-        console.log(err);
         apy = getZeroApy()
     }
 
