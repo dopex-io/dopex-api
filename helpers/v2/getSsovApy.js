@@ -169,51 +169,18 @@ async function getDopexApy(name, asset) {
         priceUnderlying
 
     if (asset === 'DPX') {
-        const oldSsovContract = ERC20SSOV__factory.connect(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV['DPX'].Vault,
-            provider
-        )
+        const totalRewardsInUSD = priceUnderlying * 60
 
-        const stakingRewardsAddress = await oldSsovContract.getAddress(
-            '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
-        )
-        const stakingRewardsContract = StakingRewards__factory.connect(
-            stakingRewardsAddress,
-            provider
-        )
-
-        let DPXemitted
-        let RDPXemitted
-
-        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all(
-            [
-                stakingRewardsContract.rewardRateDPX(),
-                stakingRewardsContract.rewardRateRDPX(),
-                stakingRewardsContract.totalSupply(),
-                getPrices(['dopex', 'dopex-rebate-token']),
-            ]
-        )
-        const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX
-
-        const TVL = new BN(totalSupply.toString())
-            .multipliedBy(assetPrice)
-            .dividedBy(1e18)
-
-        const rewardsDuration = new BN(86400 * 365)
-
-        DPXemitted = new BN(DPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceDPX)
-            .dividedBy(1e18)
-        RDPXemitted = new BN(RDPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceRDPX)
-            .dividedBy(1e18)
-
-        const denominator =
-            TVL.toNumber() + DPXemitted.toNumber() + RDPXemitted.toNumber()
-
-        return ((denominator / TVL.toNumber() - 1) * 100).toFixed(2)
+        return Math.max(
+            (
+                ((totalRewardsInUSD / totalEpochDepositsInUSD) *
+                    12 *
+                    100 *
+                    effectivePeriod) /
+                totalPeriod
+            ).toFixed(2),
+            0
+        ).toFixed(2)
     } else {
         const totalRewardsInUSD = priceUnderlying * 1500
 
