@@ -215,7 +215,7 @@ async function getDopexApy(name, asset) {
 
         return ((denominator / TVL.toNumber() - 1) * 100).toFixed(2)
     } else {
-        const totalRewardsInUSD = priceUnderlying * 3000
+        const totalRewardsInUSD = priceUnderlying * 1500
 
         return Math.max(
             (
@@ -448,53 +448,53 @@ const NAME_TO_GETTER = {
         fn: getEthSsovV3Apy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3-3', 25],
     },
-    'ETH-MONTHLY-CALLS-SSOV-V3': {
+    'ETH-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getEthSsovV3Apy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3', 150],
+        args: ['ETH-MONTHLY-CALLS-SSOV-V3-2', 75],
     },
-    'DPX-MONTHLY-CALLS-SSOV-V3': {
+    'DPX-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getDopexApy,
-        args: ['DPX-MONTHLY-CALLS-SSOV-V3', 'DPX'],
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3-2', 'DPX'],
     },
-    'rDPX-MONTHLY-CALLS-SSOV-V3': {
+    'rDPX-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getDopexApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3', 'RDPX'],
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-2', 'RDPX'],
     },
     'gOHM-MONTHLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
-        args: ['gOHM-MONTHLY-CALLS-SSOV-V3'],
+        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-WEEKLY-PUTS-SSOV-V3': {
+    'ETH-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['ETH-WEEKLY-PUTS-SSOV-V3'],
+        args: ['ETH-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'DPX-WEEKLY-PUTS-SSOV-V3': {
+    'DPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['DPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['DPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'rDPX-WEEKLY-PUTS-SSOV-V3': {
+    'rDPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['rDPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['rDPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'BTC-WEEKLY-PUTS-SSOV-V3': {
+    'BTC-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['BTC-WEEKLY-PUTS-SSOV-V3'],
+        args: ['BTC-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'gOHM-WEEKLY-PUTS-SSOV-V3': {
+    'gOHM-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['gOHM-WEEKLY-PUTS-SSOV-V3'],
+        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'GMX-WEEKLY-PUTS-SSOV-V3': {
+    'GMX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['GMX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['GMX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'CRV-WEEKLY-PUTS-SSOV-V3': {
+    'CRV-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['CRV-WEEKLY-PUTS-SSOV-V3'],
+        args: ['CRV-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'LUNA-WEEKLY-PUTS-SSOV-V3': {
+    'LUNA-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
+        args: ['LUNA-WEEKLY-PUTS-SSOV-V3-2'],
     },
     'Metis-MONTHLY-CALLS-SSOV-V3': {
         fn: getMetisApy,
@@ -517,8 +517,10 @@ const getSsovApy = async (ssov) => {
         apy = '3.7'
     }
     try {
+        console.log(name);
         apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
     } catch (err) {
+        console.log(err);
         apy = getZeroApy()
     }
 
