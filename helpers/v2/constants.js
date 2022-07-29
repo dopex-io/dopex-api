@@ -461,7 +461,7 @@ export const SSOVS = [
         address: '0x7e00Ab584c3dcaB784FE8A04C471088C34386415',
     },
     {
-        type: 'put',
+        type: 'call',
         underlyingSymbol: 'ETH',
         symbol: 'ETH-WEEKLY-CALLS-SSOV-V3-4',
         version: 3,
