@@ -33,7 +33,12 @@ async function getRewardsFromStakingStrat(ssovContract) {
     return rewards;
 }
 
-async function getTotalCollateralBalance()
+async function getTotalCollateralBalance(ssovContract, epoch) {
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
+    return totalEpochDeposits;
+}
 
 async function getBnbApy() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.BSC)
@@ -180,9 +185,7 @@ async function getDopexApy(name) {
 
     const rewards = await getRewardsFromStakingStrat(ssovContract);
 
-    const tvl = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
+    const tvl = await getTotalCollateralBalance(ssovContract, epoch)
 
     const rewardRate = rewards / totalPeriod
 
@@ -209,23 +212,21 @@ async function getEthSsovV3Apy(name) {
 
     const epochTimes = await ssovContract.getEpochTimes(epoch)
 
-    const [priceDPX] = await getPrices(['dopex'])
+    const [dpxPrice] = await getPrices(['dopex'])
 
     const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
 
     const effectivePeriod =
         epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
 
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
+    const totalEpochDeposits = await getTotalCollateralBalance(ssovContract, epoch)
 
     const dpxRewards = await getRewardsFromStakingStrat(ssovContract);
 
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
 
-    const totalRewardsInUSD = priceDPX * dpxRewards
+    const totalRewardsInUSD = dpxPrice * dpxRewards
 
     const totalEpochDepositsInUSD =
         totalEpochDeposits.div('1000000000000000000').toNumber() *
@@ -257,18 +258,16 @@ async function getSsovPutApy(name) {
 
     const epochTimes = await ssovContract.getEpochTimes(epoch)
 
-    const [priceDPX] = await getPrices(['dopex'])
+    const [dpxPrice] = await getPrices(['dopex'])
 
     const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
 
     const effectivePeriod =
         epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
 
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
+    const totalEpochDeposits = await getTotalCollateralBalance(ssovContract, epoch)
 
-    const totalRewardsInUSD = priceDPX * 1.25
+    const totalRewardsInUSD = dpxPrice * 1.25
 
     const totalEpochDepositsInUSD = totalEpochDeposits
         .div('1000000000000000000')
@@ -374,9 +373,7 @@ const getMetisApy = async (name) => {
     const effectivePeriod =
         epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
 
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
+    const totalEpochDeposits = await getTotalCollateralBalance(ssovContract, epoch)
 
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
@@ -411,19 +408,19 @@ const NAME_TO_GETTER = {
 
     'ETH-WEEKLY-CALLS-SSOV-V3-2': {
         fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-2', 25],
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-2'],
     },
     'ETH-WEEKLY-CALLS-SSOV-V3': {
         fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3', 25],
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3'],
     },
     'ETH-WEEKLY-CALLS-SSOV-V3-3': {
         fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-3', 25],
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-3'],
     },
     'ETH-MONTHLY-CALLS-SSOV-V3': {
         fn: getEthSsovV3Apy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3', 150],
+        args: ['ETH-MONTHLY-CALLS-SSOV-V3'],
     },
     'DPX-MONTHLY-CALLS-SSOV-V3': {
         fn: getDopexApy,
