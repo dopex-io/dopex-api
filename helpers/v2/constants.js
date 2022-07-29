@@ -460,6 +460,17 @@ export const SSOVS = [
         retired: false,
         address: '0x7e00Ab584c3dcaB784FE8A04C471088C34386415',
     },
+    {
+        type: 'put',
+        underlyingSymbol: 'ETH',
+        symbol: 'ETH-WEEKLY-CALLS-SSOV-V3-4',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0x9f52C2eeac80bb9084b4d67C26A56aAC7B3f54B0',
+    },
 ]
 
 export const IR_VAULTS = [
