@@ -319,10 +319,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@dopex-io/sdk@1.0.0-beta.8":
-  version "1.0.0-beta.8"
-  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-beta.8.tgz#5cfa311c4d8894af97531f0265623b9f68bdac02"
-  integrity sha512-lrcfNq5y4umn+OnhAAFRHNg0kuxkriE4IRE36mZYb6MgUUy/MAuTPcmTP554JWxixZ4Q7feg8747X38nzuffbw==
+"@dopex-io/sdk@1.0.0-beta.10":
+  version "1.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-beta.10.tgz#cf23c57e037f3ce33b78083a8abceb4bcd923c35"
+  integrity sha512-LjqbIXe28ire0upLNlo2XcM5fhXtpFA4yOxmTW8Fj25HSRFwesf3nFPf/x5ZTtEFFwG975SuAlzKmOs7YayV/w==
   dependencies:
     ethers "^5.6.4"
 
