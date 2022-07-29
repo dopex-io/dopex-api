@@ -138,7 +138,7 @@ async function getGohmApy() {
     return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
 }
 
-async function getDopexApy(name, asset) {
+async function getDopexApy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
@@ -150,84 +150,38 @@ async function getDopexApy(name, asset) {
 
     if (epoch.isZero()) return '0'
 
-    const epochTimes = await ssovContract.getEpochTimes(epoch)
+    const stakingStratAddr = await ssovContract.addresses().stakingStrategy.address
+    console.log(stakingStratAddr)
 
-    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
+    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
 
-    const effectivePeriod =
-        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
+    const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+    const stakingContract = new ethers.Contract(
+        stakingStratAddr,
+        [
+            'function rewardsPerEpoch() view returns (uint256)',
+        ],
+        provider
+    )
+
+    const [rewards] = await Promise.all([
+        stakingContract.rewardsPerEpoch(epoch)
+    ])
+
+    const tvl = (await ssovContract.getEpochData(epoch))[
         'totalCollateralBalance'
     ]
 
-    const priceUnderlying =
-        (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
+    const rewardRate = rewards / totalPeriod
 
-    const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() *
-        priceUnderlying
+    const rewardsEmitted = rewardRate * (Date.now() - startTime)
 
-    if (asset === 'DPX') {
-        const oldSsovContract = ERC20SSOV__factory.connect(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV['DPX'].Vault,
-            provider
-        )
+    const denominator = tvl.toNumber() + rewardsEmitted.toNumber()
 
-        const stakingRewardsAddress = await oldSsovContract.getAddress(
-            '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
-        )
-        const stakingRewardsContract = StakingRewards__factory.connect(
-            stakingRewardsAddress,
-            provider
-        )
+    let apr = (denominator / tvl.toNumber() - 1) * 100
 
-        let DPXemitted
-        let RDPXemitted
-
-        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all(
-            [
-                stakingRewardsContract.rewardRateDPX(),
-                stakingRewardsContract.rewardRateRDPX(),
-                stakingRewardsContract.totalSupply(),
-                getPrices(['dopex', 'dopex-rebate-token']),
-            ]
-        )
-        const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX
-
-        const TVL = new BN(totalSupply.toString())
-            .multipliedBy(assetPrice)
-            .dividedBy(1e18)
-
-        const rewardsDuration = new BN(86400 * 365)
-
-        DPXemitted = new BN(DPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceDPX)
-            .dividedBy(1e18)
-        RDPXemitted = new BN(RDPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceRDPX)
-            .dividedBy(1e18)
-
-        const denominator =
-            TVL.toNumber() + DPXemitted.toNumber() + RDPXemitted.toNumber()
-
-        return ((denominator / TVL.toNumber() - 1) * 100).toFixed(2)
-    } else {
-        const totalRewardsInUSD = priceUnderlying * 3000
-
-        return Math.max(
-            (
-                ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                    12 *
-                    100 *
-                    effectivePeriod) /
-                totalPeriod
-            ).toFixed(2),
-            0
-        ).toFixed(2)
-    }
+    return Number((((1 + apr / 365 / 100) ** 365 - 1) * 100).toFixed(2))
 }
 
 async function getEthSsovV3Apy(name, dpxRewards) {
@@ -314,7 +268,7 @@ async function getSsovPutApy(name) {
                 52 *
                 100 *
                 effectivePeriod) /
-                totalPeriod
+            totalPeriod
         ).toFixed(2),
         0
     ).toFixed(2)
@@ -454,11 +408,11 @@ const NAME_TO_GETTER = {
     },
     'DPX-MONTHLY-CALLS-SSOV-V3': {
         fn: getDopexApy,
-        args: ['DPX-MONTHLY-CALLS-SSOV-V3', 'DPX'],
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3'],
     },
     'rDPX-MONTHLY-CALLS-SSOV-V3': {
         fn: getDopexApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3', 'RDPX'],
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3'],
     },
     'gOHM-MONTHLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
