@@ -32,10 +32,12 @@ export default async (ssov) => {
             epoch = epoch.add(1)
         }
 
-        const [totalEpochDeposits, underlyingPrice] = await Promise.all([
-            ssovContract.totalEpochDeposits(epoch),
-            ssovContract.getUsdPrice(),
-        ])
+        const [totalEpochDeposits, underlyingPrice, epochTimes] =
+            await Promise.all([
+                ssovContract.totalEpochDeposits(epoch),
+                ssovContract.getUsdPrice(),
+                ssovContract.getEpochTimes(epoch),
+            ])
 
         return {
             currentEpoch: epoch.toString(),
@@ -44,6 +46,10 @@ export default async (ssov) => {
                 collateralDecimals
             ),
             underlyingPrice: ethersUtils.formatUnits(underlyingPrice, 8),
+            epochTimes: {
+                startTime: epochTimes.start,
+                expiry: epochTimes.end,
+            },
         }
     } else {
         const ssovAddress = Addresses[chainId]['SSOV-V3'].VAULTS[symbol]
@@ -72,6 +78,10 @@ export default async (ssov) => {
                 collateralDecimals
             ),
             underlyingPrice: ethersUtils.formatUnits(underlyingPrice, 8),
+            epochTimes: {
+                startTime: epochData['startTime'],
+                expiry: epochData['expiry'],
+            },
         }
     }
 }
