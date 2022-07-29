@@ -36,7 +36,7 @@ export default async (ssov) => {
             await Promise.all([
                 ssovContract.totalEpochDeposits(epoch),
                 ssovContract.getUsdPrice(),
-                ssovContract.getEpochTimes(),
+                ssovContract.getEpochTimes(epoch),
             ])
 
         return {
