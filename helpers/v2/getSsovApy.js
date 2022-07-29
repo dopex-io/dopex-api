@@ -11,6 +11,30 @@ import getPrices from '../getPrices'
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
 
+const SSOV_VERSION = 'SSOV-V3-2'
+
+async function getRewardsFromStakingStrat(ssovContract) {
+    const stakingStratAddr = (await ssovContract.addresses())['stakingStrategy'].address
+
+    console.log(stakingStratAddr)
+
+    const stakingContract = new ethers.Contract(
+        stakingStratAddr,
+        [
+            'function rewardsPerEpoch() view returns (uint256)',
+        ],
+        provider
+    )
+
+    const [rewards] = await Promise.all([
+        stakingContract.rewardsPerEpoch(epoch)
+    ])
+
+    return rewards;
+}
+
+async function getTotalCollateralBalance()
+
 async function getBnbApy() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.BSC)
 
@@ -142,7 +166,7 @@ async function getDopexApy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[42161]['SSOV-V3'].VAULTS[name],
+        Addresses[42161][SSOV_VERSION].VAULTS[name],
         provider
     )
 
@@ -150,24 +174,11 @@ async function getDopexApy(name) {
 
     if (epoch.isZero()) return '0'
 
-    const stakingStratAddr = await ssovContract.addresses().stakingStrategy.address
-    console.log(stakingStratAddr)
-
     const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
 
     const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
-    const stakingContract = new ethers.Contract(
-        stakingStratAddr,
-        [
-            'function rewardsPerEpoch() view returns (uint256)',
-        ],
-        provider
-    )
-
-    const [rewards] = await Promise.all([
-        stakingContract.rewardsPerEpoch(epoch)
-    ])
+    const rewards = await getRewardsFromStakingStrat(ssovContract);
 
     const tvl = (await ssovContract.getEpochData(epoch))[
         'totalCollateralBalance'
@@ -184,11 +195,11 @@ async function getDopexApy(name) {
     return Number((((1 + apr / 365 / 100) ** 365 - 1) * 100).toFixed(2))
 }
 
-async function getEthSsovV3Apy(name, dpxRewards) {
+async function getEthSsovV3Apy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[42161]['SSOV-V3'].VAULTS[name],
+        Addresses[42161][SSOV_VERSION].VAULTS[name],
         provider
     )
 
@@ -208,6 +219,8 @@ async function getEthSsovV3Apy(name, dpxRewards) {
     const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
         'totalCollateralBalance'
     ]
+
+    const dpxRewards = await getRewardsFromStakingStrat(ssovContract);
 
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
@@ -234,7 +247,7 @@ async function getSsovPutApy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[42161]['SSOV-V3'].VAULTS[name],
+        Addresses[42161][SSOV_VERSION].VAULTS[name],
         provider
     )
 
@@ -340,11 +353,11 @@ const getZeroApy = () => {
     return '0'
 }
 
-const getMetisApy = async () => {
+const getMetisApy = async (name) => {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[1088]['SSOV-V3'].VAULTS['Metis-WEEKLY-PUTS-SSOV-V3'],
+        Addresses[1088][SSOV_VERSION].VAULTS[name],
         provider
     )
 
@@ -387,9 +400,15 @@ const getMetisApy = async () => {
 }
 
 const NAME_TO_GETTER = {
-    DPX: { fn: getZeroApy, args: [] },
-    RDPX: { fn: getZeroApy, args: [] },
-    ETH: { fn: getZeroApy, args: [] },
+    // TODO(komorebi): remove all since all contracts are V3-2 now
+    // DPX: { fn: getZeroApy, args: [] },
+    // RDPX: { fn: getZeroApy, args: [] },
+    // ETH: { fn: getZeroApy, args: [] },
+    // GOHM: { fn: getGohmApy, args: [] },
+    // BNB: { fn: getBnbApy, args: [] },
+    // GMX: { fn: getGmxApy, args: [] },
+    // AVAX: { fn: getAvaxAPY, args: [] },
+
     'ETH-WEEKLY-CALLS-SSOV-V3-2': {
         fn: getEthSsovV3Apy,
         args: ['ETH-WEEKLY-CALLS-SSOV-V3-2', 25],
@@ -446,18 +465,10 @@ const NAME_TO_GETTER = {
         fn: getSsovPutApy,
         args: ['CRV-WEEKLY-PUTS-SSOV-V3'],
     },
-    'LUNA-WEEKLY-PUTS-SSOV-V3': {
-        fn: getSsovPutApy,
-        args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
-    },
     'Metis-MONTHLY-CALLS-SSOV-V3': {
         fn: getMetisApy,
-        args: [],
+        args: ['Metis-MONTHLY-CALLS-SSOV-V3'],
     },
-    GOHM: { fn: getGohmApy, args: [] },
-    BNB: { fn: getBnbApy, args: [] },
-    GMX: { fn: getGmxApy, args: [] },
-    AVAX: { fn: getAvaxAPY, args: [] },
 }
 
 const getSsovApy = async (ssov) => {
