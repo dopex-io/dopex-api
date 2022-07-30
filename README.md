@@ -8,6 +8,12 @@ Read more here - https://vercel.com/docs/concepts/functions/serverless-functions
 
 Setup a `.env` file similar to `.env.sample`.
 
+If you're running for the first time,
+```
+npm i ethers
+yarn global add vercel
+```
+
 To start the server, run:
 
 ```
