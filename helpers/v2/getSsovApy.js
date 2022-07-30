@@ -2,8 +2,6 @@ import { ethers } from 'ethers'
 import BN from 'bignumber.js'
 import {
     Addresses,
-    ERC20SSOV__factory,
-    StakingRewards__factory,
     SsovV3__factory,
 } from '@dopex-io/sdk'
 
@@ -11,33 +9,46 @@ import getPrices from '../getPrices'
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
 
-const SSOV_VERSION = 'SSOV-V3-2'
+const SSOV_VERSION = 'SSOV-V3'
+const ETHER_TO_WEI = 10 ** 18
+const DAYS_PER_YEAR = 365
+const SECONDS_PER_DAY = 60 * 60 * 24
 
-async function getRewardsFromStakingStrat(ssovContract) {
-    const stakingStratAddr = (await ssovContract.addresses())['stakingStrategy'].address
+// coingecko IDs
+const COINGECKO_DPX_ID = 'dopex'
+const COINGECKO_CRV_ID = 'curve-dao-token'
 
-    console.log(stakingStratAddr)
+// https://arbitrum.curve.fi/
+const TWO_CRV_APY = 0.0061
+const CRV_APR = 0.0222
+
+async function fetchEpochRewards(ssovContract, epoch, provider) {
+    const stakingStratAddr = (await ssovContract.addresses())['stakingStrategy']
 
     const stakingContract = new ethers.Contract(
         stakingStratAddr,
         [
-            'function rewardsPerEpoch() view returns (uint256)',
+            'function rewardsPerEpoch(uint256) view returns (uint256)',
         ],
         provider
     )
 
-    const [rewards] = await Promise.all([
-        stakingContract.rewardsPerEpoch(epoch)
-    ])
+    const rewards = await stakingContract.rewardsPerEpoch(epoch) / ETHER_TO_WEI
 
     return rewards;
 }
 
-async function getTotalCollateralBalance(ssovContract, epoch) {
+async function fetchTotalCollateralBalance(ssovContract, epoch) {
     const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
         'totalCollateralBalance'
     ]
-    return totalEpochDeposits;
+    return totalEpochDeposits / ETHER_TO_WEI
+}
+
+function calculateApy(rewardsPerYear, totalEpochDeposits) {
+    const denominator = totalEpochDeposits + rewardsPerYear
+    const apr = (denominator / totalEpochDeposits - 1) * 100
+    return (((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) * 100).toFixed(2)
 }
 
 async function getBnbApy() {
@@ -178,27 +189,18 @@ async function getDopexApy(name) {
     const epoch = await ssovContract.currentEpoch()
 
     if (epoch.isZero()) return '0'
-
     const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
+    const totalPeriod = (expiry.toNumber() - startTime.toNumber())
 
-    const totalPeriod = expiry.toNumber() - startTime.toNumber()
+    const totalEpochDeposits = await fetchTotalCollateralBalance(ssovContract, epoch)
 
-    const rewards = await getRewardsFromStakingStrat(ssovContract);
+    const rewards = await fetchEpochRewards(ssovContract, epoch, provider);
+    const rewardsPerYear = rewards / totalPeriod * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    const tvl = await getTotalCollateralBalance(ssovContract, epoch)
-
-    const rewardRate = rewards / totalPeriod
-
-    const rewardsEmitted = rewardRate * (Date.now() - startTime)
-
-    const denominator = tvl.toNumber() + rewardsEmitted.toNumber()
-
-    let apr = (denominator / tvl.toNumber() - 1) * 100
-
-    return Number((((1 + apr / 365 / 100) ** 365 - 1) * 100).toFixed(2))
+    return calculateApy(rewardsPerYear, totalEpochDeposits)
 }
 
-async function getEthSsovV3Apy(name) {
+async function getDpxRewardsApy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
@@ -209,39 +211,22 @@ async function getEthSsovV3Apy(name) {
     const epoch = await ssovContract.currentEpoch()
 
     if (epoch.isZero()) return '0'
-
-    const epochTimes = await ssovContract.getEpochTimes(epoch)
-
-    const [dpxPrice] = await getPrices(['dopex'])
-
-    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
-
-    const effectivePeriod =
-        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
-
-    const totalEpochDeposits = await getTotalCollateralBalance(ssovContract, epoch)
-
-    const dpxRewards = await getRewardsFromStakingStrat(ssovContract);
+    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
+    const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
+    const totalEpochDeposits = await fetchTotalCollateralBalance(ssovContract, epoch)
+    const totalEpochDepositsInUsd = totalEpochDeposits * priceUnderlying
 
-    const totalRewardsInUSD = dpxPrice * dpxRewards
+    const dpxRewards = await fetchEpochRewards(ssovContract, epoch, provider);
+    const dpxPrice = await getPrices([COINGECKO_DPX_ID])
+    const dpxRewardsInUsd = dpxPrice * dpxRewards
+    const rewardsPerYear = dpxRewardsInUsd /
+        totalPeriod *
+        (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() *
-        priceUnderlying
-
-    return Math.max(
-        (
-            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                52 *
-                100 *
-                effectivePeriod) /
-            totalPeriod
-        ).toFixed(2),
-        0
-    ).toFixed(2)
+    return calculateApy(rewardsPerYear, totalEpochDepositsInUsd)
 }
 
 async function getSsovPutApy(name) {
@@ -255,35 +240,35 @@ async function getSsovPutApy(name) {
     const epoch = await ssovContract.currentEpoch()
 
     if (epoch.isZero()) return '0'
+    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
+    const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
-    const epochTimes = await ssovContract.getEpochTimes(epoch)
+    const twoCrvPrice =
+        (await ssovContract.getCollateralPrice()).toNumber() / 10 ** 8
+    const totalEpochDeposits = await fetchTotalCollateralBalance(ssovContract, epoch)
+    const totalEpochDepositsInUsd = totalEpochDeposits * twoCrvPrice
 
-    const [dpxPrice] = await getPrices(['dopex'])
+    // calculate DPX incentives
+    const dpxRewards = await fetchEpochRewards(ssovContract, epoch, provider)
+    const dpxPrice = await getPrices([COINGECKO_DPX_ID])
+    const dpxRewardsInUsd = dpxRewards * dpxPrice
+    const dpxRewardsInUsdPerYear = dpxRewardsInUsd /
+        totalPeriod *
+        (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
+    // calculate 2crv return
+    const twoCrvApr = ((TWO_CRV_APY + 1) ** (1 / DAYS_PER_YEAR) - 1) * DAYS_PER_YEAR
+    const twoCrvRewardsInUsdPerYear = twoCrvPrice * twoCrvApr * totalEpochDeposits
 
-    const effectivePeriod =
-        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
+    // calculate crv return
+    const crvPrice = await getPrices([COINGECKO_CRV_ID])
+    const crvRewardsInUsdPerYear = crvPrice * CRV_APR * totalEpochDeposits
 
-    const totalEpochDeposits = await getTotalCollateralBalance(ssovContract, epoch)
+    const totalRewardsInUsd = dpxRewardsInUsdPerYear +
+        twoCrvRewardsInUsdPerYear +
+        crvRewardsInUsdPerYear
 
-    const totalRewardsInUSD = dpxPrice * 1.25
-
-    const totalEpochDepositsInUSD = totalEpochDeposits
-        .div('1000000000000000000')
-        .toNumber()
-
-    return Math.max(
-        (
-            4 +
-            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                52 *
-                100 *
-                effectivePeriod) /
-            totalPeriod
-        ).toFixed(2),
-        0
-    ).toFixed(2)
+    return calculateApy(totalRewardsInUsd, totalEpochDepositsInUsd)
 }
 
 async function getAvaxAPY() {
@@ -352,11 +337,11 @@ const getZeroApy = () => {
     return '0'
 }
 
-const getMetisApy = async (name) => {
+const getMetisApy = async () => {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[1088][SSOV_VERSION].VAULTS[name],
+        Addresses[1088]['SSOV-V3'].VAULTS['Metis-WEEKLY-PUTS-SSOV-V3'],
         provider
     )
 
@@ -373,7 +358,9 @@ const getMetisApy = async (name) => {
     const effectivePeriod =
         epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
 
-    const totalEpochDeposits = await getTotalCollateralBalance(ssovContract, epoch)
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
 
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
@@ -397,93 +384,69 @@ const getMetisApy = async (name) => {
 }
 
 const NAME_TO_GETTER = {
-    // TODO(komorebi): remove all since all contracts are V3-2 now
-    // DPX: { fn: getZeroApy, args: [] },
-    // RDPX: { fn: getZeroApy, args: [] },
-    // ETH: { fn: getZeroApy, args: [] },
-    // GOHM: { fn: getGohmApy, args: [] },
-    // BNB: { fn: getBnbApy, args: [] },
-    // GMX: { fn: getGmxApy, args: [] },
-    // AVAX: { fn: getAvaxAPY, args: [] },
-
-    'ETH-WEEKLY-CALLS-SSOV-V3-2': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-2'],
+    // Calls
+    'ETH-WEEKLY-CALLS-SSOV-V3-4': {
+        fn: getDpxRewardsApy,
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-4'],
     },
-    'ETH-WEEKLY-CALLS-SSOV-V3': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3'],
+    'ETH-MONTHLY-CALLS-SSOV-V3-2': {
+        fn: getDpxRewardsApy,
+        args: ['ETH-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-WEEKLY-CALLS-SSOV-V3-3': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-3'],
-    },
-    'ETH-MONTHLY-CALLS-SSOV-V3': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3'],
-    },
-    'DPX-MONTHLY-CALLS-SSOV-V3': {
+    'DPX-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getDopexApy,
-        args: ['DPX-MONTHLY-CALLS-SSOV-V3'],
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'rDPX-MONTHLY-CALLS-SSOV-V3': {
+    'rDPX-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getDopexApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3'],
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'gOHM-MONTHLY-CALLS-SSOV-V3': {
+    'gOHM-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getGohmApy,
-        args: ['gOHM-MONTHLY-CALLS-SSOV-V3'],
+        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-WEEKLY-PUTS-SSOV-V3': {
+
+    // Puts
+    'ETH-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['ETH-WEEKLY-PUTS-SSOV-V3'],
+        args: ['ETH-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'DPX-WEEKLY-PUTS-SSOV-V3': {
+    'DPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['DPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['DPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'rDPX-WEEKLY-PUTS-SSOV-V3': {
+    'rDPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['rDPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['rDPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'BTC-WEEKLY-PUTS-SSOV-V3': {
+    'BTC-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['BTC-WEEKLY-PUTS-SSOV-V3'],
+        args: ['BTC-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'gOHM-WEEKLY-PUTS-SSOV-V3': {
+    'gOHM-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['gOHM-WEEKLY-PUTS-SSOV-V3'],
+        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'GMX-WEEKLY-PUTS-SSOV-V3': {
+    'GMX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['GMX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['GMX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'CRV-WEEKLY-PUTS-SSOV-V3': {
+    'CRV-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['CRV-WEEKLY-PUTS-SSOV-V3'],
-    },
-    'Metis-MONTHLY-CALLS-SSOV-V3': {
-        fn: getMetisApy,
-        args: ['Metis-MONTHLY-CALLS-SSOV-V3'],
+        args: ['CRV-WEEKLY-PUTS-SSOV-V3-2'],
     },
 }
 
 const getSsovApy = async (ssov) => {
-    const { symbol, underlyingSymbol, version, type } = ssov
+    const { symbol } = ssov
+
     let apy
-    let name = underlyingSymbol
-    if (version === 3) {
-        name = symbol
-    }
-    if (version === 2 && type === 'PUT') {
-        apy = '3.7'
-    }
+
     try {
-        apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
+        apy = await NAME_TO_GETTER[symbol].fn(...NAME_TO_GETTER[symbol].args)
     } catch (err) {
         apy = getZeroApy()
     }
-
     return apy
 }
 
