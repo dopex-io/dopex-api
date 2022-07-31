@@ -342,6 +342,17 @@ export const SSOVS = [
     {
         type: 'call',
         underlyingSymbol: 'ETH',
+        symbol: 'ETH-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'special',
+        retired: false,
+        address: '0x9E722E233646E1eDEa4A913489A75262A181C911',
+    },
+    {
+        type: 'call',
+        underlyingSymbol: 'ETH',
         symbol: 'ETH-MONTHLY-CALLS-SSOV-V3-2',
         version: 3,
         chainId: 42161,
