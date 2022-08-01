@@ -359,7 +359,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'monthly',
         retired: false,
-        address: '0x7Af6399E4dd8C1D5B7C53dc2c6Ad04b39049c83E',
+        address: '0x8161033b2776a9556b326D5eB468B2B76B7B4a23',
     },
     {
         type: 'call',
@@ -370,7 +370,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'monthly',
         retired: false,
-        address: '0xDb62c01C23E247cea558E90814dBeB215b92C81F',
+        address: '0x1ae38835Bf3afbEC178E8a59Ca82aA383dC3DF57',
     },
     {
         type: 'call',
@@ -381,7 +381,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'monthly',
         retired: false,
-        address: '0x8D66b80E03fCeff5d825B77433B62400C00dB22D',
+        address: '0xAfD90Af84ae892C2DFeEA6D379087A7B4D21eC34',
     },
     {
         type: 'call',
@@ -392,7 +392,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'monthly',
         retired: false,
-        address: '0xedA8F8D555a89d1ce5c631027ab89fD761D614F7',
+        address: '0x52c70138FfF1a5a6D821ab4Bb39D3dF0346f98bd',
     },
     {
         type: 'put',
@@ -403,7 +403,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0xE1ACc3254bE1CcED13c8760A34E6D672021D0e02',
+        address: '0xC7552Cd237823DeFa7F3a2E2cB6A3D0B9759F32C',
     },
     {
         type: 'put',
@@ -414,7 +414,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0x459819C34266Dd9154172D373AC559Ce27f5F273',
+        address: '0xE9132A503ba31Cf6320Ae97f42A9f3cf06Fa4e08',
     },
     {
         type: 'put',
@@ -425,7 +425,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0x4D7d6100122c92DDad3b57E472b00979e45a2326',
+        address: '0xdbAfE8d85620c2cfCc0b2a55d5d68D48B1d00631',
     },
     {
         type: 'put',
@@ -436,7 +436,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0x411982342c0D41cEBB1706eD80ef32d48F3fEf3B',
+        address: '0x54565213927794D7cA31436D01b799f487e204BA',
     },
     {
         type: 'put',
@@ -447,7 +447,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0x7904eA09B0ce9A98Af8F4A2eD2f060364fB65042',
+        address: '0x541fDD2284852Dacc5BA7E31241Ff5bc646b8985',
     },
     {
         type: 'put',
@@ -458,7 +458,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0xB5Acc94D901eAB4206b49652bBf80E14ed8a79a0',
+        address: '0x7e513B848cFAF3Bc9FfB69a35981E5E1279acE59',
     },
     {
         type: 'put',
@@ -469,7 +469,7 @@ export const SSOVS = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0x7e00Ab584c3dcaB784FE8A04C471088C34386415',
+        address: '0x03475494dc89d378C4268e90A62876eFb0278a1a',
     },
     {
         type: 'call',
