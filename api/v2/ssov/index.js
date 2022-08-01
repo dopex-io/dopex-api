@@ -5,8 +5,10 @@ import getSsovApy from '../../../helpers/v2/getSsovApy'
 import getSsovTvl from '../../../helpers/v2/getSsovTvl'
 import getSsovData from '../../../helpers/v2/getSsovData'
 
-export default async (_req, res) => {
+export default async (req, res) => {
     try {
+        const _groupBy = req.query.groupBy ?? 'chainId'
+
         const [tvls, apys, data] = await Promise.all([
             Promise.all(
                 SSOVS.map((ssov) => {
@@ -37,7 +39,8 @@ export default async (_req, res) => {
             }
         })
 
-        const fData = groupBy(ssovArray, 'chainId')
+        const fData =
+            _groupBy === 'none' ? ssovArray : groupBy(ssovArray, _groupBy)
 
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
 

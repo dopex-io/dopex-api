@@ -22,6 +22,11 @@ Returns data about the Dopex SSOVs
 
     `GET`
 
+-   **URL Params**
+
+    -   **Optional:** <br />
+        `groupBy=[chainId, type etc defaults to chainId, use none for no grouping]`
+
 -   **Sample call:**
 
     ```bash
