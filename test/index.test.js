@@ -3,7 +3,7 @@ const axios = require('axios')
 const BASE_URL = 'http://localhost:5001/api'
 
 const ENDPOINTS = [
-
+    '/v2/ssov/apy?symbol=ETH-WEEKLY-CALLS-SSOV-V3-4',
     '/v2/ssov',
     '/v1/ssov',
     '/v1/dpx/price',
