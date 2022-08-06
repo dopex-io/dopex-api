@@ -47,8 +47,8 @@ export default async (ssov) => {
             ),
             underlyingPrice: ethersUtils.formatUnits(underlyingPrice, 8),
             epochTimes: {
-                startTime: epochTimes.start,
-                expiry: epochTimes.end,
+                startTime: epochTimes.start.toString(),
+                expiry: epochTimes.end.toString(),
             },
         }
     } else {
@@ -79,8 +79,8 @@ export default async (ssov) => {
             ),
             underlyingPrice: ethersUtils.formatUnits(underlyingPrice, 8),
             epochTimes: {
-                startTime: epochData['startTime'],
-                expiry: epochData['expiry'],
+                startTime: epochData['startTime'].toString(),
+                expiry: epochData['expiry'].toString(),
             },
         }
     }
