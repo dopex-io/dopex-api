@@ -1,42 +1,45 @@
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
-import {
-    Addresses,
-    SsovV3__factory,
-} from '@dopex-io/sdk'
+import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
 
 import getPrices from '../getPrices'
 import getProvider from '../getProvider'
-import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
+import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
 
 const SSOV_VERSION = 'SSOV-V3'
 const ETHER_TO_WEI = 10 ** 18
 const DAYS_PER_YEAR = 365
 const SECONDS_PER_DAY = 60 * 60 * 24
 
-// coingecko IDs
-const COINGECKO_DPX_ID = 'dopex'
-const COINGECKO_RDPX_ID = 'dopex-rebate-token'
-const COINGECKO_CRV_ID = 'curve-dao-token'
+const TOKEN_ADDRESS_TO_CG_ID = {
+    '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'dopex',
+    '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
+}
 
 // https://arbitrum.curve.fi/
 const TWO_CRV_APY = 0.0061
 const CRV_APR = 0.0222
 
 async function fetchEpochRewards(ssovContract, epoch, provider) {
-    const stakingStratAddr = (await ssovContract.addresses())['stakingStrategy']
+    const stakingStrategyAddress = (await ssovContract.addresses())[
+        'stakingStrategy'
+    ]
 
     const stakingContract = new ethers.Contract(
-        stakingStratAddr,
+        stakingStrategyAddress,
         [
             'function rewardsPerEpoch(uint256) view returns (uint256)',
+            'function getRewardTokens() view returns (address[])',
         ],
         provider
     )
 
-    const rewards = await stakingContract.rewardsPerEpoch(epoch) / ETHER_TO_WEI
+    const rewards =
+        (await stakingContract.rewardsPerEpoch(epoch)) / ETHER_TO_WEI
 
-    return rewards;
+    const rewardTokens = await stakingContract.getRewardTokens()
+
+    return { rewards, rewardToken: rewardTokens[0] }
 }
 
 async function fetchTotalCollateralBalance(ssovContract, epoch) {
@@ -46,20 +49,16 @@ async function fetchTotalCollateralBalance(ssovContract, epoch) {
     return totalEpochDeposits / ETHER_TO_WEI
 }
 
-function getRewardTokenId(name) {
-    if (name.split("-")[0] == "rDPX") {
-        return COINGECKO_RDPX_ID
-    }
-    return COINGECKO_DPX_ID
-}
-
 function calculateApy(rewardsPerYear, totalEpochDeposits) {
     const denominator = totalEpochDeposits + rewardsPerYear
     const apr = (denominator / totalEpochDeposits - 1) * 100
-    return (((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) * 100).toFixed(2)
+    return (
+        ((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) *
+        100
+    ).toFixed(2)
 }
 
-async function getBnbApy() {
+async function _getBnbApy() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.BSC)
 
     const vbnbContract = new ethers.Contract(
@@ -81,7 +80,7 @@ async function getBnbApy() {
     ).toFixed(2)
 }
 
-async function getGmxApy() {
+async function _getGmxApy() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const stakingContract = new ethers.Contract(
@@ -187,7 +186,6 @@ async function getGohmApy() {
 }
 
 async function getRewardsApy(name) {
-
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
@@ -205,16 +203,24 @@ async function getRewardsApy(name) {
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
 
-    const totalEpochDeposits = await fetchTotalCollateralBalance(ssovContract, epoch)
+    const totalEpochDeposits = await fetchTotalCollateralBalance(
+        ssovContract,
+        epoch
+    )
     const totalEpochDepositsInUsd = totalEpochDeposits * priceUnderlying
 
     // calculate amount of reward token incentives
-    const rewardsAmount = await fetchEpochRewards(ssovContract, epoch, provider);
-    const rewardTokenPrice = await getPrices([getRewardTokenId(name)])
-    const rewardsInUsd = rewardTokenPrice * rewardsAmount
-    const rewardsPerYear = rewardsInUsd /
-        totalPeriod *
-        (SECONDS_PER_DAY * DAYS_PER_YEAR)
+    const { rewards, rewardToken } = await fetchEpochRewards(
+        ssovContract,
+        epoch,
+        provider
+    )
+    const rewardTokenPrice = await getPrices([
+        TOKEN_ADDRESS_TO_CG_ID[rewardToken.toLowerCase()],
+    ])
+    const rewardsInUsd = rewardTokenPrice * rewards
+    const rewardsPerYear =
+        (rewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
     return calculateApy(rewardsPerYear, totalEpochDepositsInUsd)
 }
@@ -235,33 +241,46 @@ async function getSsovPutApy(name) {
 
     const twoCrvPrice =
         (await ssovContract.getCollateralPrice()).toNumber() / 10 ** 8
-    const totalEpochDeposits = await fetchTotalCollateralBalance(ssovContract, epoch)
+    const totalEpochDeposits = await fetchTotalCollateralBalance(
+        ssovContract,
+        epoch
+    )
     const totalEpochDepositsInUsd = totalEpochDeposits * twoCrvPrice
 
+    // get CRV and DPX prices
+    const [dpxPrice, crvPrice] = await getPrices([
+        TOKEN_TO_CG_ID.DPX,
+        TOKEN_TO_CG_ID.CRV,
+    ])
+
     // calculate DPX incentives
-    const dpxRewards = await fetchEpochRewards(ssovContract, epoch, provider)
-    const dpxPrice = await getPrices([COINGECKO_DPX_ID])
+    const { rewards: dpxRewards } = await fetchEpochRewards(
+        ssovContract,
+        epoch,
+        provider
+    )
     const dpxRewardsInUsd = dpxRewards * dpxPrice
-    const dpxRewardsInUsdPerYear = dpxRewardsInUsd /
-        totalPeriod *
-        (SECONDS_PER_DAY * DAYS_PER_YEAR)
+    const dpxRewardsInUsdPerYear =
+        (dpxRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
     // calculate 2crv return
-    const twoCrvApr = ((TWO_CRV_APY + 1) ** (1 / DAYS_PER_YEAR) - 1) * DAYS_PER_YEAR
-    const twoCrvRewardsInUsdPerYear = twoCrvPrice * twoCrvApr * totalEpochDeposits
+    const twoCrvApr =
+        ((TWO_CRV_APY + 1) ** (1 / DAYS_PER_YEAR) - 1) * DAYS_PER_YEAR
+    const twoCrvRewardsInUsdPerYear =
+        twoCrvPrice * twoCrvApr * totalEpochDeposits
 
     // calculate crv return
-    const crvPrice = await getPrices([COINGECKO_CRV_ID])
     const crvRewardsInUsdPerYear = crvPrice * CRV_APR * totalEpochDeposits
 
-    const totalRewardsInUsd = dpxRewardsInUsdPerYear +
+    const totalRewardsInUsd =
+        dpxRewardsInUsdPerYear +
         twoCrvRewardsInUsdPerYear +
         crvRewardsInUsdPerYear
 
     return calculateApy(totalRewardsInUsd, totalEpochDepositsInUsd)
 }
 
-async function getAvaxAPY() {
+async function _getAvaxAPY() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.AVAX)
 
     const rewardDistributorContract = new ethers.Contract(
@@ -327,7 +346,7 @@ const getZeroApy = () => {
     return '0'
 }
 
-const getMetisApy = async () => {
+const _getMetisApy = async () => {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
@@ -433,8 +452,13 @@ const getSsovApy = async (ssov) => {
     let apy
 
     try {
-        apy = await NAME_TO_GETTER[symbol].fn(...NAME_TO_GETTER[symbol].args)
+        if (NAME_TO_GETTER[symbol])
+            apy = await NAME_TO_GETTER[symbol].fn(
+                ...NAME_TO_GETTER[symbol].args
+            )
+        else apy = getZeroApy()
     } catch (err) {
+        console.log(err)
         apy = getZeroApy()
     }
     return apy
