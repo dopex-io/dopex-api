@@ -9,14 +9,17 @@ export default async (vault) => {
 
     const rateVaultContract = RateVault__factory.connect(address, provider)
 
-    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl
+    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl, epochTimes
 
     try {
         currentEpoch = await rateVaultContract.currentEpoch()
         totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
+        epochTimes = await rateVaultContract.getEpochTimes(currentEpoch)
         if (totalEpochData[9]) {
             currentEpoch = currentEpoch.toNumber() + 1
-            totalEpochData = await rateVaultContract.totalEpochData(currentEpoch)
+            totalEpochData = await rateVaultContract.totalEpochData(
+                currentEpoch
+            )
         }
         totalEpochDeposits = totalEpochData['totalCallsDeposits'].add(
             totalEpochData['totalPutsDeposits']
@@ -25,14 +28,14 @@ export default async (vault) => {
             .add(totalEpochData['totalPutsDeposits'])
             .add(totalEpochData['epochCallsPremium'])
             .add(totalEpochData['epochPutsPremium'])
-    } catch(err) {
+    } catch (err) {
         tvl = BigNumber.from('0')
         totalEpochDeposits = BigNumber.from('0')
     }
 
     try {
         rate = await rateVaultContract.getCurrentRate()
-    } catch(err) {
+    } catch (err) {
         rate = BigNumber.from('0')
     }
 
@@ -41,5 +44,9 @@ export default async (vault) => {
         totalEpochDeposits: totalEpochDeposits,
         rate: rate,
         tvl: tvl,
+        epochTimes: {
+            startTime: epochTimes.start.toString(),
+            expiry: epochTimes.end.toString(),
+        },
     }
 }
