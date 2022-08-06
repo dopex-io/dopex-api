@@ -7,6 +7,7 @@ export const TOKEN_TO_CG_ID = {
     BNB: 'binancecoin',
     AVAX: 'avalanche-2',
     METIS: 'metis',
+    CRV: 'curve-dao-token',
 }
 
 export const BLOCKCHAIN_TO_CHAIN_ID = {

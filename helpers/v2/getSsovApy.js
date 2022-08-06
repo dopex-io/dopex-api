@@ -1,17 +1,64 @@
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
-import {
-    Addresses,
-    ERC20SSOV__factory,
-    StakingRewards__factory,
-    SsovV3__factory,
-} from '@dopex-io/sdk'
+import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
 
 import getPrices from '../getPrices'
 import getProvider from '../getProvider'
-import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
+import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
 
-async function getBnbApy() {
+const SSOV_VERSION = 'SSOV-V3'
+const ETHER_TO_WEI = 10 ** 18
+const DAYS_PER_YEAR = 365
+const SECONDS_PER_DAY = 60 * 60 * 24
+
+const TOKEN_ADDRESS_TO_CG_ID = {
+    '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'dopex',
+    '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
+}
+
+// https://arbitrum.curve.fi/
+const TWO_CRV_APY = 0.0061
+const CRV_APR = 0.0222
+
+async function fetchEpochRewards(ssovContract, epoch, provider) {
+    const stakingStrategyAddress = (await ssovContract.addresses())[
+        'stakingStrategy'
+    ]
+
+    const stakingContract = new ethers.Contract(
+        stakingStrategyAddress,
+        [
+            'function rewardsPerEpoch(uint256) view returns (uint256)',
+            'function getRewardTokens() view returns (address[])',
+        ],
+        provider
+    )
+
+    const rewards =
+        (await stakingContract.rewardsPerEpoch(epoch)) / ETHER_TO_WEI
+
+    const rewardTokens = await stakingContract.getRewardTokens()
+
+    return { rewards, rewardToken: rewardTokens[0] }
+}
+
+async function fetchTotalCollateralBalance(ssovContract, epoch) {
+    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
+        'totalCollateralBalance'
+    ]
+    return totalEpochDeposits / ETHER_TO_WEI
+}
+
+function calculateApy(rewardsPerYear, totalEpochDeposits) {
+    const denominator = totalEpochDeposits + rewardsPerYear
+    const apr = (denominator / totalEpochDeposits - 1) * 100
+    return (
+        ((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) *
+        100
+    ).toFixed(2)
+}
+
+async function _getBnbApy() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.BSC)
 
     const vbnbContract = new ethers.Contract(
@@ -33,7 +80,7 @@ async function getBnbApy() {
     ).toFixed(2)
 }
 
-async function getGmxApy() {
+async function _getGmxApy() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const stakingContract = new ethers.Contract(
@@ -138,189 +185,102 @@ async function getGohmApy() {
     return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
 }
 
-async function getDopexApy(name, asset) {
+async function getRewardsApy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[42161]['SSOV-V3'].VAULTS[name],
+        Addresses[42161][SSOV_VERSION].VAULTS[name],
         provider
     )
 
     const epoch = await ssovContract.currentEpoch()
 
     if (epoch.isZero()) return '0'
+    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
+    const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
-    const epochTimes = await ssovContract.getEpochTimes(epoch)
-
-    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
-
-    const effectivePeriod =
-        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
-
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
-
+    // get price of underlying ssov token
     const priceUnderlying =
         (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
 
-    const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() *
-        priceUnderlying
+    const totalEpochDeposits = await fetchTotalCollateralBalance(
+        ssovContract,
+        epoch
+    )
+    const totalEpochDepositsInUsd = totalEpochDeposits * priceUnderlying
 
-    if (asset === 'DPX') {
-        const oldSsovContract = ERC20SSOV__factory.connect(
-            Addresses[BLOCKCHAIN_TO_CHAIN_ID['ARBITRUM']].SSOV['DPX'].Vault,
-            provider
-        )
-
-        const stakingRewardsAddress = await oldSsovContract.getAddress(
-            '0x5374616b696e6752657761726473000000000000000000000000000000000000' // StakingRewards
-        )
-        const stakingRewardsContract = StakingRewards__factory.connect(
-            stakingRewardsAddress,
-            provider
-        )
-
-        let DPXemitted
-        let RDPXemitted
-
-        let [DPX, RDPX, totalSupply, [priceDPX, priceRDPX]] = await Promise.all(
-            [
-                stakingRewardsContract.rewardRateDPX(),
-                stakingRewardsContract.rewardRateRDPX(),
-                stakingRewardsContract.totalSupply(),
-                getPrices(['dopex', 'dopex-rebate-token']),
-            ]
-        )
-        const assetPrice = asset === 'DPX' ? priceDPX : priceRDPX
-
-        const TVL = new BN(totalSupply.toString())
-            .multipliedBy(assetPrice)
-            .dividedBy(1e18)
-
-        const rewardsDuration = new BN(86400 * 365)
-
-        DPXemitted = new BN(DPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceDPX)
-            .dividedBy(1e18)
-        RDPXemitted = new BN(RDPX.toString())
-            .multipliedBy(rewardsDuration)
-            .multipliedBy(priceRDPX)
-            .dividedBy(1e18)
-
-        const denominator =
-            TVL.toNumber() + DPXemitted.toNumber() + RDPXemitted.toNumber()
-
-        return ((denominator / TVL.toNumber() - 1) * 100).toFixed(2)
-    } else {
-        const totalRewardsInUSD = priceUnderlying * 3000
-
-        return Math.max(
-            (
-                ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                    12 *
-                    100 *
-                    effectivePeriod) /
-                totalPeriod
-            ).toFixed(2),
-            0
-        ).toFixed(2)
-    }
-}
-
-async function getEthSsovV3Apy(name, dpxRewards) {
-    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
-
-    const ssovContract = SsovV3__factory.connect(
-        Addresses[42161]['SSOV-V3'].VAULTS[name],
+    // calculate amount of reward token incentives
+    const { rewards, rewardToken } = await fetchEpochRewards(
+        ssovContract,
+        epoch,
         provider
     )
+    const rewardTokenPrice = await getPrices([
+        TOKEN_ADDRESS_TO_CG_ID[rewardToken.toLowerCase()],
+    ])
+    const rewardsInUsd = rewardTokenPrice * rewards
+    const rewardsPerYear =
+        (rewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    const epoch = await ssovContract.currentEpoch()
-
-    if (epoch.isZero()) return '0'
-
-    const epochTimes = await ssovContract.getEpochTimes(epoch)
-
-    const [priceDPX] = await getPrices(['dopex'])
-
-    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
-
-    const effectivePeriod =
-        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
-
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
-
-    const priceUnderlying =
-        (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
-
-    const totalRewardsInUSD = priceDPX * dpxRewards
-
-    const totalEpochDepositsInUSD =
-        totalEpochDeposits.div('1000000000000000000').toNumber() *
-        priceUnderlying
-
-    return Math.max(
-        (
-            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                52 *
-                100 *
-                effectivePeriod) /
-            totalPeriod
-        ).toFixed(2),
-        0
-    ).toFixed(2)
+    return calculateApy(rewardsPerYear, totalEpochDepositsInUsd)
 }
 
 async function getSsovPutApy(name) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[42161]['SSOV-V3'].VAULTS[name],
+        Addresses[42161][SSOV_VERSION].VAULTS[name],
         provider
     )
 
     const epoch = await ssovContract.currentEpoch()
 
     if (epoch.isZero()) return '0'
+    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
+    const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
-    const epochTimes = await ssovContract.getEpochTimes(epoch)
+    const twoCrvPrice =
+        (await ssovContract.getCollateralPrice()).toNumber() / 10 ** 8
+    const totalEpochDeposits = await fetchTotalCollateralBalance(
+        ssovContract,
+        epoch
+    )
+    const totalEpochDepositsInUsd = totalEpochDeposits * twoCrvPrice
 
-    const [priceDPX] = await getPrices(['dopex'])
+    // get CRV and DPX prices
+    const [dpxPrice, crvPrice] = await getPrices([
+        TOKEN_TO_CG_ID.DPX,
+        TOKEN_TO_CG_ID.CRV,
+    ])
 
-    const totalPeriod = epochTimes[1].toNumber() - epochTimes[0].toNumber()
+    // calculate DPX incentives
+    const { rewards: dpxRewards } = await fetchEpochRewards(
+        ssovContract,
+        epoch,
+        provider
+    )
+    const dpxRewardsInUsd = dpxRewards * dpxPrice
+    const dpxRewardsInUsdPerYear =
+        (dpxRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    const effectivePeriod =
-        epochTimes[1].toNumber() - Math.floor(Date.now() / 1000)
+    // calculate 2crv return
+    const twoCrvApr =
+        ((TWO_CRV_APY + 1) ** (1 / DAYS_PER_YEAR) - 1) * DAYS_PER_YEAR
+    const twoCrvRewardsInUsdPerYear =
+        twoCrvPrice * twoCrvApr * totalEpochDeposits
 
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
+    // calculate crv return
+    const crvRewardsInUsdPerYear = crvPrice * CRV_APR * totalEpochDeposits
 
-    const totalRewardsInUSD = priceDPX * 1.25
+    const totalRewardsInUsd =
+        dpxRewardsInUsdPerYear +
+        twoCrvRewardsInUsdPerYear +
+        crvRewardsInUsdPerYear
 
-    const totalEpochDepositsInUSD = totalEpochDeposits
-        .div('1000000000000000000')
-        .toNumber()
-
-    return Math.max(
-        (
-            4 +
-            ((totalRewardsInUSD / totalEpochDepositsInUSD) *
-                52 *
-                100 *
-                effectivePeriod) /
-                totalPeriod
-        ).toFixed(2),
-        0
-    ).toFixed(2)
+    return calculateApy(totalRewardsInUsd, totalEpochDepositsInUsd)
 }
 
-async function getAvaxAPY() {
+async function _getAvaxAPY() {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.AVAX)
 
     const rewardDistributorContract = new ethers.Contract(
@@ -386,7 +346,7 @@ const getZeroApy = () => {
     return '0'
 }
 
-const getMetisApy = async () => {
+const _getMetisApy = async () => {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
@@ -433,95 +393,74 @@ const getMetisApy = async () => {
 }
 
 const NAME_TO_GETTER = {
-    DPX: { fn: getZeroApy, args: [] },
-    RDPX: { fn: getZeroApy, args: [] },
-    ETH: { fn: getZeroApy, args: [] },
-    'ETH-WEEKLY-CALLS-SSOV-V3-2': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-2', 25],
+    // Calls
+    'ETH-WEEKLY-CALLS-SSOV-V3-4': {
+        fn: getRewardsApy,
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-4'],
     },
-    'ETH-WEEKLY-CALLS-SSOV-V3': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3', 25],
+    'ETH-MONTHLY-CALLS-SSOV-V3-2': {
+        fn: getRewardsApy,
+        args: ['ETH-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-WEEKLY-CALLS-SSOV-V3-3': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-3', 25],
+    'DPX-MONTHLY-CALLS-SSOV-V3-2': {
+        fn: getRewardsApy,
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-MONTHLY-CALLS-SSOV-V3': {
-        fn: getEthSsovV3Apy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3', 150],
+    'rDPX-MONTHLY-CALLS-SSOV-V3-2': {
+        fn: getRewardsApy,
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'DPX-MONTHLY-CALLS-SSOV-V3': {
-        fn: getDopexApy,
-        args: ['DPX-MONTHLY-CALLS-SSOV-V3', 'DPX'],
-    },
-    'rDPX-MONTHLY-CALLS-SSOV-V3': {
-        fn: getDopexApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3', 'RDPX'],
-    },
-    'gOHM-MONTHLY-CALLS-SSOV-V3': {
+    'gOHM-MONTHLY-CALLS-SSOV-V3-2': {
         fn: getGohmApy,
-        args: ['gOHM-MONTHLY-CALLS-SSOV-V3'],
+        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-2'],
     },
-    'ETH-WEEKLY-PUTS-SSOV-V3': {
+
+    // Puts
+    'ETH-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['ETH-WEEKLY-PUTS-SSOV-V3'],
+        args: ['ETH-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'DPX-WEEKLY-PUTS-SSOV-V3': {
+    'DPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['DPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['DPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'rDPX-WEEKLY-PUTS-SSOV-V3': {
+    'rDPX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['rDPX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['rDPX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'BTC-WEEKLY-PUTS-SSOV-V3': {
+    'BTC-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['BTC-WEEKLY-PUTS-SSOV-V3'],
+        args: ['BTC-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'gOHM-WEEKLY-PUTS-SSOV-V3': {
+    'gOHM-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['gOHM-WEEKLY-PUTS-SSOV-V3'],
+        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'GMX-WEEKLY-PUTS-SSOV-V3': {
+    'GMX-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['GMX-WEEKLY-PUTS-SSOV-V3'],
+        args: ['GMX-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'CRV-WEEKLY-PUTS-SSOV-V3': {
+    'CRV-WEEKLY-PUTS-SSOV-V3-2': {
         fn: getSsovPutApy,
-        args: ['CRV-WEEKLY-PUTS-SSOV-V3'],
+        args: ['CRV-WEEKLY-PUTS-SSOV-V3-2'],
     },
-    'LUNA-WEEKLY-PUTS-SSOV-V3': {
-        fn: getSsovPutApy,
-        args: ['LUNA-WEEKLY-PUTS-SSOV-V3'],
-    },
-    'Metis-MONTHLY-CALLS-SSOV-V3': {
-        fn: getMetisApy,
-        args: [],
-    },
-    GOHM: { fn: getGohmApy, args: [] },
-    BNB: { fn: getBnbApy, args: [] },
-    GMX: { fn: getGmxApy, args: [] },
-    AVAX: { fn: getAvaxAPY, args: [] },
 }
 
 const getSsovApy = async (ssov) => {
-    const { symbol, underlyingSymbol, version, type } = ssov
+    const { symbol } = ssov
+
     let apy
-    let name = underlyingSymbol
-    if (version === 3) {
-        name = symbol
-    }
-    if (version === 2 && type === 'PUT') {
-        apy = '3.7'
-    }
+
     try {
-        apy = await NAME_TO_GETTER[name].fn(...NAME_TO_GETTER[name].args)
+        if (NAME_TO_GETTER[symbol])
+            apy = await NAME_TO_GETTER[symbol].fn(
+                ...NAME_TO_GETTER[symbol].args
+            )
+        else apy = getZeroApy()
     } catch (err) {
+        console.log(err)
         apy = getZeroApy()
     }
-
     return apy
 }
 
