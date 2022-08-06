@@ -22,6 +22,7 @@ export default async (_req, res) => {
                     data[index].totalEpochDeposits,
                     18
                 ),
+                epochTimes: data[index].epochTimes,
             }
         })
 
