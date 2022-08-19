@@ -1,6 +1,6 @@
 # Endpoints
 
-The base URL for a hosted version of this API is `https://api.dopex.io/api/v1`
+The base URL for a hosted version of this API is `https://api.dopex.io/v1`
 
 ## Table of contents
 
