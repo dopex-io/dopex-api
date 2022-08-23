@@ -29,5 +29,9 @@ export default async (vault) => {
         currentEpoch: currentEpoch.toString(),
         tvl: tvl,
         totalDeposits: totalDeposits,
+        epochTimes: {
+            startTime: epochData['startTime'].toString(),
+            expiry: epochData['expiry'].toString(),
+        }
     }
 }
