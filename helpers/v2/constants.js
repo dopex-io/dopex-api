@@ -774,3 +774,5 @@ export const STRADDLES = [
         address: '0x0Dc96f38980144ebFfe745706DFeE92622dba829',
     },
 ]
+
+export const OLPS = SSOVS.concat(STRADDLES)
