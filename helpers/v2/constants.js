@@ -775,4 +775,48 @@ export const STRADDLES = [
     },
 ]
 
-export const OLPS = SSOVS.concat(STRADDLES)
+export const OLPS = [
+    {
+        underlyingSymbol: 'ETH',
+        symbol: 'ETH-MONTHLY-OLP',
+        duration: 'monthly',
+        chainId: 5,
+        collateralDecimals: 6,
+        retired: false,
+        address: '0xaad25870e0569398c181276dbbb52b26db7e9bc8',
+        parents: ['ETH-CALLS-SSOV-V3'],
+    },
+    // {
+    //     underlyingSymbol: 'ETH',
+    //     symbol: 'ETH-WEEKLY-OLP',
+    //     duration: 'weekly',
+    //     chainId: 5,
+    //     collateralDecimals: 6,
+    //     retired: false,
+    //     address: '',
+    //     parents: ['ETH-WEEKLY-CALLS-SSOV-V3-5', 'ETH-WEEKLY-PUTS-SSOV-V3-3'],
+    // },
+    // {
+    //     underlyingSymbol: 'ETH',
+    //     symbol: 'ETH-STRADDLES-OLP',
+    //     duration: '3 days',
+    //     chainId: 5,
+    //     collateralDecimals: 6,
+    //     retired: false,
+    //     address: '',
+    //     parents: ['ETH-ATLANTIC-STRADDLE-3'],
+    // },
+]
+
+export const ROLPS = [
+    {
+        underlyingSymbol: 'ETH',
+        symbol: 'ETH-ROLP',
+        duration: 'monthly',
+        chainId: 5,
+        collateralDecimals: 8,
+        retired: false,
+        address: '0xf1d2aacbdd0e0ab74cb990169652b802fe95f02d',
+        parents: ['ETH-CALLS-SSOV-V3'],
+    },
+]

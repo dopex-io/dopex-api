@@ -1,8 +1,10 @@
-import { OptionLP__factory } from '../../mocks/factories/OptionLP__factory'
 import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
 import getSsovTvl from './getSsovTvl'
 import getStraddlesData from './getStraddlesData'
+import getPrices from '../getPrices'
+import { TOKEN_TO_CG_ID } from '../constants'
+import { ReverseOptionLP__factory } from '../../mocks/factories/ReverseOptionLP__factory'
 import { SSOVS } from './constants'
 
 const USD_DECIMALS = BigNumber.from(10).pow(6)
@@ -16,7 +18,7 @@ export default async (vault) => {
         vault
 
     const provider = getProvider(chainId)
-    const olpContract = OptionLP__factory.connect(address, provider)
+    const rolpContract = ReverseOptionLP__factory.connect(address, provider)
 
     let parentTvl = 0
     let liquidity = BigNumber.from(0)
@@ -24,8 +26,8 @@ export default async (vault) => {
         parents.map(async (parent) => {
             if (parent.includes('SSOV')) {
                 const ssov = getSsovAddress(parent)
-                const currentEpoch = await olpContract.getSsovEpoch(ssov)
-                const strikeTokens = await olpContract.getSsovEpochStrikes(
+                const currentEpoch = await rolpContract.getSsovEpoch(ssov)
+                const strikeTokens = await rolpContract.getSsovEpochStrikes(
                     ssov,
                     currentEpoch
                 )
@@ -33,7 +35,7 @@ export default async (vault) => {
                 let strikeTokensInfoPromise = []
                 strikeTokens.map(async (token) => {
                     strikeTokensInfoPromise.push(
-                        olpContract.getOptionTokenInfo(token)
+                        rolpContract.getOptionTokenInfo(token)
                     )
                 })
 
@@ -54,6 +56,11 @@ export default async (vault) => {
                 parentTvl += tvl
             }
         })
+
+        const underlyingPrice = await getPrices([
+            TOKEN_TO_CG_ID[underlyingSymbol],
+        ])
+        liquidity = liquidity.div(USD_DECIMALS).toNumber() * underlyingPrice
     } catch (err) {
         console.log(err)
     }
@@ -65,6 +72,6 @@ export default async (vault) => {
         chainId: chainId,
         address: address,
         parentTvl: parentTvl,
-        tvl: liquidity.div(USD_DECIMALS).toNumber(),
+        tvl: liquidity,
     }
 }
