@@ -9,6 +9,7 @@ The base URL for a hosted version of this API is `https://api.dopex.io/v2`
 1. [GET SSOVs](#ssovs)
 2. [GET SSOV APYs](#ssov-apys)
 3. [GET IR VAULTs](#ssovs)
+4. [GET STRADDLES](#straddles)
 
 ## SSOVs
 
@@ -76,6 +77,26 @@ Returns data about the Dopex IR Vaults
 
     ```bash
     curl --location --request GET 'https://api.dopex.io/api/v2/rateVaults'
+    ```
+
+---
+
+## Straddles
+
+Returns data about the Dopex Straddles
+
+-   **URL**
+
+    `/straddles`
+
+-   **Method:**
+
+    `GET`
+
+-   **Sample call:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/api/v2/straddles'
     ```
 
 ---
