@@ -2,7 +2,7 @@
 
 > Note: This version of the API is currently in beta and is subject to change.
 
-The base URL for a hosted version of this API is `https://api.dopex.io/api/v2`
+The base URL for a hosted version of this API is `https://api.dopex.io/v2`
 
 ## Table of contents
 
