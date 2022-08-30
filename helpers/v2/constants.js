@@ -575,7 +575,7 @@ export const STRADDLES = [
         version: 2,
         chainId: 42161,
         collateralDecimals: 18,
-        retired: true,
+        retired: false,
         address: '0xCBCE47f554fBd4F8985800795322eF6901923e5c',
     },
 ]
