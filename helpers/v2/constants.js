@@ -540,26 +540,6 @@ export const IR_VAULTS = [
 export const STRADDLES = [
     {
         underlyingSymbol: 'ETH',
-        symbol: 'ETH-ATLANTIC-STRADDLE-2',
-        duration: '3 days',
-        version: 2,
-        chainId: 42161,
-        collateralDecimals: 18,
-        retired: true,
-        address: '0x0bE0905daFa89Dac8F26e9F96e04cfe3c5fA3E51',
-    },
-    {
-        underlyingSymbol: 'RDPX',
-        symbol: 'RDPX-ATLANTIC-STRADDLE-2',
-        duration: '3 days',
-        version: 2,
-        chainId: 42161,
-        collateralDecimals: 18,
-        retired: true,
-        address: '0x66EA60f34805B3F77f780FFa22acd5E2f4EFb555',
-    },
-    {
-        underlyingSymbol: 'ETH',
         symbol: 'ETH-ATLANTIC-STRADDLE-3',
         duration: '3 days',
         version: 2,
