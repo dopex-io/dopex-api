@@ -1,5 +1,5 @@
 import { AtlanticStraddle__factory } from '@dopex-io/sdk'
-import { BigNumber } from 'ethers'
+import { utils } from 'ethers'
 
 import getProvider from '../getProvider'
 
@@ -12,26 +12,35 @@ export default async (vault) => {
         provider
     )
 
-    let currentEpoch, tvl, totalDeposits, epochData
+    let currentEpoch, tvl, epochData, utilization
 
     try {
         currentEpoch = await straddlesContract.currentEpoch()
         epochData = await straddlesContract.epochData(currentEpoch)
-
-        totalDeposits = epochData['activeUsdDeposits']
-
-        tvl = totalDeposits
+        utilization = utils.formatUnits(
+            epochData['activeUsdDeposits'].div(1e8),
+            18
+        )
+        tvl = utils.formatUnits(epochData['usdDeposits'], 6)
     } catch (err) {
-        tvl = BigNumber.from('0')
+        return {
+            currentEpoch: '0',
+            tvl: '0',
+            utilization: '0',
+            epochTimes: {
+                startTime: '0',
+                expiry: '0',
+            },
+        }
     }
 
     return {
         currentEpoch: currentEpoch.toString(),
-        tvl: tvl,
-        totalDeposits: totalDeposits,
+        tvl,
+        utilization,
         epochTimes: {
             startTime: epochData['startTime'].toString(),
             expiry: epochData['expiry'].toString(),
-        }
+        },
     }
 }

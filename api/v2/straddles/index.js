@@ -1,5 +1,4 @@
 import groupBy from 'lodash/groupBy'
-import { utils as ethersUtils } from 'ethers/lib/ethers'
 
 import { STRADDLES } from '../../../helpers/v2/constants'
 import getStraddlesData from '../../../helpers/v2/getStraddlesData'
@@ -15,13 +14,7 @@ export default async (_req, res) => {
         const vaultArray = STRADDLES.map((item, index) => {
             return {
                 ...item,
-                tvl: ethersUtils.formatUnits(data[index].tvl, 18),
-                currentEpoch: data[index].currentEpoch,
-                totalDeposits: ethersUtils.formatUnits(
-                    data[index].totalDeposits,
-                    18
-                ),
-                epochTimes: data[index].epochTimes,
+                ...data[index],
             }
         })
 
