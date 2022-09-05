@@ -594,7 +594,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingSymbol: 'ETH',
+        underlyingSymbol: 'DPX',
         symbol: 'DPX-WEEKLY-CALLS-SSOV-V3',
         version: 3,
         chainId: 42161,
@@ -605,7 +605,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingSymbol: 'ETH',
+        underlyingSymbol: 'RDPX',
         symbol: 'rDPX-WEEKLY-CALLS-SSOV-V3',
         version: 3,
         chainId: 42161,
@@ -616,7 +616,7 @@ export const SSOVS = [
     },
     {
         type: 'call',
-        underlyingSymbol: 'ETH',
+        underlyingSymbol: 'GOHM',
         symbol: 'gOHM-WEEKLY-CALLS-SSOV-V3',
         version: 3,
         chainId: 42161,
