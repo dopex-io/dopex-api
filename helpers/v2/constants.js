@@ -630,12 +630,32 @@ export const SSOVS = [
 export const IR_VAULTS = [
     {
         underlyingSymbol: '2CRV',
-        symbol: 'PUSD3CRV-BIWEEKLY-1',
+        symbol: 'PUSD3CRV-BIWEEKLY-2',
         duration: 'biweekly',
         version: 2,
         chainId: 42161,
         collateralDecimals: 18,
         retired: false,
+        address: '0xba3d2183A6378B80EC71D8CcFaFf33e44D32fa77',
+    },
+    {
+        underlyingSymbol: '2CRV',
+        symbol: 'PUSD3CRV-3',
+        duration: 'weekly',
+        version: 2,
+        chainId: 42161,
+        collateralDecimals: 18,
+        retired: false,
+        address: '0x44BFe4979b2Ba2bfdac9CE224280129b90526048',
+    },
+    {
+        underlyingSymbol: '2CRV',
+        symbol: 'PUSD3CRV-BIWEEKLY-1',
+        duration: 'biweekly',
+        version: 2,
+        chainId: 42161,
+        collateralDecimals: 18,
+        retired: true,
         address: '0x66cF9033E119FcA8429bC87D423a14AaCEd22a3D',
     },
     {
@@ -645,7 +665,7 @@ export const IR_VAULTS = [
         version: 2,
         chainId: 42161,
         collateralDecimals: 18,
-        retired: false,
+        retired: true,
         address: '0x7a839098c2754Dba5a8f489a73b8DB10BD3dc35c',
     },
     {

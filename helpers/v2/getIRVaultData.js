@@ -9,7 +9,8 @@ export default async (vault) => {
 
     const rateVaultContract = RateVault__factory.connect(address, provider)
 
-    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl, epochTimes
+    let rate, currentEpoch, totalEpochData, totalEpochDeposits, tvl
+    let epochTimes = {}
 
     try {
         currentEpoch = await rateVaultContract.currentEpoch()
@@ -31,6 +32,8 @@ export default async (vault) => {
     } catch (err) {
         tvl = BigNumber.from('0')
         totalEpochDeposits = BigNumber.from('0')
+        epochTimes.start = BigNumber.from(0)
+        epochTimes.end = BigNumber.from(0)
     }
 
     try {
