@@ -520,8 +520,6 @@ const NAME_TO_GETTER = {
 const getSsovApy = async (ssov) => {
     const { symbol } = ssov
 
-    if (ssov.retired) return getZeroApy()
-
     let apy = getZeroApy()
 
     try {
