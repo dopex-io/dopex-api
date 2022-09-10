@@ -297,7 +297,8 @@ async function getSsovPutApy(name) {
         epoch,
         provider
     )
-    const dpxRewardsInUsd = dpxRewards * dpxPrice
+    const dpxRewardsInUsd =
+        dpxRewards[0].div(BIG_NUMBER_ETHERS).toNumber() * dpxPrice
     const dpxRewardsInUsdPerYear =
         (dpxRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
