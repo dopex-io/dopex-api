@@ -1,52 +1,79 @@
 import { ethers } from 'ethers'
 import BN from 'bignumber.js'
+import { BigNumber } from 'ethers'
 import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
-
+import { zipWith } from 'lodash'
 import getPrices from '../getPrices'
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
 
 const SSOV_VERSION = 'SSOV-V3'
-const ETHER_TO_WEI = 10 ** 18
+const BIG_NUMBER_ETHERS = BigNumber.from(10).pow(18)
 const DAYS_PER_YEAR = 365
 const SECONDS_PER_DAY = 60 * 60 * 24
 
 const TOKEN_ADDRESS_TO_CG_ID = {
     '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'dopex',
     '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
+    '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
 }
 
 // https://arbitrum.curve.fi/
 const TWO_CRV_APY = 0.0061
 const CRV_APR = 0.0222
 
-async function fetchEpochRewards(ssovContract, epoch, provider) {
+async function fetchEpochRewards(
+    ssovContract,
+    epoch,
+    provider,
+    isV2Staking = false
+) {
     const stakingStrategyAddress = (await ssovContract.addresses())[
         'stakingStrategy'
     ]
 
-    const stakingContract = new ethers.Contract(
-        stakingStrategyAddress,
-        [
+    let abis
+    if (isV2Staking) {
+        abis = [
+            'function rewardsPerEpoch(uint256,uint256) view returns (uint256)',
+            'function getRewardTokens() view returns (address[])',
+        ]
+    } else {
+        abis = [
             'function rewardsPerEpoch(uint256) view returns (uint256)',
             'function getRewardTokens() view returns (address[])',
-        ],
+        ]
+    }
+
+    const stakingContract = new ethers.Contract(
+        stakingStrategyAddress,
+        abis,
         provider
     )
 
-    const rewards =
-        (await stakingContract.rewardsPerEpoch(epoch)) / ETHER_TO_WEI
-
     const rewardTokens = await stakingContract.getRewardTokens()
 
-    return { rewards, rewardToken: rewardTokens[0] }
+    let rewards = []
+    if (isV2Staking) {
+        const rewardsPromises = []
+        rewardTokens.map(async (_, idx) => {
+            rewardsPromises.push(
+                stakingContract.rewardsPerEpoch(epoch, BigNumber.from(idx))
+            )
+        })
+        rewards = await Promise.all(rewardsPromises)
+    } else {
+        rewards = [await stakingContract.rewardsPerEpoch(epoch)]
+    }
+
+    return { rewards: rewards, rewardTokens: rewardTokens }
 }
 
 async function fetchTotalCollateralBalance(ssovContract, epoch) {
     const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
         'totalCollateralBalance'
     ]
-    return totalEpochDeposits / ETHER_TO_WEI
+    return totalEpochDeposits.div(BIG_NUMBER_ETHERS).toNumber()
 }
 
 function calculateApy(rewardsPerYear, totalEpochDeposits) {
@@ -185,7 +212,7 @@ async function getGohmApy() {
     return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
 }
 
-async function getRewardsApy(name) {
+async function getRewardsApy(name, isV2Staking = false) {
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
     const ssovContract = SsovV3__factory.connect(
@@ -210,17 +237,28 @@ async function getRewardsApy(name) {
     const totalEpochDepositsInUsd = totalEpochDeposits * priceUnderlying
 
     // calculate amount of reward token incentives
-    const { rewards, rewardToken } = await fetchEpochRewards(
+    const { rewards, rewardTokens } = await fetchEpochRewards(
         ssovContract,
         epoch,
-        provider
+        provider,
+        isV2Staking
     )
-    const rewardTokenPrice = await getPrices([
-        TOKEN_ADDRESS_TO_CG_ID[rewardToken.toLowerCase()],
-    ])
-    const rewardsInUsd = rewardTokenPrice * rewards
+
+    const addressToId = rewardTokens.map((rewardToken) => {
+        return TOKEN_ADDRESS_TO_CG_ID[rewardToken.toLowerCase()]
+    })
+
+    const rewardTokenPrices = await getPrices(addressToId)
+
+    let totalRewardsInUsd = 0
+    zipWith(rewards, rewardTokenPrices, function (reward, rewardTokenPrice) {
+        const rewardsInUsd =
+            rewardTokenPrice * reward.div(BIG_NUMBER_ETHERS).toNumber()
+        totalRewardsInUsd += rewardsInUsd
+    })
+
     const rewardsPerYear =
-        (rewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
+        (totalRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
     return calculateApy(rewardsPerYear, totalEpochDepositsInUsd)
 }
@@ -392,71 +430,25 @@ const _getMetisApy = async () => {
     ).toFixed(2)
 }
 
-const NAME_TO_GETTER = {
-    // Calls
-    'ETH-WEEKLY-CALLS-SSOV-V3-4': {
-        fn: getRewardsApy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-4'],
-    },
-    'ETH-MONTHLY-CALLS-SSOV-V3-2': {
-        fn: getRewardsApy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3-2'],
-    },
-    'DPX-MONTHLY-CALLS-SSOV-V3-2': {
-        fn: getRewardsApy,
-        args: ['DPX-MONTHLY-CALLS-SSOV-V3-2'],
-    },
-    'rDPX-MONTHLY-CALLS-SSOV-V3-2': {
-        fn: getRewardsApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-2'],
-    },
-    'gOHM-MONTHLY-CALLS-SSOV-V3-2': {
-        fn: getGohmApy,
-        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-2'],
-    },
-
-    // Puts
-    'ETH-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['ETH-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-    'DPX-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['DPX-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-    'rDPX-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['rDPX-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-    'BTC-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['BTC-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-    'gOHM-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-    'GMX-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['GMX-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-    'CRV-WEEKLY-PUTS-SSOV-V3-2': {
-        fn: getSsovPutApy,
-        args: ['CRV-WEEKLY-PUTS-SSOV-V3-2'],
-    },
-}
-
 const getSsovApy = async (ssov) => {
     const { symbol } = ssov
+    const symbolLowerCase = symbol.toLowerCase()
 
     let apy
 
     try {
-        if (NAME_TO_GETTER[symbol])
-            apy = await NAME_TO_GETTER[symbol].fn(
-                ...NAME_TO_GETTER[symbol].args
-            )
-        else apy = getZeroApy()
+        if (symbolLowerCase.includes('puts')) {
+            apy = await getSsovPutApy(symbol)
+        } else if (symbolLowerCase.includes('gohm')) {
+            apy = await getGohmApy(symbol)
+        } else if (
+            symbolLowerCase.includes('dpx-weekly') ||
+            symbolLowerCase.includes('rdpx-weekly')
+        ) {
+            apy = await getRewardsApy(symbol, true)
+        } else {
+            apy = await getRewardsApy(symbol)
+        }
     } catch (err) {
         console.log(err)
         apy = getZeroApy()
