@@ -431,28 +431,84 @@ const _getMetisApy = async () => {
     ).toFixed(2)
 }
 
+const NAME_TO_GETTER = {
+    // Calls
+    'ETH-WEEKLY-CALLS-SSOV-V3-5': {
+        fn: getRewardsApy,
+        args: ['ETH-WEEKLY-CALLS-SSOV-V3-5'],
+    },
+    'DPX-WEEKLY-CALLS-SSOV-V3': {
+        fn: getRewardsApy,
+        args: ['DPX-WEEKLY-CALLS-SSOV-V3', true],
+    },
+    'rDPX-WEEKLY-CALLS-SSOV-V3': {
+        fn: getRewardsApy,
+        args: ['rDPX-WEEKLY-CALLS-SSOV-V3', true],
+    },
+    'gOHM-WEEKLY-CALLS-SSOV-V3': {
+        fn: getRewardsApy,
+        args: ['gOHM-WEEKLY-CALLS-SSOV-V3'],
+    },
+    'ETH-MONTHLY-CALLS-SSOV-V3-3': {
+        fn: getRewardsApy,
+        args: ['ETH-MONTHLY-CALLS-SSOV-V3-3'],
+    },
+    'DPX-MONTHLY-CALLS-SSOV-V3-3': {
+        fn: getRewardsApy,
+        args: ['DPX-MONTHLY-CALLS-SSOV-V3-3'],
+    },
+    'rDPX-MONTHLY-CALLS-SSOV-V3-3': {
+        fn: getRewardsApy,
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3'],
+    },
+    'gOHM-MONTHLY-CALLS-SSOV-V3-3': {
+        fn: getGohmApy,
+        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-3'],
+    },
+
+    // Puts
+    'ETH-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['ETH-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+    'DPX-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['DPX-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+    'rDPX-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['rDPX-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+    'BTC-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['BTC-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+    'gOHM-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+    'GMX-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['GMX-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+    'CRV-WEEKLY-PUTS-SSOV-V3-3': {
+        fn: getSsovPutApy,
+        args: ['CRV-WEEKLY-PUTS-SSOV-V3-3'],
+    },
+}
+
 const getSsovApy = async (ssov) => {
     const { symbol } = ssov
-    const symbolLowerCase = symbol.toLowerCase()
 
-    let apy
+    let apy = getZeroApy()
 
     try {
-        if (symbolLowerCase.includes('puts')) {
-            apy = await getSsovPutApy(symbol)
-        } else if (symbolLowerCase.includes('gohm')) {
-            apy = await getGohmApy(symbol)
-        } else if (
-            symbolLowerCase.includes('dpx-weekly') ||
-            symbolLowerCase.includes('rdpx-weekly')
-        ) {
-            apy = await getRewardsApy(symbol, true)
-        } else {
-            apy = await getRewardsApy(symbol)
-        }
+        if (NAME_TO_GETTER[symbol])
+            apy = await NAME_TO_GETTER[symbol].fn(
+                ...NAME_TO_GETTER[symbol].args
+            )
     } catch (err) {
         console.log(err)
-        apy = getZeroApy()
     }
     return apy
 }
