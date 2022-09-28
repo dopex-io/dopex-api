@@ -9,25 +9,27 @@ export default async (req, res) => {
     try {
         const _groupBy = req.query.groupBy ?? 'chainId'
 
+        const _SSOVS = SSOVS.filter((ssov) => !ssov.retired)
+
         const [tvls, apys, data] = await Promise.all([
             Promise.all(
-                SSOVS.map((ssov) => {
+                _SSOVS.map((ssov) => {
                     return getSsovTvl(ssov)
                 })
             ),
             Promise.all(
-                SSOVS.map((ssov) => {
+                _SSOVS.map((ssov) => {
                     return getSsovApy(ssov)
                 })
             ),
             Promise.all(
-                SSOVS.map((ssov) => {
+                _SSOVS.map((ssov) => {
                     return getSsovData(ssov)
                 })
             ),
         ])
 
-        const ssovArray = SSOVS.map((item, index) => {
+        const ssovArray = _SSOVS.map((item, index) => {
             return {
                 ...item,
                 tvl: tvls[index],
