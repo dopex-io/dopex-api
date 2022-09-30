@@ -465,7 +465,6 @@ const NAME_TO_GETTER = {
         fn: getGohmApy,
         args: ['gOHM-MONTHLY-CALLS-SSOV-V3-3'],
     },
-
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {
         fn: getSsovPutApy,
@@ -499,6 +498,8 @@ const NAME_TO_GETTER = {
 
 const getSsovApy = async (ssov) => {
     const { symbol } = ssov
+
+    if (ssov.retired) return getZeroApy()
 
     let apy = getZeroApy()
 
