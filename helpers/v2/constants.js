@@ -626,6 +626,17 @@ export const SSOVS = [
         retired: false,
         address: '0x546cd36F761f1D984eEE1Dbe67cC4F86E75cAF0C',
     },
+    {
+        type: 'call',
+        underlyingSymbol: 'ETH',
+        symbol: 'ETH-MONTHLY-CALLS-SSOV-V3-3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: false,
+        address: '0xC59836FEC63Cfb2E48b0aa00515056436D74Dc03',
+    },
 ]
 
 export const IR_VAULTS = [

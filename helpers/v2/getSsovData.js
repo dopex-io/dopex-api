@@ -4,6 +4,17 @@ import { utils as ethersUtils } from 'ethers'
 import getProvider from '../getProvider'
 
 export default async (ssov) => {
+    if (ssov.retired || ssov.duration === 'special')
+        return {
+            currentEpoch: 0,
+            totalEpochDeposits: '0',
+            underlyingPrice: '0',
+            epochTimes: {
+                startTime: '0',
+                expiry: '0',
+            },
+        }
+
     const {
         underlyingSymbol,
         symbol,
