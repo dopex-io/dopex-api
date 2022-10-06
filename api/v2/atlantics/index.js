@@ -17,8 +17,6 @@ export default async (_req, res) => {
                 .flat()
         )
 
-        console.log('Data: ', data)
-
         const vaultArray = data.map((item, i) => {
             return { ...ATLANTIC_POOLS[item.underlying][i], ...item }
         })

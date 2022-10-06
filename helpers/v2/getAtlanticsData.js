@@ -122,7 +122,7 @@ export default async (pool) => {
             underlying: underlying,
         }
     } catch (e) {
-        console.log('Failed To Fetch AP Data')
+        console.log('Failed To Fetch AP Data with error ', e)
         return {
             currentEpoch: '0',
             strikes: [],
