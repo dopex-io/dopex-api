@@ -741,3 +741,17 @@ export const STRADDLES = [
         address: '0x89801C1855D680a86aAF7Eb887Ff10d451683A8D',
     },
 ]
+
+export const ATLANTIC_POOLS = {
+    WETH: [
+        {
+            strategy: 'Insured Long Perps',
+            base: 'USDC',
+            underlying: 'WETH',
+            symbol: 'WETH-PUTS-WEEKLY',
+            chainId: 42161,
+            vaultAddress: '0x5f8a669b85ce64DBAc730Dd35C8B70d80C31bC9E',
+            duration: 'WEEKLY',
+        },
+    ],
+}

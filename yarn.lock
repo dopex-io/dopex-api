@@ -332,10 +332,9 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@dopex-io/sdk@1.0.0-beta.28":
-  version "1.0.0-beta.28"
-  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-beta.28.tgz#3039529fbd0082f272217ec3c9f54bde5ce4b032"
-  integrity sha512-r3dFS8Iu0OCfAYd99FkFc7DYTUGUHzWF17WwkQ/Z/A/MHulMcBwhb/vgQOwx9f3/vZ6472gzjH4UtJAgvlO6XA==
+"@dopex-io/sdk@https://github.com/dopex-io/sdk#feat/atlantics":
+  version "1.0.0-beta.32"
+  resolved "https://github.com/dopex-io/sdk#bc5761a73302f55145be048064f0ef26d8b3c579"
 
 "@eslint/eslintrc@^1.3.2":
   version "1.3.2"
