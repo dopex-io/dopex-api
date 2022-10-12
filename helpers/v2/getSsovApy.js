@@ -446,7 +446,7 @@ const NAME_TO_GETTER = {
         args: ['rDPX-WEEKLY-CALLS-SSOV-V3', true],
     },
     'gOHM-WEEKLY-CALLS-SSOV-V3': {
-        fn: getRewardsApy,
+        fn: getGohmApy,
         args: ['gOHM-WEEKLY-CALLS-SSOV-V3'],
     },
     'ETH-MONTHLY-CALLS-SSOV-V3-3': {
@@ -461,10 +461,7 @@ const NAME_TO_GETTER = {
         fn: getRewardsApy,
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3'],
     },
-    'gOHM-MONTHLY-CALLS-SSOV-V3-3': {
-        fn: getGohmApy,
-        args: ['gOHM-MONTHLY-CALLS-SSOV-V3-3'],
-    },
+
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {
         fn: getSsovPutApy,
