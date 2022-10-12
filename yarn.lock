@@ -2,35 +2,35 @@
 # yarn lockfile v1
 
 
-"@0xsequence/abi@^0.42.4":
-  version "0.42.4"
-  resolved "https://registry.yarnpkg.com/@0xsequence/abi/-/abi-0.42.4.tgz#b10c06b455fb1e893a7ec7b63a71fdab62a1109b"
-  integrity sha512-yR96OipY8+LU/cHZgnu+O8NTt3Qd//S4VItovfVidLGfjaxhHN73TmL0lmvmrlmz98rMKAUCJFKP8SiPc8BA/A==
+"@0xsequence/abi@^0.42.5":
+  version "0.42.5"
+  resolved "https://registry.yarnpkg.com/@0xsequence/abi/-/abi-0.42.5.tgz#955863af0e60007585152856716538f2e98ef894"
+  integrity sha512-ILgYEzAhFfFVVmB5w5t3q2bFSJCfnaQ5Q0lvAQG+jQuOAH7J4NvUrfTBtze7oVfVmqALDCxaxf5jR+qvDE28lw==
 
 "@0xsequence/multicall@^0.42.4":
-  version "0.42.4"
-  resolved "https://registry.yarnpkg.com/@0xsequence/multicall/-/multicall-0.42.4.tgz#072bfd3d3f12e5b9c2dfc6643007bbaf53a0833f"
-  integrity sha512-eEBDKsAMTeYDJ+FTuszl655H1wqTnbv0vGibIS8AivMQ4qwbTmXyyh+7h+RLswCKdNe699OmFvEWxdVLhYAN5Q==
+  version "0.42.5"
+  resolved "https://registry.yarnpkg.com/@0xsequence/multicall/-/multicall-0.42.5.tgz#6347e14464665ff691ac4d93286f60ebca8c14a8"
+  integrity sha512-hArOGx7qNNwvYiXLcupWj1rBHUy7MDl+xM8zfdq5UWdItWky4TFdBSsL9l/QmgDrNfzhWSVkx9SAiltn3CtcmA==
   dependencies:
-    "@0xsequence/abi" "^0.42.4"
-    "@0xsequence/network" "^0.42.4"
-    "@0xsequence/utils" "^0.42.4"
+    "@0xsequence/abi" "^0.42.5"
+    "@0xsequence/network" "^0.42.5"
+    "@0xsequence/utils" "^0.42.5"
     "@ethersproject/providers" "^5.5.1"
     ethers "^5.5.2"
 
-"@0xsequence/network@^0.42.4":
-  version "0.42.4"
-  resolved "https://registry.yarnpkg.com/@0xsequence/network/-/network-0.42.4.tgz#f76e09ee3b4033881097a34b6235905f3ea5852f"
-  integrity sha512-BIKi2yTPC0tkkc6p3AoSzOUj/Ge5wDEMc7fuqpBzJ3uSeKcUZvm9KVcRFUZGuHgoSWY5Dcark0+IhVJU5Soxmg==
+"@0xsequence/network@^0.42.5":
+  version "0.42.5"
+  resolved "https://registry.yarnpkg.com/@0xsequence/network/-/network-0.42.5.tgz#0ed19c1b6e03e14a47f8c06bde490e0d1c945124"
+  integrity sha512-bY7oB38TKaR2xWLTCKMVloXCAhYImTX1Oo3xQJ7yvU+YnAqrK+u3Jkk1P6Gl6wAGmSN405rFwduZEC66HB6/rA==
   dependencies:
-    "@0xsequence/utils" "^0.42.4"
+    "@0xsequence/utils" "^0.42.5"
     "@ethersproject/providers" "^5.5.1"
     ethers "^5.5.2"
 
-"@0xsequence/utils@^0.42.4":
-  version "0.42.4"
-  resolved "https://registry.yarnpkg.com/@0xsequence/utils/-/utils-0.42.4.tgz#7bd52e6d8b690826245dbc6cb82400815ceeb354"
-  integrity sha512-jL5Q4PfIpcj/8i09M7U5Q9363EL0vXEqnFp5FCBd6FAgDGvR1vLWsaW4IXl3qs+iHUZZolc9SRxf42uyVN7EqA==
+"@0xsequence/utils@^0.42.5":
+  version "0.42.5"
+  resolved "https://registry.yarnpkg.com/@0xsequence/utils/-/utils-0.42.5.tgz#84065a33ed000829eb24c8a298123416c2a67a04"
+  integrity sha512-8TiQmWR1Nt6nungGkmczY5u1IuDpGxVO6iSUCYcQWIokTrMMjxjtZ8nfLPT+Rdhzn7HqvlwXSMvewxoCVXq7XQ==
   dependencies:
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/properties" "^5.5.0"
@@ -1226,14 +1226,13 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
-axios@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.1.2.tgz#8b6f6c540abf44ab98d9904e8daf55351ca4a331"
-  integrity sha512-bznQyETwElsXl2RK7HLLwb5GPpOLlycxHCtrpDR/4RqqBzjARaOTo3jz4IgtntWUYee7Ne4S8UHd92VCuzPaWA==
+axios@^0.27.2:
+  version "0.27.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
+  integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
   dependencies:
-    follow-redirects "^1.15.0"
+    follow-redirects "^1.14.9"
     form-data "^4.0.0"
-    proxy-from-env "^1.1.0"
 
 babel-jest@^29.1.2:
   version "29.1.2"
@@ -1866,7 +1865,7 @@ flatted@^3.1.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.7.tgz#609f39207cb614b89d0765b477cb2d437fbf9787"
   integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
 
-follow-redirects@^1.15.0:
+follow-redirects@^1.14.9:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
@@ -2871,11 +2870,6 @@ prompts@^2.0.1:
   dependencies:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
-
-proxy-from-env@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz#e102f16ca355424865755d2c9e8ea4f24d58c3e2"
-  integrity sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==
 
 punycode@^2.1.0:
   version "2.1.1"
