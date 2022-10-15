@@ -4,6 +4,7 @@ import { SSOVS } from '../../../helpers/v2/constants'
 import getSsovApy from '../../../helpers/v2/getSsovApy'
 import getSsovTvl from '../../../helpers/v2/getSsovTvl'
 import getSsovData from '../../../helpers/v2/getSsovData'
+import getSsovRewards from '../../../helpers/v2/getSsovRewards'
 
 export default async (req, res) => {
     try {
@@ -11,7 +12,7 @@ export default async (req, res) => {
 
         const _SSOVS = SSOVS.filter((ssov) => !ssov.retired)
 
-        const [tvls, apys, data] = await Promise.all([
+        const [tvls, apys, data, rewards] = await Promise.all([
             Promise.all(
                 _SSOVS.map((ssov) => {
                     return getSsovTvl(ssov)
@@ -27,6 +28,11 @@ export default async (req, res) => {
                     return getSsovData(ssov)
                 })
             ),
+            Promise.all(
+                _SSOVS.map((ssov) => {
+                    return getSsovRewards(ssov)
+                })
+            ),
         ])
 
         const ssovArray = _SSOVS.map((item, index) => {
@@ -34,6 +40,7 @@ export default async (req, res) => {
                 ...item,
                 tvl: tvls[index],
                 apy: apys[index],
+                rewards: rewards[index],
                 currentEpoch: data[index].currentEpoch,
                 totalEpochDeposits: data[index].totalEpochDeposits,
                 underlyingPrice: data[index].underlyingPrice,
