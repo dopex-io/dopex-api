@@ -10,7 +10,7 @@ export default async (_req, res) => {
             })
         )
 
-        const pools = data.map((item, index) => {
+        const vaultArray = data.map((item, index) => {
             return {
                 ...item,
                 underlyingSymbol: data[index].underlyingSymbol,
@@ -18,12 +18,12 @@ export default async (_req, res) => {
                 duration: data[index].duration,
                 chainId: data[index].chainId,
                 address: data[index].address,
-                parentTvl: data[index].parentTvl,
                 tvl: data[index].tvl,
             }
         })
 
-        const fData = groupBy(pools, 'underlyingSymbol')
+        const fData = groupBy(vaultArray, 'chainId')
+
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
         res.json({ ...fData })
     } catch (err) {

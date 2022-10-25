@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from 'ethers'
 import type { Provider } from '@ethersproject/providers'
-import type { OptionLP, OptionLPInterface } from '../OptionLP'
+import type { OptionLP, OptionLPInterface, BaseOptionLp } from '../OptionLP'
 
 const _abi = [
     {
@@ -13,6 +13,33 @@ const _abi = [
                 internalType: 'string',
                 name: '_name',
                 type: 'string',
+            },
+            {
+                components: [
+                    {
+                        internalType: 'address',
+                        name: 'usd',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'underlying',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'optionPricing',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'assetSwapper',
+                        type: 'address',
+                    },
+                ],
+                internalType: 'struct BaseOptionLp.Addresses',
+                name: '_addresses',
+                type: 'tuple',
             },
         ],
         stateMutability: 'nonpayable',
@@ -40,11 +67,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: 'InvalidAmount',
-        type: 'error',
-    },
-    {
-        inputs: [],
         name: 'InvalidDiscount',
         type: 'error',
     },
@@ -65,11 +87,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: 'InvalidMarkup',
-        type: 'error',
-    },
-    {
-        inputs: [],
         name: 'InvalidParams',
         type: 'error',
     },
@@ -80,42 +97,12 @@ const _abi = [
     },
     {
         inputs: [],
-        name: 'LpDustFailedToClear',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'LpPositionFailedToAdd',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'LpPositionFailedToFill',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'LpPositionFailedToKill',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'LpPositionKilled',
+        name: 'LpPositionDead',
         type: 'error',
     },
     {
         inputs: [],
         name: 'OnlyBuyerCanKill',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'OptionTokenExpired',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'PositionFailedToKillAndTransfer',
         type: 'error',
     },
     {
@@ -126,11 +113,6 @@ const _abi = [
     {
         inputs: [],
         name: 'SsovEpochExpired',
-        type: 'error',
-    },
-    {
-        inputs: [],
-        name: 'SsovEpochIsZero',
         type: 'error',
     },
     {
@@ -156,9 +138,24 @@ const _abi = [
                         name: 'usd',
                         type: 'address',
                     },
+                    {
+                        internalType: 'address',
+                        name: 'underlying',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'optionPricing',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'assetSwapper',
+                        type: 'address',
+                    },
                 ],
                 indexed: false,
-                internalType: 'struct BaseLP.Addresses',
+                internalType: 'struct BaseOptionLp.Addresses',
                 name: '_addresses',
                 type: 'tuple',
             },
@@ -210,7 +207,7 @@ const _abi = [
             {
                 indexed: false,
                 internalType: 'uint256',
-                name: 'index',
+                name: 'lpId',
                 type: 'uint256',
             },
             {
@@ -222,7 +219,13 @@ const _abi = [
             {
                 indexed: false,
                 internalType: 'uint256',
-                name: 'premium',
+                name: 'usdPremium',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'underlyingPremium',
                 type: 'uint256',
             },
             {
@@ -252,25 +255,6 @@ const _abi = [
             },
         ],
         name: 'LPPositionKilled',
-        type: 'event',
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: 'address',
-                name: 'epochStrikeToken',
-                type: 'address',
-            },
-            {
-                indexed: false,
-                internalType: 'uint256',
-                name: 'index',
-                type: 'uint256',
-            },
-        ],
-        name: 'LiquidityForStrikeAdded',
         type: 'event',
     },
     {
@@ -391,6 +375,37 @@ const _abi = [
         anonymous: false,
         inputs: [
             {
+                indexed: true,
+                internalType: 'address',
+                name: 'epochStrikeToken',
+                type: 'address',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'buyer',
+                type: 'address',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'lpId',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'baseLiquidity',
+                type: 'uint256',
+            },
+        ],
+        name: 'UnderlyingLiquidityForStrikeAdded',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
                 indexed: false,
                 internalType: 'address',
                 name: 'account',
@@ -398,6 +413,37 @@ const _abi = [
             },
         ],
         name: 'Unpaused',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'epochStrikeToken',
+                type: 'address',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'buyer',
+                type: 'address',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'lpId',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'usdLiquidity',
+                type: 'uint256',
+            },
+        ],
+        name: 'UsdLiquidityForStrikeAdded',
         type: 'event',
     },
     {
@@ -422,6 +468,11 @@ const _abi = [
             },
             {
                 internalType: 'bool',
+                name: 'isUsd',
+                type: 'bool',
+            },
+            {
+                internalType: 'bool',
                 name: 'isPut',
                 type: 'bool',
             },
@@ -432,12 +483,12 @@ const _abi = [
             },
             {
                 internalType: 'uint256',
-                name: 'liquidityPerStrike',
+                name: 'liquidity',
                 type: 'uint256',
             },
             {
                 internalType: 'uint256',
-                name: 'discountToMarket',
+                name: 'discount',
                 type: 'uint256',
             },
             {
@@ -466,6 +517,65 @@ const _abi = [
                 name: 'usd',
                 type: 'address',
             },
+            {
+                internalType: 'address',
+                name: 'underlying',
+                type: 'address',
+            },
+            {
+                internalType: 'address',
+                name: 'optionPricing',
+                type: 'address',
+            },
+            {
+                internalType: 'address',
+                name: 'assetSwapper',
+                type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'uint256',
+                name: 'strike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'volatility',
+                type: 'uint256',
+            },
+            {
+                internalType: 'address',
+                name: 'vault',
+                type: 'address',
+            },
+        ],
+        name: 'calculatePremium',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
         ],
         stateMutability: 'view',
         type: 'function',
@@ -490,6 +600,16 @@ const _abi = [
     },
     {
         inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'bool',
+                name: 'outUsd',
+                type: 'bool',
+            },
             {
                 internalType: 'address',
                 name: 'strikeToken',
@@ -546,12 +666,22 @@ const _abi = [
                     },
                     {
                         internalType: 'uint256',
-                        name: 'liquidity',
+                        name: 'usdLiquidity',
                         type: 'uint256',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'liquidityUsed',
+                        name: 'underlyingLiquidity',
+                        type: 'uint256',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'usdLiquidityUsed',
+                        type: 'uint256',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'underlyingLiquidityUsed',
                         type: 'uint256',
                     },
                     {
@@ -575,7 +705,7 @@ const _abi = [
                         type: 'bool',
                     },
                 ],
-                internalType: 'struct OptionLP.LpPosition[]',
+                internalType: 'struct OptionLp.LpPosition[]',
                 name: '',
                 type: 'tuple[]',
             },
@@ -605,7 +735,36 @@ const _abi = [
             },
             {
                 internalType: 'uint256',
-                name: 'tokenLiquidity',
+                name: 'usdLiquidity',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'underlyingLiquidity',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: 'ssov',
+                type: 'address',
+            },
+            {
+                internalType: 'uint256',
+                name: 'usdPremium',
+                type: 'uint256',
+            },
+        ],
+        name: 'getPremiumInUnderlying',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
                 type: 'uint256',
             },
         ],
@@ -629,6 +788,25 @@ const _abi = [
             },
         ],
         stateMutability: 'pure',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: 'vault',
+                type: 'address',
+            },
+        ],
+        name: 'getSsovCollateralPrecision',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
         type: 'function',
     },
     {
@@ -697,8 +875,32 @@ const _abi = [
         inputs: [
             {
                 internalType: 'address',
+                name: 'ssov',
+                type: 'address',
+            },
+        ],
+        name: 'getSsovEpochs',
+        outputs: [
+            {
+                internalType: 'uint256[]',
+                name: '',
+                type: 'uint256[]',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
                 name: 'vault',
                 type: 'address',
+            },
+            {
+                internalType: 'uint256',
+                name: 'epoch',
+                type: 'uint256',
             },
         ],
         name: 'getSsovExpiry',
@@ -772,18 +974,8 @@ const _abi = [
                 name: 'vault',
                 type: 'address',
             },
-            {
-                internalType: 'uint256',
-                name: 'strike',
-                type: 'uint256',
-            },
-            {
-                internalType: 'uint256',
-                name: 'amount',
-                type: 'uint256',
-            },
         ],
-        name: 'getSsovPremiumCalculation',
+        name: 'getSsovUnderlyingPrice',
         outputs: [
             {
                 internalType: 'uint256',
@@ -806,13 +998,8 @@ const _abi = [
                 name: 'strike',
                 type: 'uint256',
             },
-            {
-                internalType: 'uint256',
-                name: 'amount',
-                type: 'uint256',
-            },
         ],
-        name: 'getSsovUsdPremiumCalculation',
+        name: 'getSsovVolatility',
         outputs: [
             {
                 internalType: 'uint256',
@@ -881,12 +1068,22 @@ const _abi = [
                     },
                     {
                         internalType: 'uint256',
-                        name: 'liquidity',
+                        name: 'usdLiquidity',
                         type: 'uint256',
                     },
                     {
                         internalType: 'uint256',
-                        name: 'liquidityUsed',
+                        name: 'underlyingLiquidity',
+                        type: 'uint256',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'usdLiquidityUsed',
+                        type: 'uint256',
+                    },
+                    {
+                        internalType: 'uint256',
+                        name: 'underlyingLiquidityUsed',
                         type: 'uint256',
                     },
                     {
@@ -910,9 +1107,33 @@ const _abi = [
                         type: 'bool',
                     },
                 ],
-                internalType: 'struct OptionLP.LpPosition[]',
+                internalType: 'struct OptionLp.LpPosition[]',
                 name: 'positions',
                 type: 'tuple[]',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: 'vault',
+                type: 'address',
+            },
+            {
+                internalType: 'uint256',
+                name: 'epoch',
+                type: 'uint256',
+            },
+        ],
+        name: 'hasEpochExpired',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
             },
         ],
         stateMutability: 'view',
@@ -970,6 +1191,11 @@ const _abi = [
             },
             {
                 internalType: 'bool',
+                name: 'isUsd',
+                type: 'bool',
+            },
+            {
+                internalType: 'bool',
                 name: 'isPut',
                 type: 'bool',
             },
@@ -980,12 +1206,12 @@ const _abi = [
             },
             {
                 internalType: 'uint256[]',
-                name: 'liquidityPerStrike',
+                name: 'liquidity',
                 type: 'uint256[]',
             },
             {
                 internalType: 'uint256[]',
-                name: 'discountToMarket',
+                name: 'discount',
                 type: 'uint256[]',
             },
             {
@@ -994,7 +1220,7 @@ const _abi = [
                 type: 'address',
             },
         ],
-        name: 'multiaddToLp',
+        name: 'multiAddToLp',
         outputs: [
             {
                 internalType: 'bool',
@@ -1007,6 +1233,16 @@ const _abi = [
     },
     {
         inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'bool',
+                name: 'outUsd',
+                type: 'bool',
+            },
             {
                 internalType: 'address',
                 name: 'strikeToken',
@@ -1023,7 +1259,7 @@ const _abi = [
                 type: 'uint256[]',
             },
         ],
-        name: 'multifillLpPosition',
+        name: 'multiFillLpPosition',
         outputs: [
             {
                 internalType: 'bool',
@@ -1047,7 +1283,7 @@ const _abi = [
                 type: 'uint256[]',
             },
         ],
-        name: 'multikillLpPosition',
+        name: 'multiKillLpPosition',
         outputs: [
             {
                 internalType: 'bool',
@@ -1162,8 +1398,23 @@ const _abi = [
                         name: 'usd',
                         type: 'address',
                     },
+                    {
+                        internalType: 'address',
+                        name: 'underlying',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'optionPricing',
+                        type: 'address',
+                    },
+                    {
+                        internalType: 'address',
+                        name: 'assetSwapper',
+                        type: 'address',
+                    },
                 ],
-                internalType: 'struct BaseLP.Addresses',
+                internalType: 'struct BaseOptionLp.Addresses',
                 name: '_addresses',
                 type: 'tuple',
             },
@@ -1229,6 +1480,11 @@ const _abi = [
                 internalType: 'address',
                 name: 'ssov',
                 type: 'address',
+            },
+            {
+                internalType: 'uint256',
+                name: 'epoch',
+                type: 'uint256',
             },
         ],
         name: 'updateSsovEpoch',

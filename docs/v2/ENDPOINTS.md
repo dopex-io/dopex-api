@@ -173,3 +173,23 @@ Returns the oracle and coingecko price in usd for dopex supported tokens
     ```
 
 ---
+
+## Options liquidity pool
+
+Returns data about the Dopex OLPs
+
+-   **URL**
+
+    `/olp`
+
+-   **Method:**
+
+    `GET`
+
+-   **Sample call:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/api/v2/olp'
+    ```
+
+---

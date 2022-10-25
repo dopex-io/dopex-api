@@ -27,19 +27,31 @@ import type {
     PromiseOrValue,
 } from './common'
 
-export declare namespace BaseLP {
-    export type AddressesStruct = { usd: PromiseOrValue<string> }
+export declare namespace BaseOptionLp {
+    export type AddressesStruct = {
+        usd: PromiseOrValue<string>
+        underlying: PromiseOrValue<string>
+        optionPricing: PromiseOrValue<string>
+        assetSwapper: PromiseOrValue<string>
+    }
 
-    export type AddressesStructOutput = [string] & { usd: string }
+    export type AddressesStructOutput = [string, string, string, string] & {
+        usd: string
+        underlying: string
+        optionPricing: string
+        assetSwapper: string
+    }
 }
 
-export declare namespace OptionLP {
+export declare namespace OptionLp {
     export type LpPositionStruct = {
         lpId: PromiseOrValue<BigNumberish>
         epoch: PromiseOrValue<BigNumberish>
         strike: PromiseOrValue<BigNumberish>
-        liquidity: PromiseOrValue<BigNumberish>
-        liquidityUsed: PromiseOrValue<BigNumberish>
+        usdLiquidity: PromiseOrValue<BigNumberish>
+        underlyingLiquidity: PromiseOrValue<BigNumberish>
+        usdLiquidityUsed: PromiseOrValue<BigNumberish>
+        underlyingLiquidityUsed: PromiseOrValue<BigNumberish>
         discount: PromiseOrValue<BigNumberish>
         purchased: PromiseOrValue<BigNumberish>
         buyer: PromiseOrValue<string>
@@ -54,14 +66,18 @@ export declare namespace OptionLP {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
         string,
         boolean
     ] & {
         lpId: BigNumber
         epoch: BigNumber
         strike: BigNumber
-        liquidity: BigNumber
-        liquidityUsed: BigNumber
+        usdLiquidity: BigNumber
+        underlyingLiquidity: BigNumber
+        usdLiquidityUsed: BigNumber
+        underlyingLiquidityUsed: BigNumber
         discount: BigNumber
         purchased: BigNumber
         buyer: string
@@ -72,28 +88,33 @@ export declare namespace OptionLP {
 export interface OptionLPInterface extends utils.Interface {
     functions: {
         'addToContractWhitelist(address)': FunctionFragment
-        'addToLp(address,bool,uint256,uint256,uint256,address)': FunctionFragment
+        'addToLp(address,bool,bool,uint256,uint256,uint256,address)': FunctionFragment
         'addresses()': FunctionFragment
+        'calculatePremium(bool,uint256,uint256,uint256,uint256,address)': FunctionFragment
         'emergencyWithdrawn(address[],bool)': FunctionFragment
-        'fillLpPosition(address,uint256,uint256)': FunctionFragment
+        'fillLpPosition(bool,bool,address,uint256,uint256)': FunctionFragment
         'getAllLpPositions(address)': FunctionFragment
         'getOptionTokenInfo(address)': FunctionFragment
+        'getPremiumInUnderlying(address,uint256)': FunctionFragment
         'getSsov(address)': FunctionFragment
+        'getSsovCollateralPrecision(address)': FunctionFragment
         'getSsovEpoch(address)': FunctionFragment
         'getSsovEpochExpiries(address)': FunctionFragment
         'getSsovEpochStrikes(address,uint256)': FunctionFragment
-        'getSsovExpiry(address)': FunctionFragment
+        'getSsovEpochs(address)': FunctionFragment
+        'getSsovExpiry(address,uint256)': FunctionFragment
         'getSsovOptionToken(address,uint256,uint256)': FunctionFragment
         'getSsovOptionTokens(address,uint256)': FunctionFragment
-        'getSsovPremiumCalculation(address,uint256,uint256)': FunctionFragment
-        'getSsovUsdPremiumCalculation(address,uint256,uint256)': FunctionFragment
+        'getSsovUnderlyingPrice(address)': FunctionFragment
+        'getSsovVolatility(address,uint256)': FunctionFragment
         'getTokenVaultRegistry(address,bool)': FunctionFragment
         'getUserLpPositions(address,address)': FunctionFragment
+        'hasEpochExpired(address,uint256)': FunctionFragment
         'isContract(address)': FunctionFragment
         'killLpPosition(address,uint256)': FunctionFragment
-        'multiaddToLp(address,bool,uint256[],uint256[],uint256[],address)': FunctionFragment
-        'multifillLpPosition(address,uint256[],uint256[])': FunctionFragment
-        'multikillLpPosition(address,uint256[])': FunctionFragment
+        'multiAddToLp(address,bool,bool,uint256[],uint256[],uint256[],address)': FunctionFragment
+        'multiFillLpPosition(bool,bool,address,uint256[],uint256[])': FunctionFragment
+        'multiKillLpPosition(address,uint256[])': FunctionFragment
         'name()': FunctionFragment
         'owner()': FunctionFragment
         'pause()': FunctionFragment
@@ -101,11 +122,11 @@ export interface OptionLPInterface extends utils.Interface {
         'registerSsovForToken(address,bool,address)': FunctionFragment
         'removeFromContractWhitelist(address)': FunctionFragment
         'renounceOwnership()': FunctionFragment
-        'setAddresses((address))': FunctionFragment
+        'setAddresses((address,address,address,address))': FunctionFragment
         'transferOwnership(address)': FunctionFragment
         'unpause()': FunctionFragment
         'unregisterSsovForToken(address,bool)': FunctionFragment
-        'updateSsovEpoch(address)': FunctionFragment
+        'updateSsovEpoch(address,uint256)': FunctionFragment
         'whitelistedContracts(address)': FunctionFragment
     }
 
@@ -114,26 +135,31 @@ export interface OptionLPInterface extends utils.Interface {
             | 'addToContractWhitelist'
             | 'addToLp'
             | 'addresses'
+            | 'calculatePremium'
             | 'emergencyWithdrawn'
             | 'fillLpPosition'
             | 'getAllLpPositions'
             | 'getOptionTokenInfo'
+            | 'getPremiumInUnderlying'
             | 'getSsov'
+            | 'getSsovCollateralPrecision'
             | 'getSsovEpoch'
             | 'getSsovEpochExpiries'
             | 'getSsovEpochStrikes'
+            | 'getSsovEpochs'
             | 'getSsovExpiry'
             | 'getSsovOptionToken'
             | 'getSsovOptionTokens'
-            | 'getSsovPremiumCalculation'
-            | 'getSsovUsdPremiumCalculation'
+            | 'getSsovUnderlyingPrice'
+            | 'getSsovVolatility'
             | 'getTokenVaultRegistry'
             | 'getUserLpPositions'
+            | 'hasEpochExpired'
             | 'isContract'
             | 'killLpPosition'
-            | 'multiaddToLp'
-            | 'multifillLpPosition'
-            | 'multikillLpPosition'
+            | 'multiAddToLp'
+            | 'multiFillLpPosition'
+            | 'multiKillLpPosition'
             | 'name'
             | 'owner'
             | 'pause'
@@ -158,6 +184,7 @@ export interface OptionLPInterface extends utils.Interface {
         values: [
             PromiseOrValue<string>,
             PromiseOrValue<boolean>,
+            PromiseOrValue<boolean>,
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>,
@@ -169,12 +196,25 @@ export interface OptionLPInterface extends utils.Interface {
         values?: undefined
     ): string
     encodeFunctionData(
+        functionFragment: 'calculatePremium',
+        values: [
+            PromiseOrValue<boolean>,
+            PromiseOrValue<BigNumberish>,
+            PromiseOrValue<BigNumberish>,
+            PromiseOrValue<BigNumberish>,
+            PromiseOrValue<BigNumberish>,
+            PromiseOrValue<string>
+        ]
+    ): string
+    encodeFunctionData(
         functionFragment: 'emergencyWithdrawn',
         values: [PromiseOrValue<string>[], PromiseOrValue<boolean>]
     ): string
     encodeFunctionData(
         functionFragment: 'fillLpPosition',
         values: [
+            PromiseOrValue<boolean>,
+            PromiseOrValue<boolean>,
             PromiseOrValue<string>,
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>
@@ -189,7 +229,15 @@ export interface OptionLPInterface extends utils.Interface {
         values: [PromiseOrValue<string>]
     ): string
     encodeFunctionData(
+        functionFragment: 'getPremiumInUnderlying',
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    ): string
+    encodeFunctionData(
         functionFragment: 'getSsov',
+        values: [PromiseOrValue<string>]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'getSsovCollateralPrecision',
         values: [PromiseOrValue<string>]
     ): string
     encodeFunctionData(
@@ -205,8 +253,12 @@ export interface OptionLPInterface extends utils.Interface {
         values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
-        functionFragment: 'getSsovExpiry',
+        functionFragment: 'getSsovEpochs',
         values: [PromiseOrValue<string>]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'getSsovExpiry',
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
         functionFragment: 'getSsovOptionToken',
@@ -221,20 +273,12 @@ export interface OptionLPInterface extends utils.Interface {
         values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
-        functionFragment: 'getSsovPremiumCalculation',
-        values: [
-            PromiseOrValue<string>,
-            PromiseOrValue<BigNumberish>,
-            PromiseOrValue<BigNumberish>
-        ]
+        functionFragment: 'getSsovUnderlyingPrice',
+        values: [PromiseOrValue<string>]
     ): string
     encodeFunctionData(
-        functionFragment: 'getSsovUsdPremiumCalculation',
-        values: [
-            PromiseOrValue<string>,
-            PromiseOrValue<BigNumberish>,
-            PromiseOrValue<BigNumberish>
-        ]
+        functionFragment: 'getSsovVolatility',
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
         functionFragment: 'getTokenVaultRegistry',
@@ -245,6 +289,10 @@ export interface OptionLPInterface extends utils.Interface {
         values: [PromiseOrValue<string>, PromiseOrValue<string>]
     ): string
     encodeFunctionData(
+        functionFragment: 'hasEpochExpired',
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    ): string
+    encodeFunctionData(
         functionFragment: 'isContract',
         values: [PromiseOrValue<string>]
     ): string
@@ -253,9 +301,10 @@ export interface OptionLPInterface extends utils.Interface {
         values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
-        functionFragment: 'multiaddToLp',
+        functionFragment: 'multiAddToLp',
         values: [
             PromiseOrValue<string>,
+            PromiseOrValue<boolean>,
             PromiseOrValue<boolean>,
             PromiseOrValue<BigNumberish>[],
             PromiseOrValue<BigNumberish>[],
@@ -264,15 +313,17 @@ export interface OptionLPInterface extends utils.Interface {
         ]
     ): string
     encodeFunctionData(
-        functionFragment: 'multifillLpPosition',
+        functionFragment: 'multiFillLpPosition',
         values: [
+            PromiseOrValue<boolean>,
+            PromiseOrValue<boolean>,
             PromiseOrValue<string>,
             PromiseOrValue<BigNumberish>[],
             PromiseOrValue<BigNumberish>[]
         ]
     ): string
     encodeFunctionData(
-        functionFragment: 'multikillLpPosition',
+        functionFragment: 'multiKillLpPosition',
         values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
     ): string
     encodeFunctionData(functionFragment: 'name', values?: undefined): string
@@ -297,7 +348,7 @@ export interface OptionLPInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'setAddresses',
-        values: [BaseLP.AddressesStruct]
+        values: [BaseOptionLp.AddressesStruct]
     ): string
     encodeFunctionData(
         functionFragment: 'transferOwnership',
@@ -310,7 +361,7 @@ export interface OptionLPInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'updateSsovEpoch',
-        values: [PromiseOrValue<string>]
+        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
         functionFragment: 'whitelistedContracts',
@@ -323,6 +374,10 @@ export interface OptionLPInterface extends utils.Interface {
     ): Result
     decodeFunctionResult(functionFragment: 'addToLp', data: BytesLike): Result
     decodeFunctionResult(functionFragment: 'addresses', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'calculatePremium',
+        data: BytesLike
+    ): Result
     decodeFunctionResult(
         functionFragment: 'emergencyWithdrawn',
         data: BytesLike
@@ -339,7 +394,15 @@ export interface OptionLPInterface extends utils.Interface {
         functionFragment: 'getOptionTokenInfo',
         data: BytesLike
     ): Result
+    decodeFunctionResult(
+        functionFragment: 'getPremiumInUnderlying',
+        data: BytesLike
+    ): Result
     decodeFunctionResult(functionFragment: 'getSsov', data: BytesLike): Result
+    decodeFunctionResult(
+        functionFragment: 'getSsovCollateralPrecision',
+        data: BytesLike
+    ): Result
     decodeFunctionResult(
         functionFragment: 'getSsovEpoch',
         data: BytesLike
@@ -350,6 +413,10 @@ export interface OptionLPInterface extends utils.Interface {
     ): Result
     decodeFunctionResult(
         functionFragment: 'getSsovEpochStrikes',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(
+        functionFragment: 'getSsovEpochs',
         data: BytesLike
     ): Result
     decodeFunctionResult(
@@ -365,11 +432,11 @@ export interface OptionLPInterface extends utils.Interface {
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'getSsovPremiumCalculation',
+        functionFragment: 'getSsovUnderlyingPrice',
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'getSsovUsdPremiumCalculation',
+        functionFragment: 'getSsovVolatility',
         data: BytesLike
     ): Result
     decodeFunctionResult(
@@ -381,6 +448,10 @@ export interface OptionLPInterface extends utils.Interface {
         data: BytesLike
     ): Result
     decodeFunctionResult(
+        functionFragment: 'hasEpochExpired',
+        data: BytesLike
+    ): Result
+    decodeFunctionResult(
         functionFragment: 'isContract',
         data: BytesLike
     ): Result
@@ -389,15 +460,15 @@ export interface OptionLPInterface extends utils.Interface {
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'multiaddToLp',
+        functionFragment: 'multiAddToLp',
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'multifillLpPosition',
+        functionFragment: 'multiFillLpPosition',
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'multikillLpPosition',
+        functionFragment: 'multiKillLpPosition',
         data: BytesLike
     ): Result
     decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result
@@ -443,16 +514,17 @@ export interface OptionLPInterface extends utils.Interface {
         'AddressesSet(tuple)': EventFragment
         'EmergencyWithdrawn(address)': EventFragment
         'LPDustCleared(address,uint256)': EventFragment
-        'LPPositionFilled(address,uint256,uint256,uint256,address)': EventFragment
+        'LPPositionFilled(address,uint256,uint256,uint256,uint256,address)': EventFragment
         'LPPositionKilled(address,uint256)': EventFragment
-        'LiquidityForStrikeAdded(address,uint256)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
         'RemoveFromContractWhitelist(address)': EventFragment
         'SsovExpiryUpdated(address,uint256)': EventFragment
         'SsovForTokenRegistered(address,bool,address)': EventFragment
         'SsovForTokenRemoved(address,bool,address)': EventFragment
+        'UnderlyingLiquidityForStrikeAdded(address,address,uint256,uint256)': EventFragment
         'Unpaused(address)': EventFragment
+        'UsdLiquidityForStrikeAdded(address,address,uint256,uint256)': EventFragment
     }
 
     getEvent(nameOrSignatureOrTopic: 'AddToContractWhitelist'): EventFragment
@@ -461,7 +533,6 @@ export interface OptionLPInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'LPDustCleared'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'LPPositionFilled'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'LPPositionKilled'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'LiquidityForStrikeAdded'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
     getEvent(
@@ -470,7 +541,13 @@ export interface OptionLPInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'SsovExpiryUpdated'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'SsovForTokenRegistered'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'SsovForTokenRemoved'): EventFragment
+    getEvent(
+        nameOrSignatureOrTopic: 'UnderlyingLiquidityForStrikeAdded'
+    ): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Unpaused'): EventFragment
+    getEvent(
+        nameOrSignatureOrTopic: 'UsdLiquidityForStrikeAdded'
+    ): EventFragment
 }
 
 export interface AddToContractWhitelistEventObject {
@@ -485,10 +562,10 @@ export type AddToContractWhitelistEventFilter =
     TypedEventFilter<AddToContractWhitelistEvent>
 
 export interface AddressesSetEventObject {
-    _addresses: BaseLP.AddressesStructOutput
+    _addresses: BaseOptionLp.AddressesStructOutput
 }
 export type AddressesSetEvent = TypedEvent<
-    [BaseLP.AddressesStructOutput],
+    [BaseOptionLp.AddressesStructOutput],
     AddressesSetEventObject
 >
 
@@ -518,13 +595,14 @@ export type LPDustClearedEventFilter = TypedEventFilter<LPDustClearedEvent>
 
 export interface LPPositionFilledEventObject {
     epochStrikeToken: string
-    index: BigNumber
+    lpId: BigNumber
     amount: BigNumber
-    premium: BigNumber
+    usdPremium: BigNumber
+    underlyingPremium: BigNumber
     seller: string
 }
 export type LPPositionFilledEvent = TypedEvent<
-    [string, BigNumber, BigNumber, BigNumber, string],
+    [string, BigNumber, BigNumber, BigNumber, BigNumber, string],
     LPPositionFilledEventObject
 >
 
@@ -542,18 +620,6 @@ export type LPPositionKilledEvent = TypedEvent<
 
 export type LPPositionKilledEventFilter =
     TypedEventFilter<LPPositionKilledEvent>
-
-export interface LiquidityForStrikeAddedEventObject {
-    epochStrikeToken: string
-    index: BigNumber
-}
-export type LiquidityForStrikeAddedEvent = TypedEvent<
-    [string, BigNumber],
-    LiquidityForStrikeAddedEventObject
->
-
-export type LiquidityForStrikeAddedEventFilter =
-    TypedEventFilter<LiquidityForStrikeAddedEvent>
 
 export interface OwnershipTransferredEventObject {
     previousOwner: string
@@ -623,12 +689,40 @@ export type SsovForTokenRemovedEvent = TypedEvent<
 export type SsovForTokenRemovedEventFilter =
     TypedEventFilter<SsovForTokenRemovedEvent>
 
+export interface UnderlyingLiquidityForStrikeAddedEventObject {
+    epochStrikeToken: string
+    buyer: string
+    lpId: BigNumber
+    baseLiquidity: BigNumber
+}
+export type UnderlyingLiquidityForStrikeAddedEvent = TypedEvent<
+    [string, string, BigNumber, BigNumber],
+    UnderlyingLiquidityForStrikeAddedEventObject
+>
+
+export type UnderlyingLiquidityForStrikeAddedEventFilter =
+    TypedEventFilter<UnderlyingLiquidityForStrikeAddedEvent>
+
 export interface UnpausedEventObject {
     account: string
 }
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>
 
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>
+
+export interface UsdLiquidityForStrikeAddedEventObject {
+    epochStrikeToken: string
+    buyer: string
+    lpId: BigNumber
+    usdLiquidity: BigNumber
+}
+export type UsdLiquidityForStrikeAddedEvent = TypedEvent<
+    [string, string, BigNumber, BigNumber],
+    UsdLiquidityForStrikeAddedEventObject
+>
+
+export type UsdLiquidityForStrikeAddedEventFilter =
+    TypedEventFilter<UsdLiquidityForStrikeAddedEvent>
 
 export interface OptionLP extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this
@@ -664,17 +758,33 @@ export interface OptionLP extends BaseContract {
 
         addToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strike: PromiseOrValue<BigNumberish>,
-            liquidityPerStrike: PromiseOrValue<BigNumberish>,
-            discountToMarket: PromiseOrValue<BigNumberish>,
+            liquidity: PromiseOrValue<BigNumberish>,
+            discount: PromiseOrValue<BigNumberish>,
             to: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
-        addresses(
+        addresses(overrides?: CallOverrides): Promise<
+            [string, string, string, string] & {
+                usd: string
+                underlying: string
+                optionPricing: string
+                assetSwapper: string
+            }
+        >
+
+        calculatePremium(
+            isPut: PromiseOrValue<boolean>,
+            strike: PromiseOrValue<BigNumberish>,
+            expiry: PromiseOrValue<BigNumberish>,
+            amount: PromiseOrValue<BigNumberish>,
+            volatility: PromiseOrValue<BigNumberish>,
+            vault: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<[string] & { usd: string }>
+        ): Promise<[BigNumber]>
 
         emergencyWithdrawn(
             tokens: PromiseOrValue<string>[],
@@ -683,6 +793,8 @@ export interface OptionLP extends BaseContract {
         ): Promise<ContractTransaction>
 
         fillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndex: PromiseOrValue<BigNumberish>,
             amount: PromiseOrValue<BigNumberish>,
@@ -692,23 +804,35 @@ export interface OptionLP extends BaseContract {
         getAllLpPositions(
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<[OptionLP.LpPositionStructOutput[]]>
+        ): Promise<[OptionLp.LpPositionStructOutput[]]>
 
         getOptionTokenInfo(
             arg0: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<
-            [string, BigNumber, BigNumber] & {
+            [string, BigNumber, BigNumber, BigNumber] & {
                 ssov: string
                 strike: BigNumber
-                tokenLiquidity: BigNumber
+                usdLiquidity: BigNumber
+                underlyingLiquidity: BigNumber
             }
         >
+
+        getPremiumInUnderlying(
+            ssov: PromiseOrValue<string>,
+            usdPremium: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>
 
         getSsov(
             vault: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<[string]>
+
+        getSsovCollateralPrecision(
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber]>
 
         getSsovEpoch(
             vault: PromiseOrValue<string>,
@@ -726,8 +850,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<[BigNumber[]] & { strikes: BigNumber[] }>
 
+        getSsovEpochs(
+            ssov: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<[BigNumber[]]>
+
         getSsovExpiry(
             vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<[BigNumber]>
 
@@ -744,17 +874,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<[string[]] & { tokens: string[] }>
 
-        getSsovPremiumCalculation(
+        getSsovUnderlyingPrice(
             vault: PromiseOrValue<string>,
-            strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<[BigNumber]>
 
-        getSsovUsdPremiumCalculation(
+        getSsovVolatility(
             vault: PromiseOrValue<string>,
             strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<[BigNumber]>
 
@@ -769,10 +896,16 @@ export interface OptionLP extends BaseContract {
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<
-            [OptionLP.LpPositionStructOutput[]] & {
-                positions: OptionLP.LpPositionStructOutput[]
+            [OptionLp.LpPositionStructOutput[]] & {
+                positions: OptionLp.LpPositionStructOutput[]
             }
         >
+
+        hasEpochExpired(
+            vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<[boolean]>
 
         isContract(
             addr: PromiseOrValue<string>,
@@ -785,24 +918,27 @@ export interface OptionLP extends BaseContract {
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
-        multiaddToLp(
+        multiAddToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strikes: PromiseOrValue<BigNumberish>[],
-            liquidityPerStrike: PromiseOrValue<BigNumberish>[],
-            discountToMarket: PromiseOrValue<BigNumberish>[],
+            liquidity: PromiseOrValue<BigNumberish>[],
+            discount: PromiseOrValue<BigNumberish>[],
             to: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
-        multifillLpPosition(
+        multiFillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             amount: PromiseOrValue<BigNumberish>[],
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
-        multikillLpPosition(
+        multiKillLpPosition(
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -835,7 +971,7 @@ export interface OptionLP extends BaseContract {
         ): Promise<ContractTransaction>
 
         setAddresses(
-            _addresses: BaseLP.AddressesStruct,
+            _addresses: BaseOptionLp.AddressesStruct,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
@@ -856,6 +992,7 @@ export interface OptionLP extends BaseContract {
 
         updateSsovEpoch(
             ssov: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
@@ -872,15 +1009,33 @@ export interface OptionLP extends BaseContract {
 
     addToLp(
         token: PromiseOrValue<string>,
+        isUsd: PromiseOrValue<boolean>,
         isPut: PromiseOrValue<boolean>,
         strike: PromiseOrValue<BigNumberish>,
-        liquidityPerStrike: PromiseOrValue<BigNumberish>,
-        discountToMarket: PromiseOrValue<BigNumberish>,
+        liquidity: PromiseOrValue<BigNumberish>,
+        discount: PromiseOrValue<BigNumberish>,
         to: PromiseOrValue<string>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
-    addresses(overrides?: CallOverrides): Promise<string>
+    addresses(overrides?: CallOverrides): Promise<
+        [string, string, string, string] & {
+            usd: string
+            underlying: string
+            optionPricing: string
+            assetSwapper: string
+        }
+    >
+
+    calculatePremium(
+        isPut: PromiseOrValue<boolean>,
+        strike: PromiseOrValue<BigNumberish>,
+        expiry: PromiseOrValue<BigNumberish>,
+        amount: PromiseOrValue<BigNumberish>,
+        volatility: PromiseOrValue<BigNumberish>,
+        vault: PromiseOrValue<string>,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
     emergencyWithdrawn(
         tokens: PromiseOrValue<string>[],
@@ -889,6 +1044,8 @@ export interface OptionLP extends BaseContract {
     ): Promise<ContractTransaction>
 
     fillLpPosition(
+        isPut: PromiseOrValue<boolean>,
+        outUsd: PromiseOrValue<boolean>,
         strikeToken: PromiseOrValue<string>,
         lpIndex: PromiseOrValue<BigNumberish>,
         amount: PromiseOrValue<BigNumberish>,
@@ -898,23 +1055,35 @@ export interface OptionLP extends BaseContract {
     getAllLpPositions(
         strikeToken: PromiseOrValue<string>,
         overrides?: CallOverrides
-    ): Promise<OptionLP.LpPositionStructOutput[]>
+    ): Promise<OptionLp.LpPositionStructOutput[]>
 
     getOptionTokenInfo(
         arg0: PromiseOrValue<string>,
         overrides?: CallOverrides
     ): Promise<
-        [string, BigNumber, BigNumber] & {
+        [string, BigNumber, BigNumber, BigNumber] & {
             ssov: string
             strike: BigNumber
-            tokenLiquidity: BigNumber
+            usdLiquidity: BigNumber
+            underlyingLiquidity: BigNumber
         }
     >
+
+    getPremiumInUnderlying(
+        ssov: PromiseOrValue<string>,
+        usdPremium: PromiseOrValue<BigNumberish>,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
     getSsov(
         vault: PromiseOrValue<string>,
         overrides?: CallOverrides
     ): Promise<string>
+
+    getSsovCollateralPrecision(
+        vault: PromiseOrValue<string>,
+        overrides?: CallOverrides
+    ): Promise<BigNumber>
 
     getSsovEpoch(
         vault: PromiseOrValue<string>,
@@ -932,8 +1101,14 @@ export interface OptionLP extends BaseContract {
         overrides?: CallOverrides
     ): Promise<BigNumber[]>
 
+    getSsovEpochs(
+        ssov: PromiseOrValue<string>,
+        overrides?: CallOverrides
+    ): Promise<BigNumber[]>
+
     getSsovExpiry(
         vault: PromiseOrValue<string>,
+        epoch: PromiseOrValue<BigNumberish>,
         overrides?: CallOverrides
     ): Promise<BigNumber>
 
@@ -950,17 +1125,14 @@ export interface OptionLP extends BaseContract {
         overrides?: CallOverrides
     ): Promise<string[]>
 
-    getSsovPremiumCalculation(
+    getSsovUnderlyingPrice(
         vault: PromiseOrValue<string>,
-        strike: PromiseOrValue<BigNumberish>,
-        amount: PromiseOrValue<BigNumberish>,
         overrides?: CallOverrides
     ): Promise<BigNumber>
 
-    getSsovUsdPremiumCalculation(
+    getSsovVolatility(
         vault: PromiseOrValue<string>,
         strike: PromiseOrValue<BigNumberish>,
-        amount: PromiseOrValue<BigNumberish>,
         overrides?: CallOverrides
     ): Promise<BigNumber>
 
@@ -974,7 +1146,13 @@ export interface OptionLP extends BaseContract {
         user: PromiseOrValue<string>,
         strikeToken: PromiseOrValue<string>,
         overrides?: CallOverrides
-    ): Promise<OptionLP.LpPositionStructOutput[]>
+    ): Promise<OptionLp.LpPositionStructOutput[]>
+
+    hasEpochExpired(
+        vault: PromiseOrValue<string>,
+        epoch: PromiseOrValue<BigNumberish>,
+        overrides?: CallOverrides
+    ): Promise<boolean>
 
     isContract(
         addr: PromiseOrValue<string>,
@@ -987,24 +1165,27 @@ export interface OptionLP extends BaseContract {
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
-    multiaddToLp(
+    multiAddToLp(
         token: PromiseOrValue<string>,
+        isUsd: PromiseOrValue<boolean>,
         isPut: PromiseOrValue<boolean>,
         strikes: PromiseOrValue<BigNumberish>[],
-        liquidityPerStrike: PromiseOrValue<BigNumberish>[],
-        discountToMarket: PromiseOrValue<BigNumberish>[],
+        liquidity: PromiseOrValue<BigNumberish>[],
+        discount: PromiseOrValue<BigNumberish>[],
         to: PromiseOrValue<string>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
-    multifillLpPosition(
+    multiFillLpPosition(
+        isPut: PromiseOrValue<boolean>,
+        outUsd: PromiseOrValue<boolean>,
         strikeToken: PromiseOrValue<string>,
         lpIndices: PromiseOrValue<BigNumberish>[],
         amount: PromiseOrValue<BigNumberish>[],
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
-    multikillLpPosition(
+    multiKillLpPosition(
         strikeToken: PromiseOrValue<string>,
         lpIndices: PromiseOrValue<BigNumberish>[],
         overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1037,7 +1218,7 @@ export interface OptionLP extends BaseContract {
     ): Promise<ContractTransaction>
 
     setAddresses(
-        _addresses: BaseLP.AddressesStruct,
+        _addresses: BaseOptionLp.AddressesStruct,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1058,6 +1239,7 @@ export interface OptionLP extends BaseContract {
 
     updateSsovEpoch(
         ssov: PromiseOrValue<string>,
+        epoch: PromiseOrValue<BigNumberish>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1074,15 +1256,33 @@ export interface OptionLP extends BaseContract {
 
         addToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strike: PromiseOrValue<BigNumberish>,
-            liquidityPerStrike: PromiseOrValue<BigNumberish>,
-            discountToMarket: PromiseOrValue<BigNumberish>,
+            liquidity: PromiseOrValue<BigNumberish>,
+            discount: PromiseOrValue<BigNumberish>,
             to: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<boolean>
 
-        addresses(overrides?: CallOverrides): Promise<string>
+        addresses(overrides?: CallOverrides): Promise<
+            [string, string, string, string] & {
+                usd: string
+                underlying: string
+                optionPricing: string
+                assetSwapper: string
+            }
+        >
+
+        calculatePremium(
+            isPut: PromiseOrValue<boolean>,
+            strike: PromiseOrValue<BigNumberish>,
+            expiry: PromiseOrValue<BigNumberish>,
+            amount: PromiseOrValue<BigNumberish>,
+            volatility: PromiseOrValue<BigNumberish>,
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
         emergencyWithdrawn(
             tokens: PromiseOrValue<string>[],
@@ -1091,6 +1291,8 @@ export interface OptionLP extends BaseContract {
         ): Promise<void>
 
         fillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndex: PromiseOrValue<BigNumberish>,
             amount: PromiseOrValue<BigNumberish>,
@@ -1100,23 +1302,35 @@ export interface OptionLP extends BaseContract {
         getAllLpPositions(
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<OptionLP.LpPositionStructOutput[]>
+        ): Promise<OptionLp.LpPositionStructOutput[]>
 
         getOptionTokenInfo(
             arg0: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<
-            [string, BigNumber, BigNumber] & {
+            [string, BigNumber, BigNumber, BigNumber] & {
                 ssov: string
                 strike: BigNumber
-                tokenLiquidity: BigNumber
+                usdLiquidity: BigNumber
+                underlyingLiquidity: BigNumber
             }
         >
+
+        getPremiumInUnderlying(
+            ssov: PromiseOrValue<string>,
+            usdPremium: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
         getSsov(
             vault: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<string>
+
+        getSsovCollateralPrecision(
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
         getSsovEpoch(
             vault: PromiseOrValue<string>,
@@ -1134,8 +1348,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<BigNumber[]>
 
+        getSsovEpochs(
+            ssov: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber[]>
+
         getSsovExpiry(
             vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
@@ -1152,17 +1372,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<string[]>
 
-        getSsovPremiumCalculation(
+        getSsovUnderlyingPrice(
             vault: PromiseOrValue<string>,
-            strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
-        getSsovUsdPremiumCalculation(
+        getSsovVolatility(
             vault: PromiseOrValue<string>,
             strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
@@ -1176,7 +1393,13 @@ export interface OptionLP extends BaseContract {
             user: PromiseOrValue<string>,
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<OptionLP.LpPositionStructOutput[]>
+        ): Promise<OptionLp.LpPositionStructOutput[]>
+
+        hasEpochExpired(
+            vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<boolean>
 
         isContract(
             addr: PromiseOrValue<string>,
@@ -1189,24 +1412,27 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<boolean>
 
-        multiaddToLp(
+        multiAddToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strikes: PromiseOrValue<BigNumberish>[],
-            liquidityPerStrike: PromiseOrValue<BigNumberish>[],
-            discountToMarket: PromiseOrValue<BigNumberish>[],
+            liquidity: PromiseOrValue<BigNumberish>[],
+            discount: PromiseOrValue<BigNumberish>[],
             to: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<boolean>
 
-        multifillLpPosition(
+        multiFillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             amount: PromiseOrValue<BigNumberish>[],
             overrides?: CallOverrides
         ): Promise<boolean>
 
-        multikillLpPosition(
+        multiKillLpPosition(
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             overrides?: CallOverrides
@@ -1235,7 +1461,7 @@ export interface OptionLP extends BaseContract {
         renounceOwnership(overrides?: CallOverrides): Promise<void>
 
         setAddresses(
-            _addresses: BaseLP.AddressesStruct,
+            _addresses: BaseOptionLp.AddressesStruct,
             overrides?: CallOverrides
         ): Promise<boolean>
 
@@ -1254,6 +1480,7 @@ export interface OptionLP extends BaseContract {
 
         updateSsovEpoch(
             ssov: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<boolean>
 
@@ -1288,18 +1515,20 @@ export interface OptionLP extends BaseContract {
             index?: null
         ): LPDustClearedEventFilter
 
-        'LPPositionFilled(address,uint256,uint256,uint256,address)'(
+        'LPPositionFilled(address,uint256,uint256,uint256,uint256,address)'(
             epochStrikeToken?: PromiseOrValue<string> | null,
-            index?: null,
+            lpId?: null,
             amount?: null,
-            premium?: null,
+            usdPremium?: null,
+            underlyingPremium?: null,
             seller?: PromiseOrValue<string> | null
         ): LPPositionFilledEventFilter
         LPPositionFilled(
             epochStrikeToken?: PromiseOrValue<string> | null,
-            index?: null,
+            lpId?: null,
             amount?: null,
-            premium?: null,
+            usdPremium?: null,
+            underlyingPremium?: null,
             seller?: PromiseOrValue<string> | null
         ): LPPositionFilledEventFilter
 
@@ -1311,15 +1540,6 @@ export interface OptionLP extends BaseContract {
             epochStrikeToken?: PromiseOrValue<string> | null,
             index?: null
         ): LPPositionKilledEventFilter
-
-        'LiquidityForStrikeAdded(address,uint256)'(
-            epochStrikeToken?: PromiseOrValue<string> | null,
-            index?: null
-        ): LiquidityForStrikeAddedEventFilter
-        LiquidityForStrikeAdded(
-            epochStrikeToken?: PromiseOrValue<string> | null,
-            index?: null
-        ): LiquidityForStrikeAddedEventFilter
 
         'OwnershipTransferred(address,address)'(
             previousOwner?: PromiseOrValue<string> | null,
@@ -1371,8 +1591,34 @@ export interface OptionLP extends BaseContract {
             ssov?: null
         ): SsovForTokenRemovedEventFilter
 
+        'UnderlyingLiquidityForStrikeAdded(address,address,uint256,uint256)'(
+            epochStrikeToken?: PromiseOrValue<string> | null,
+            buyer?: PromiseOrValue<string> | null,
+            lpId?: null,
+            baseLiquidity?: null
+        ): UnderlyingLiquidityForStrikeAddedEventFilter
+        UnderlyingLiquidityForStrikeAdded(
+            epochStrikeToken?: PromiseOrValue<string> | null,
+            buyer?: PromiseOrValue<string> | null,
+            lpId?: null,
+            baseLiquidity?: null
+        ): UnderlyingLiquidityForStrikeAddedEventFilter
+
         'Unpaused(address)'(account?: null): UnpausedEventFilter
         Unpaused(account?: null): UnpausedEventFilter
+
+        'UsdLiquidityForStrikeAdded(address,address,uint256,uint256)'(
+            epochStrikeToken?: PromiseOrValue<string> | null,
+            buyer?: PromiseOrValue<string> | null,
+            lpId?: null,
+            usdLiquidity?: null
+        ): UsdLiquidityForStrikeAddedEventFilter
+        UsdLiquidityForStrikeAdded(
+            epochStrikeToken?: PromiseOrValue<string> | null,
+            buyer?: PromiseOrValue<string> | null,
+            lpId?: null,
+            usdLiquidity?: null
+        ): UsdLiquidityForStrikeAddedEventFilter
     }
 
     estimateGas: {
@@ -1383,15 +1629,26 @@ export interface OptionLP extends BaseContract {
 
         addToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strike: PromiseOrValue<BigNumberish>,
-            liquidityPerStrike: PromiseOrValue<BigNumberish>,
-            discountToMarket: PromiseOrValue<BigNumberish>,
+            liquidity: PromiseOrValue<BigNumberish>,
+            discount: PromiseOrValue<BigNumberish>,
             to: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
         addresses(overrides?: CallOverrides): Promise<BigNumber>
+
+        calculatePremium(
+            isPut: PromiseOrValue<boolean>,
+            strike: PromiseOrValue<BigNumberish>,
+            expiry: PromiseOrValue<BigNumberish>,
+            amount: PromiseOrValue<BigNumberish>,
+            volatility: PromiseOrValue<BigNumberish>,
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
 
         emergencyWithdrawn(
             tokens: PromiseOrValue<string>[],
@@ -1400,6 +1657,8 @@ export interface OptionLP extends BaseContract {
         ): Promise<BigNumber>
 
         fillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndex: PromiseOrValue<BigNumberish>,
             amount: PromiseOrValue<BigNumberish>,
@@ -1416,7 +1675,18 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
+        getPremiumInUnderlying(
+            ssov: PromiseOrValue<string>,
+            usdPremium: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
         getSsov(
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
+        getSsovCollateralPrecision(
             vault: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
@@ -1437,8 +1707,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
+        getSsovEpochs(
+            ssov: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
         getSsovExpiry(
             vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
@@ -1455,17 +1731,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
-        getSsovPremiumCalculation(
+        getSsovUnderlyingPrice(
             vault: PromiseOrValue<string>,
-            strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
-        getSsovUsdPremiumCalculation(
+        getSsovVolatility(
             vault: PromiseOrValue<string>,
             strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
@@ -1481,6 +1754,12 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<BigNumber>
 
+        hasEpochExpired(
+            vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<BigNumber>
+
         isContract(
             addr: PromiseOrValue<string>,
             overrides?: CallOverrides
@@ -1492,24 +1771,27 @@ export interface OptionLP extends BaseContract {
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
-        multiaddToLp(
+        multiAddToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strikes: PromiseOrValue<BigNumberish>[],
-            liquidityPerStrike: PromiseOrValue<BigNumberish>[],
-            discountToMarket: PromiseOrValue<BigNumberish>[],
+            liquidity: PromiseOrValue<BigNumberish>[],
+            discount: PromiseOrValue<BigNumberish>[],
             to: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
-        multifillLpPosition(
+        multiFillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             amount: PromiseOrValue<BigNumberish>[],
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
-        multikillLpPosition(
+        multiKillLpPosition(
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1542,7 +1824,7 @@ export interface OptionLP extends BaseContract {
         ): Promise<BigNumber>
 
         setAddresses(
-            _addresses: BaseLP.AddressesStruct,
+            _addresses: BaseOptionLp.AddressesStruct,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
@@ -1563,6 +1845,7 @@ export interface OptionLP extends BaseContract {
 
         updateSsovEpoch(
             ssov: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
@@ -1580,15 +1863,26 @@ export interface OptionLP extends BaseContract {
 
         addToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strike: PromiseOrValue<BigNumberish>,
-            liquidityPerStrike: PromiseOrValue<BigNumberish>,
-            discountToMarket: PromiseOrValue<BigNumberish>,
+            liquidity: PromiseOrValue<BigNumberish>,
+            discount: PromiseOrValue<BigNumberish>,
             to: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
         addresses(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+        calculatePremium(
+            isPut: PromiseOrValue<boolean>,
+            strike: PromiseOrValue<BigNumberish>,
+            expiry: PromiseOrValue<BigNumberish>,
+            amount: PromiseOrValue<BigNumberish>,
+            volatility: PromiseOrValue<BigNumberish>,
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
 
         emergencyWithdrawn(
             tokens: PromiseOrValue<string>[],
@@ -1597,6 +1891,8 @@ export interface OptionLP extends BaseContract {
         ): Promise<PopulatedTransaction>
 
         fillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndex: PromiseOrValue<BigNumberish>,
             amount: PromiseOrValue<BigNumberish>,
@@ -1613,7 +1909,18 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
+        getPremiumInUnderlying(
+            ssov: PromiseOrValue<string>,
+            usdPremium: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
         getSsov(
+            vault: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
+        getSsovCollateralPrecision(
             vault: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
@@ -1634,8 +1941,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
+        getSsovEpochs(
+            ssov: PromiseOrValue<string>,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
         getSsovExpiry(
             vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
@@ -1652,17 +1965,14 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
-        getSsovPremiumCalculation(
+        getSsovUnderlyingPrice(
             vault: PromiseOrValue<string>,
-            strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
-        getSsovUsdPremiumCalculation(
+        getSsovVolatility(
             vault: PromiseOrValue<string>,
             strike: PromiseOrValue<BigNumberish>,
-            amount: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
@@ -1678,6 +1988,12 @@ export interface OptionLP extends BaseContract {
             overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
+        hasEpochExpired(
+            vault: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
+            overrides?: CallOverrides
+        ): Promise<PopulatedTransaction>
+
         isContract(
             addr: PromiseOrValue<string>,
             overrides?: CallOverrides
@@ -1689,24 +2005,27 @@ export interface OptionLP extends BaseContract {
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
-        multiaddToLp(
+        multiAddToLp(
             token: PromiseOrValue<string>,
+            isUsd: PromiseOrValue<boolean>,
             isPut: PromiseOrValue<boolean>,
             strikes: PromiseOrValue<BigNumberish>[],
-            liquidityPerStrike: PromiseOrValue<BigNumberish>[],
-            discountToMarket: PromiseOrValue<BigNumberish>[],
+            liquidity: PromiseOrValue<BigNumberish>[],
+            discount: PromiseOrValue<BigNumberish>[],
             to: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
-        multifillLpPosition(
+        multiFillLpPosition(
+            isPut: PromiseOrValue<boolean>,
+            outUsd: PromiseOrValue<boolean>,
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             amount: PromiseOrValue<BigNumberish>[],
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
-        multikillLpPosition(
+        multiKillLpPosition(
             strikeToken: PromiseOrValue<string>,
             lpIndices: PromiseOrValue<BigNumberish>[],
             overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1739,7 +2058,7 @@ export interface OptionLP extends BaseContract {
         ): Promise<PopulatedTransaction>
 
         setAddresses(
-            _addresses: BaseLP.AddressesStruct,
+            _addresses: BaseOptionLp.AddressesStruct,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
@@ -1760,6 +2079,7 @@ export interface OptionLP extends BaseContract {
 
         updateSsovEpoch(
             ssov: PromiseOrValue<string>,
+            epoch: PromiseOrValue<BigNumberish>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
