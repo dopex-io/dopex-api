@@ -775,18 +775,7 @@ export const STRADDLES = [
     },
 ]
 
-export const OLPS = [
-    {
-        underlyingSymbol: 'ETH',
-        symbol: 'ETH-MONTHLY-OLP',
-        duration: 'monthly',
-        chainId: 5,
-        collateralDecimals: 6,
-        retired: false,
-        isPut: false,
-        address: '0xa1AFAF737E89575a6E4F51fa8e18c7D3b38823DC',
-        token: '0xF54fcf65adA818b878eB9119D7aB38c708AF8fa5',
-    },
+export const SSOV_LPS = [
     {
         underlyingSymbol: 'DPX',
         symbol: 'DPX-MONTHLY-OLP',
@@ -795,7 +784,7 @@ export const OLPS = [
         collateralDecimals: 6,
         retired: false,
         isPut: false,
-        address: '0xa1AFAF737E89575a6E4F51fa8e18c7D3b38823DC',
+        address: '0x8126d975c935f0d22132deae034b310d6bb2dda5',
         token: '0xF54fcf65adA818b878eB9119D7aB38c708AF8fa5',
     },
 ]

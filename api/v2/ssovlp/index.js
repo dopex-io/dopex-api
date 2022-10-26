@@ -1,12 +1,12 @@
 import groupBy from 'lodash/groupBy'
-import { OLPS } from '../../../helpers/v2/constants'
-import getOlpData from '../../../helpers/v2/getOlpData'
+import { SSOV_LPS } from '../../../helpers/v2/constants'
+import getSsovLpData from '../../../helpers/v2/getSsovLpData'
 
 export default async (_req, res) => {
     try {
         const data = await Promise.all(
-            OLPS.filter((vault) => !vault.retired).map((vault) => {
-                return getOlpData(vault)
+            SSOV_LPS.filter((vault) => !vault.retired).map((vault) => {
+                return getSsovLpData(vault)
             })
         )
 

@@ -1,4 +1,4 @@
-import { OptionLP__factory } from '../../mocks/factories/OptionLP__factory'
+import { SsovLp__factory } from '../../mocks/factories/SsovLp__factory'
 import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
 
@@ -18,7 +18,7 @@ export default async (vault) => {
     } = vault
 
     const provider = getProvider(chainId)
-    const olpContract = OptionLP__factory.connect(address, provider)
+    const olpContract = SsovLp__factory.connect(address, provider)
 
     const ssov = await olpContract.getTokenVaultRegistry(token, isPut)
     const currentEpoch = await olpContract.getSsovEpoch(ssov)
