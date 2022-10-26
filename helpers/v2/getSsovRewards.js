@@ -1,9 +1,9 @@
-import { ethers } from 'ethers'
+import { ethers, BigNumber } from 'ethers'
 import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
-import { BigNumber } from 'ethers'
+import zipWith from 'lodash/zipWith'
+
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID } from '../constants'
-import { zipWith } from 'lodash'
 
 const SSOV_VERSION = 'SSOV-V3'
 const TWO_CRV_ADDRESS = '0x11cdb42b0eb46d95f990bedd4695a6e3fa034978'
@@ -88,10 +88,6 @@ const NAME_TO_GETTER = {
     },
     'rDPX-WEEKLY-CALLS-SSOV-V3': {
         isV2: true,
-        isCurveStrat: false,
-    },
-    'gOHM-WEEKLY-CALLS-SSOV-V3': {
-        isV2: false,
         isCurveStrat: false,
     },
     'ETH-MONTHLY-CALLS-SSOV-V3-3': {
