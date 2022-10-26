@@ -27,7 +27,7 @@ import type {
     PromiseOrValue,
 } from './common'
 
-export declare namespace BaseOptionLp {
+export declare namespace BaseSsovLp {
     export type AddressesStruct = {
         usd: PromiseOrValue<string>
         underlying: PromiseOrValue<string>
@@ -43,7 +43,7 @@ export declare namespace BaseOptionLp {
     }
 }
 
-export declare namespace OptionLp {
+export declare namespace SsovLp {
     export type LpPositionStruct = {
         lpId: PromiseOrValue<BigNumberish>
         epoch: PromiseOrValue<BigNumberish>
@@ -85,7 +85,7 @@ export declare namespace OptionLp {
     }
 }
 
-export interface OptionLPInterface extends utils.Interface {
+export interface SsovLpInterface extends utils.Interface {
     functions: {
         'addToContractWhitelist(address)': FunctionFragment
         'addToLp(address,bool,bool,uint256,uint256,uint256,address)': FunctionFragment
@@ -119,11 +119,12 @@ export interface OptionLPInterface extends utils.Interface {
         'owner()': FunctionFragment
         'pause()': FunctionFragment
         'paused()': FunctionFragment
-        'registerSsovForToken(address,bool,address)': FunctionFragment
+        'registerSsovForToken(address,address,bool)': FunctionFragment
         'removeFromContractWhitelist(address)': FunctionFragment
         'renounceOwnership()': FunctionFragment
         'setAddresses((address,address,address,address))': FunctionFragment
         'transferOwnership(address)': FunctionFragment
+        'underlyingSymbol()': FunctionFragment
         'unpause()': FunctionFragment
         'unregisterSsovForToken(address,bool)': FunctionFragment
         'updateSsovEpoch(address,uint256)': FunctionFragment
@@ -169,6 +170,7 @@ export interface OptionLPInterface extends utils.Interface {
             | 'renounceOwnership'
             | 'setAddresses'
             | 'transferOwnership'
+            | 'underlyingSymbol'
             | 'unpause'
             | 'unregisterSsovForToken'
             | 'updateSsovEpoch'
@@ -334,8 +336,8 @@ export interface OptionLPInterface extends utils.Interface {
         functionFragment: 'registerSsovForToken',
         values: [
             PromiseOrValue<string>,
-            PromiseOrValue<boolean>,
-            PromiseOrValue<string>
+            PromiseOrValue<string>,
+            PromiseOrValue<boolean>
         ]
     ): string
     encodeFunctionData(
@@ -348,11 +350,15 @@ export interface OptionLPInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'setAddresses',
-        values: [BaseOptionLp.AddressesStruct]
+        values: [BaseSsovLp.AddressesStruct]
     ): string
     encodeFunctionData(
         functionFragment: 'transferOwnership',
         values: [PromiseOrValue<string>]
+    ): string
+    encodeFunctionData(
+        functionFragment: 'underlyingSymbol',
+        values?: undefined
     ): string
     encodeFunctionData(functionFragment: 'unpause', values?: undefined): string
     encodeFunctionData(
@@ -495,6 +501,10 @@ export interface OptionLPInterface extends utils.Interface {
         functionFragment: 'transferOwnership',
         data: BytesLike
     ): Result
+    decodeFunctionResult(
+        functionFragment: 'underlyingSymbol',
+        data: BytesLike
+    ): Result
     decodeFunctionResult(functionFragment: 'unpause', data: BytesLike): Result
     decodeFunctionResult(
         functionFragment: 'unregisterSsovForToken',
@@ -513,9 +523,9 @@ export interface OptionLPInterface extends utils.Interface {
         'AddToContractWhitelist(address)': EventFragment
         'AddressesSet(tuple)': EventFragment
         'EmergencyWithdrawn(address)': EventFragment
-        'LPDustCleared(address,uint256)': EventFragment
-        'LPPositionFilled(address,uint256,uint256,uint256,uint256,address)': EventFragment
-        'LPPositionKilled(address,uint256)': EventFragment
+        'LpDustCleared(address,uint256)': EventFragment
+        'LpPositionFilled(address,uint256,uint256,uint256,uint256,address)': EventFragment
+        'LpPositionKilled(address,uint256)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
         'RemoveFromContractWhitelist(address)': EventFragment
@@ -530,9 +540,9 @@ export interface OptionLPInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: 'AddToContractWhitelist'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'AddressesSet'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'EmergencyWithdrawn'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'LPDustCleared'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'LPPositionFilled'): EventFragment
-    getEvent(nameOrSignatureOrTopic: 'LPPositionKilled'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'LpDustCleared'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'LpPositionFilled'): EventFragment
+    getEvent(nameOrSignatureOrTopic: 'LpPositionKilled'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
     getEvent(nameOrSignatureOrTopic: 'Paused'): EventFragment
     getEvent(
@@ -562,10 +572,10 @@ export type AddToContractWhitelistEventFilter =
     TypedEventFilter<AddToContractWhitelistEvent>
 
 export interface AddressesSetEventObject {
-    _addresses: BaseOptionLp.AddressesStructOutput
+    _addresses: BaseSsovLp.AddressesStructOutput
 }
 export type AddressesSetEvent = TypedEvent<
-    [BaseOptionLp.AddressesStructOutput],
+    [BaseSsovLp.AddressesStructOutput],
     AddressesSetEventObject
 >
 
@@ -582,18 +592,18 @@ export type EmergencyWithdrawnEvent = TypedEvent<
 export type EmergencyWithdrawnEventFilter =
     TypedEventFilter<EmergencyWithdrawnEvent>
 
-export interface LPDustClearedEventObject {
+export interface LpDustClearedEventObject {
     epochStrikeToken: string
     index: BigNumber
 }
-export type LPDustClearedEvent = TypedEvent<
+export type LpDustClearedEvent = TypedEvent<
     [string, BigNumber],
-    LPDustClearedEventObject
+    LpDustClearedEventObject
 >
 
-export type LPDustClearedEventFilter = TypedEventFilter<LPDustClearedEvent>
+export type LpDustClearedEventFilter = TypedEventFilter<LpDustClearedEvent>
 
-export interface LPPositionFilledEventObject {
+export interface LpPositionFilledEventObject {
     epochStrikeToken: string
     lpId: BigNumber
     amount: BigNumber
@@ -601,25 +611,25 @@ export interface LPPositionFilledEventObject {
     underlyingPremium: BigNumber
     seller: string
 }
-export type LPPositionFilledEvent = TypedEvent<
+export type LpPositionFilledEvent = TypedEvent<
     [string, BigNumber, BigNumber, BigNumber, BigNumber, string],
-    LPPositionFilledEventObject
+    LpPositionFilledEventObject
 >
 
-export type LPPositionFilledEventFilter =
-    TypedEventFilter<LPPositionFilledEvent>
+export type LpPositionFilledEventFilter =
+    TypedEventFilter<LpPositionFilledEvent>
 
-export interface LPPositionKilledEventObject {
+export interface LpPositionKilledEventObject {
     epochStrikeToken: string
     index: BigNumber
 }
-export type LPPositionKilledEvent = TypedEvent<
+export type LpPositionKilledEvent = TypedEvent<
     [string, BigNumber],
-    LPPositionKilledEventObject
+    LpPositionKilledEventObject
 >
 
-export type LPPositionKilledEventFilter =
-    TypedEventFilter<LPPositionKilledEvent>
+export type LpPositionKilledEventFilter =
+    TypedEventFilter<LpPositionKilledEvent>
 
 export interface OwnershipTransferredEventObject {
     previousOwner: string
@@ -724,12 +734,12 @@ export type UsdLiquidityForStrikeAddedEvent = TypedEvent<
 export type UsdLiquidityForStrikeAddedEventFilter =
     TypedEventFilter<UsdLiquidityForStrikeAddedEvent>
 
-export interface OptionLP extends BaseContract {
+export interface SsovLp extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this
     attach(addressOrName: string): this
     deployed(): Promise<this>
 
-    interface: OptionLPInterface
+    interface: SsovLpInterface
 
     queryFilter<TEvent extends TypedEvent>(
         event: TypedEventFilter<TEvent>,
@@ -804,7 +814,7 @@ export interface OptionLP extends BaseContract {
         getAllLpPositions(
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<[OptionLp.LpPositionStructOutput[]]>
+        ): Promise<[SsovLp.LpPositionStructOutput[]]>
 
         getOptionTokenInfo(
             arg0: PromiseOrValue<string>,
@@ -896,8 +906,8 @@ export interface OptionLP extends BaseContract {
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<
-            [OptionLp.LpPositionStructOutput[]] & {
-                positions: OptionLp.LpPositionStructOutput[]
+            [SsovLp.LpPositionStructOutput[]] & {
+                positions: SsovLp.LpPositionStructOutput[]
             }
         >
 
@@ -956,8 +966,8 @@ export interface OptionLP extends BaseContract {
 
         registerSsovForToken(
             token: PromiseOrValue<string>,
-            isPut: PromiseOrValue<boolean>,
             vault: PromiseOrValue<string>,
+            isPut: PromiseOrValue<boolean>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
@@ -971,7 +981,7 @@ export interface OptionLP extends BaseContract {
         ): Promise<ContractTransaction>
 
         setAddresses(
-            _addresses: BaseOptionLp.AddressesStruct,
+            _addresses: BaseSsovLp.AddressesStruct,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
@@ -979,6 +989,8 @@ export interface OptionLP extends BaseContract {
             newOwner: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
+
+        underlyingSymbol(overrides?: CallOverrides): Promise<[string]>
 
         unpause(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1055,7 +1067,7 @@ export interface OptionLP extends BaseContract {
     getAllLpPositions(
         strikeToken: PromiseOrValue<string>,
         overrides?: CallOverrides
-    ): Promise<OptionLp.LpPositionStructOutput[]>
+    ): Promise<SsovLp.LpPositionStructOutput[]>
 
     getOptionTokenInfo(
         arg0: PromiseOrValue<string>,
@@ -1146,7 +1158,7 @@ export interface OptionLP extends BaseContract {
         user: PromiseOrValue<string>,
         strikeToken: PromiseOrValue<string>,
         overrides?: CallOverrides
-    ): Promise<OptionLp.LpPositionStructOutput[]>
+    ): Promise<SsovLp.LpPositionStructOutput[]>
 
     hasEpochExpired(
         vault: PromiseOrValue<string>,
@@ -1203,8 +1215,8 @@ export interface OptionLP extends BaseContract {
 
     registerSsovForToken(
         token: PromiseOrValue<string>,
-        isPut: PromiseOrValue<boolean>,
         vault: PromiseOrValue<string>,
+        isPut: PromiseOrValue<boolean>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1218,7 +1230,7 @@ export interface OptionLP extends BaseContract {
     ): Promise<ContractTransaction>
 
     setAddresses(
-        _addresses: BaseOptionLp.AddressesStruct,
+        _addresses: BaseSsovLp.AddressesStruct,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1226,6 +1238,8 @@ export interface OptionLP extends BaseContract {
         newOwner: PromiseOrValue<string>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
+
+    underlyingSymbol(overrides?: CallOverrides): Promise<string>
 
     unpause(
         overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1302,7 +1316,7 @@ export interface OptionLP extends BaseContract {
         getAllLpPositions(
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<OptionLp.LpPositionStructOutput[]>
+        ): Promise<SsovLp.LpPositionStructOutput[]>
 
         getOptionTokenInfo(
             arg0: PromiseOrValue<string>,
@@ -1393,7 +1407,7 @@ export interface OptionLP extends BaseContract {
             user: PromiseOrValue<string>,
             strikeToken: PromiseOrValue<string>,
             overrides?: CallOverrides
-        ): Promise<OptionLp.LpPositionStructOutput[]>
+        ): Promise<SsovLp.LpPositionStructOutput[]>
 
         hasEpochExpired(
             vault: PromiseOrValue<string>,
@@ -1448,8 +1462,8 @@ export interface OptionLP extends BaseContract {
 
         registerSsovForToken(
             token: PromiseOrValue<string>,
-            isPut: PromiseOrValue<boolean>,
             vault: PromiseOrValue<string>,
+            isPut: PromiseOrValue<boolean>,
             overrides?: CallOverrides
         ): Promise<boolean>
 
@@ -1461,7 +1475,7 @@ export interface OptionLP extends BaseContract {
         renounceOwnership(overrides?: CallOverrides): Promise<void>
 
         setAddresses(
-            _addresses: BaseOptionLp.AddressesStruct,
+            _addresses: BaseSsovLp.AddressesStruct,
             overrides?: CallOverrides
         ): Promise<boolean>
 
@@ -1469,6 +1483,8 @@ export interface OptionLP extends BaseContract {
             newOwner: PromiseOrValue<string>,
             overrides?: CallOverrides
         ): Promise<void>
+
+        underlyingSymbol(overrides?: CallOverrides): Promise<string>
 
         unpause(overrides?: CallOverrides): Promise<void>
 
@@ -1506,40 +1522,40 @@ export interface OptionLP extends BaseContract {
         ): EmergencyWithdrawnEventFilter
         EmergencyWithdrawn(caller?: null): EmergencyWithdrawnEventFilter
 
-        'LPDustCleared(address,uint256)'(
+        'LpDustCleared(address,uint256)'(
             epochStrikeToken?: PromiseOrValue<string> | null,
             index?: null
-        ): LPDustClearedEventFilter
-        LPDustCleared(
+        ): LpDustClearedEventFilter
+        LpDustCleared(
             epochStrikeToken?: PromiseOrValue<string> | null,
             index?: null
-        ): LPDustClearedEventFilter
+        ): LpDustClearedEventFilter
 
-        'LPPositionFilled(address,uint256,uint256,uint256,uint256,address)'(
+        'LpPositionFilled(address,uint256,uint256,uint256,uint256,address)'(
             epochStrikeToken?: PromiseOrValue<string> | null,
             lpId?: null,
             amount?: null,
             usdPremium?: null,
             underlyingPremium?: null,
             seller?: PromiseOrValue<string> | null
-        ): LPPositionFilledEventFilter
-        LPPositionFilled(
+        ): LpPositionFilledEventFilter
+        LpPositionFilled(
             epochStrikeToken?: PromiseOrValue<string> | null,
             lpId?: null,
             amount?: null,
             usdPremium?: null,
             underlyingPremium?: null,
             seller?: PromiseOrValue<string> | null
-        ): LPPositionFilledEventFilter
+        ): LpPositionFilledEventFilter
 
-        'LPPositionKilled(address,uint256)'(
+        'LpPositionKilled(address,uint256)'(
             epochStrikeToken?: PromiseOrValue<string> | null,
             index?: null
-        ): LPPositionKilledEventFilter
-        LPPositionKilled(
+        ): LpPositionKilledEventFilter
+        LpPositionKilled(
             epochStrikeToken?: PromiseOrValue<string> | null,
             index?: null
-        ): LPPositionKilledEventFilter
+        ): LpPositionKilledEventFilter
 
         'OwnershipTransferred(address,address)'(
             previousOwner?: PromiseOrValue<string> | null,
@@ -1809,8 +1825,8 @@ export interface OptionLP extends BaseContract {
 
         registerSsovForToken(
             token: PromiseOrValue<string>,
-            isPut: PromiseOrValue<boolean>,
             vault: PromiseOrValue<string>,
+            isPut: PromiseOrValue<boolean>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
@@ -1824,7 +1840,7 @@ export interface OptionLP extends BaseContract {
         ): Promise<BigNumber>
 
         setAddresses(
-            _addresses: BaseOptionLp.AddressesStruct,
+            _addresses: BaseSsovLp.AddressesStruct,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
@@ -1832,6 +1848,8 @@ export interface OptionLP extends BaseContract {
             newOwner: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
+
+        underlyingSymbol(overrides?: CallOverrides): Promise<BigNumber>
 
         unpause(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2043,8 +2061,8 @@ export interface OptionLP extends BaseContract {
 
         registerSsovForToken(
             token: PromiseOrValue<string>,
-            isPut: PromiseOrValue<boolean>,
             vault: PromiseOrValue<string>,
+            isPut: PromiseOrValue<boolean>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
@@ -2058,13 +2076,17 @@ export interface OptionLP extends BaseContract {
         ): Promise<PopulatedTransaction>
 
         setAddresses(
-            _addresses: BaseOptionLp.AddressesStruct,
+            _addresses: BaseSsovLp.AddressesStruct,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
         transferOwnership(
             newOwner: PromiseOrValue<string>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
+        ): Promise<PopulatedTransaction>
+
+        underlyingSymbol(
+            overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
         unpause(

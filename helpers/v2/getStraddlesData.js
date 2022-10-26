@@ -1,6 +1,6 @@
 import { AtlanticStraddle__factory } from '@dopex-io/sdk'
-import { BigNumber } from 'ethers'
-import { utils as ethersUtils } from 'ethers'
+import { utils } from 'ethers'
+
 import getProvider from '../getProvider'
 
 export default async (vault) => {

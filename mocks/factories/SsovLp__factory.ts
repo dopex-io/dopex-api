@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from 'ethers'
 import type { Provider } from '@ethersproject/providers'
-import type { OptionLP, OptionLPInterface, BaseOptionLp } from '../OptionLP'
+import type { SsovLp, SsovLpInterface, BaseSsovLp } from '../SsovLp'
 
 const _abi = [
     {
@@ -12,6 +12,11 @@ const _abi = [
             {
                 internalType: 'string',
                 name: '_name',
+                type: 'string',
+            },
+            {
+                internalType: 'string',
+                name: '_underlyingSymbol',
                 type: 'string',
             },
             {
@@ -37,7 +42,7 @@ const _abi = [
                         type: 'address',
                     },
                 ],
-                internalType: 'struct BaseOptionLp.Addresses',
+                internalType: 'struct BaseSsovLp.Addresses',
                 name: '_addresses',
                 type: 'tuple',
             },
@@ -155,7 +160,7 @@ const _abi = [
                     },
                 ],
                 indexed: false,
-                internalType: 'struct BaseOptionLp.Addresses',
+                internalType: 'struct BaseSsovLp.Addresses',
                 name: '_addresses',
                 type: 'tuple',
             },
@@ -192,7 +197,7 @@ const _abi = [
                 type: 'uint256',
             },
         ],
-        name: 'LPDustCleared',
+        name: 'LpDustCleared',
         type: 'event',
     },
     {
@@ -235,7 +240,7 @@ const _abi = [
                 type: 'address',
             },
         ],
-        name: 'LPPositionFilled',
+        name: 'LpPositionFilled',
         type: 'event',
     },
     {
@@ -254,7 +259,7 @@ const _abi = [
                 type: 'uint256',
             },
         ],
-        name: 'LPPositionKilled',
+        name: 'LpPositionKilled',
         type: 'event',
     },
     {
@@ -705,7 +710,7 @@ const _abi = [
                         type: 'bool',
                     },
                 ],
-                internalType: 'struct OptionLp.LpPosition[]',
+                internalType: 'struct SsovLp.LpPosition[]',
                 name: '',
                 type: 'tuple[]',
             },
@@ -1107,7 +1112,7 @@ const _abi = [
                         type: 'bool',
                     },
                 ],
-                internalType: 'struct OptionLp.LpPosition[]',
+                internalType: 'struct SsovLp.LpPosition[]',
                 name: 'positions',
                 type: 'tuple[]',
             },
@@ -1348,14 +1353,14 @@ const _abi = [
                 type: 'address',
             },
             {
-                internalType: 'bool',
-                name: 'isPut',
-                type: 'bool',
-            },
-            {
                 internalType: 'address',
                 name: 'vault',
                 type: 'address',
+            },
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
             },
         ],
         name: 'registerSsovForToken',
@@ -1414,7 +1419,7 @@ const _abi = [
                         type: 'address',
                     },
                 ],
-                internalType: 'struct BaseOptionLp.Addresses',
+                internalType: 'struct BaseSsovLp.Addresses',
                 name: '_addresses',
                 type: 'tuple',
             },
@@ -1441,6 +1446,19 @@ const _abi = [
         name: 'transferOwnership',
         outputs: [],
         stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'underlyingSymbol',
+        outputs: [
+            {
+                internalType: 'string',
+                name: '',
+                type: 'string',
+            },
+        ],
+        stateMutability: 'view',
         type: 'function',
     },
     {
@@ -1519,15 +1537,15 @@ const _abi = [
     },
 ]
 
-export class OptionLP__factory {
+export class SsovLp__factory {
     static readonly abi = _abi
-    static createInterface(): OptionLPInterface {
-        return new utils.Interface(_abi) as OptionLPInterface
+    static createInterface(): SsovLpInterface {
+        return new utils.Interface(_abi) as SsovLpInterface
     }
     static connect(
         address: string,
         signerOrProvider: Signer | Provider
-    ): OptionLP {
-        return new Contract(address, _abi, signerOrProvider) as OptionLP
+    ): SsovLp {
+        return new Contract(address, _abi, signerOrProvider) as SsovLp
     }
 }
