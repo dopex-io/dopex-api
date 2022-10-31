@@ -491,6 +491,10 @@ const NAME_TO_GETTER = {
         fn: getSsovPutApy,
         args: ['CRV-WEEKLY-PUTS-SSOV-V3-3'],
     },
+    'ETH-QUARTERLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['ETH-QUARTERLY-PUTS-SSOV-V3'],
+    },
 }
 
 const getSsovApy = async (ssov) => {

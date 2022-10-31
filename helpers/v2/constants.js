@@ -637,6 +637,17 @@ export const SSOVS = [
         retired: false,
         address: '0xC59836FEC63Cfb2E48b0aa00515056436D74Dc03',
     },
+    {
+        type: 'put',
+        underlyingSymbol: 'ETH',
+        symbol: 'ETH-QUARTERLY-PUTS-SSOV-V3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'quarterly',
+        retired: false,
+        address: '0x8a0dd3203a9F1cf66c7201e4A8Ab4762D09f0B3a',
+    },
 ]
 
 export const IR_VAULTS = [
