@@ -132,6 +132,10 @@ const NAME_TO_GETTER = {
         isV2: false,
         isCurveStrat: true,
     },
+    'ETH-QUARTERLY-PUTS-SSOV-V3': {
+        isV2: false,
+        isCurveStrat: true,
+    },
 }
 
 const getSsovRewards = async (ssov) => {
