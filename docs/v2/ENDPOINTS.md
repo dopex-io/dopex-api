@@ -100,3 +100,28 @@ Returns data about the Dopex Straddles
     ```
 
 ---
+
+## Farms
+
+Returns TVL and APY for a Dopex Sushiswap farm about
+
+-   **URL**
+
+    `/farms`
+
+-   **Method:**
+
+    `GET`
+
+-   **URL Params**
+
+    -   **Required:** <br />
+        `pool=[string]` where pool is either `DPX-WETH` or `RDPX-WETH`
+
+-   **Sample call:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/api/v2/farms?pool=DPX-WETH'
+    ```
+
+---
