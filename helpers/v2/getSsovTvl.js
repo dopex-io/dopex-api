@@ -10,7 +10,7 @@ import BN from 'bignumber.js'
 import getProvider from '../getProvider'
 
 export default async (ssov) => {
-    if (ssov.retired || ssov.duration === 'special') return '0'
+    if (ssov.retired) return '0'
 
     const {
         underlyingSymbol,

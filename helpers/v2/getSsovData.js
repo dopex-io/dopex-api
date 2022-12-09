@@ -4,7 +4,7 @@ import { utils as ethersUtils } from 'ethers'
 import getProvider from '../getProvider'
 
 export default async (ssov) => {
-    if (ssov.retired || ssov.duration === 'special')
+    if (ssov.retired)
         return {
             currentEpoch: 0,
             totalEpochDeposits: '0',
