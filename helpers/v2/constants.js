@@ -1,6 +1,17 @@
 export const SSOVS = [
     {
         type: 'call',
+        underlyingSymbol: 'GOHM',
+        symbol: 'GOHM-CALLS-SSOV-V2',
+        version: 2,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: true,
+        address: '0x89836d5f178141aaf013412b12abd754802d2318',
+    },
+    {
+        type: 'call',
         underlyingSymbol: 'DPX',
         symbol: 'DPX-CALLS-SSOV-V2',
         version: 2,
