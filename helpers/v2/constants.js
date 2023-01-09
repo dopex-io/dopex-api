@@ -659,6 +659,17 @@ export const SSOVS = [
         retired: false,
         address: '0x8a0dd3203a9F1cf66c7201e4A8Ab4762D09f0B3a',
     },
+    {
+        type: 'call',
+        underlyingSymbol: 'stETH',
+        symbol: 'stETH-WEEKLY-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0xFca61E79F38a7a82c62f469f55A9df54CB8dF678',
+    },
 ]
 
 export const IR_VAULTS = [

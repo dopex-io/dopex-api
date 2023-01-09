@@ -18,6 +18,7 @@ const TOKEN_ADDRESS_TO_CG_ID = {
     '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'dopex',
     '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
     '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
+    '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
 }
 
 async function fetchEpochRewards(
@@ -177,6 +178,20 @@ async function _getGmxApy() {
     const gmxAprTotal = gmxAprForNativeToken + gmxAprForEsGmx
 
     return (((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2)
+}
+
+async function getStEthApy() {
+    const poolId = '747c1d2a-c668-4682-b9f9-296708a3dd90'
+
+    const response = await axios.get('https://yields.llama.fi/pools')
+
+    const pool = response.data.data.find((p) => p.pool === poolId)
+
+    const rewardsApy = await getRewardsApy('stETH-WEEKLY-CALLS-SSOV-V3', false)
+
+    const finalApy = pool.apy + Number(rewardsApy)
+
+    return finalApy.toString()
 }
 
 async function getGohmApy() {
@@ -461,6 +476,10 @@ const NAME_TO_GETTER = {
     'rDPX-MONTHLY-CALLS-SSOV-V3-3': {
         fn: getRewardsApy,
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3'],
+    },
+    'stETH-WEEKLY-CALLS-SSOV-V3': {
+        fn: getStEthApy,
+        args: [],
     },
 
     // Puts
