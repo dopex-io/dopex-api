@@ -1,4 +1,4 @@
-import { SsovLp__factory } from '../../mocks/factories/SsovLp__factory'
+import { SsovLp__factory } from '@dopex-io/sdk'
 import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
 
