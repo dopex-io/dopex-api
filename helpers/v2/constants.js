@@ -774,3 +774,17 @@ export const STRADDLES = [
         address: '0x0Dc96f38980144ebFfe745706DFeE92622dba829',
     },
 ]
+
+export const SSOV_LPS = [
+    {
+        underlyingSymbol: 'DPX',
+        symbol: 'DPX-MONTHLY-OLP',
+        duration: 'monthly',
+        chainId: 5,
+        collateralDecimals: 6,
+        retired: false,
+        isPut: false,
+        address: '0x8126d975c935f0d22132deae034b310d6bb2dda5',
+        token: '0xF54fcf65adA818b878eB9119D7aB38c708AF8fa5',
+    },
+]
