@@ -778,13 +778,13 @@ export const STRADDLES = [
 export const SSOV_LPS = [
     {
         underlyingSymbol: 'DPX',
-        symbol: 'DPX-MONTHLY-OLP',
+        symbol: 'DPX-MONTHLY-CALLS-SSOV-V3-3',
         duration: 'monthly',
-        chainId: 5,
+        chainId: 42161,
         collateralDecimals: 6,
         retired: false,
         isPut: false,
-        address: '0x8126d975c935f0d22132deae034b310d6bb2dda5',
-        token: '0xF54fcf65adA818b878eB9119D7aB38c708AF8fa5',
+        address: '0xd843E6212efdAB10492B6F55DC89aD621ea716Aa',
+        token: '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55',
     },
 ]

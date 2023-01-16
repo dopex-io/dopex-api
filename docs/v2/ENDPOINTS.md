@@ -189,7 +189,7 @@ Returns data about the Dopex SSOV LPs
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/ssovlp'
+    curl --location --request GET 'https://api.dopex.io/api/v2/olp'
     ```
 
 ---

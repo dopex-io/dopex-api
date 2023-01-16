@@ -1,5 +1,7 @@
 import groupBy from 'lodash/groupBy'
+
 import { SSOV_LPS } from '../../../helpers/v2/constants'
+
 import getSsovLpData from '../../../helpers/v2/getSsovLpData'
 
 export default async (_req, res) => {
