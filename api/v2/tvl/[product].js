@@ -64,6 +64,7 @@ export default async (req, res) => {
             case 'vedpx': {
                 tvl = await getVedpxTvl()
 
+                tvl = String(tvl)
                 break
             }
 

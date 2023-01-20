@@ -1,4 +1,4 @@
-import { ERC20__factory } from '@dopex-io/sdk'
+import { ERC20__factory, Addresses } from '@dopex-io/sdk'
 import { utils as ethersUtils } from 'ethers'
 
 import getProvider from '../getProvider'
@@ -7,12 +7,9 @@ import getPrice from '../getPrice'
 export default async () => {
     const provider = getProvider(42161)
 
-    const dpxContract = ERC20__factory.connect(
-        '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55',
-        provider
-    )
+    const dpxContract = ERC20__factory.connect(Addresses[42161].DPX, provider)
 
-    let tvl = '0'
+    let tvl = 0
 
     try {
         const { usd: dpxPrice } = await getPrice('dopex')
