@@ -193,3 +193,59 @@ Returns data about the Dopex SSOV LPs
     ```
 
 ---
+
+## Protocol TVL
+
+Returns the total TVL of all Dopex Products. Allows you to query for specific products of the protocol as well. Leaving parameters empty returns total TVL.
+
+Possible products are: ssov, atlantic-straddles, farms, vedpx
+
+-   **URL**
+
+    `/tvl`
+
+-   **Method:**
+
+    `GET`
+
+-   **Success response:**
+
+    ```json
+    { "tvl": "385272088.86094545716095555338" }
+    ```
+
+-   **Sample calls:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/v2/tvl'
+    ```
+
+---
+
+## Product TVL
+
+Returns the total TVL of a dopex product
+
+Possible products are: ssov, atlantic-straddles, farms, vedpx
+
+-   **URL**
+
+    `/tvl/[product]`
+
+-   **Method:**
+
+    `GET`
+
+-   **Success response:**
+
+    ```json
+    { "tvl": "385272088.86094545716095555338" }
+    ```
+
+-   **Sample calls:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/v2/tvl/ssov'
+    ```
+
+---
