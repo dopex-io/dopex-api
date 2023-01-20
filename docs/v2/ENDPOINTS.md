@@ -13,6 +13,9 @@ The base URL for a hosted version of this API is `https://api.dopex.io/v2`
 5. [GET FARMS](#farms)
 6. [GET SUPPORTED TOKENS](#supported-tokens-for-pricing)
 7. [GET PRICE](#token-oracle--coingecko-price)
+8. [GET OLP](#options-liquidity-pool)
+9. [GET PROTOCOL TVL](#protocol-tvl)
+10. [GET PRODUCT TVL](#product-tvl)
 
 ## SSOVs
 
@@ -34,7 +37,7 @@ Returns data about the Dopex SSOVs
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/ssov'
+    curl --location --request GET 'https://api.dopex.io/v2/ssov'
     ```
 
 ---
@@ -59,7 +62,7 @@ Gets the APY for the requested SSOV
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/ssov/apy?symbol=DPX-CALLS-SSOV-V2'
+    curl --location --request GET 'https://api.dopex.io/v2/ssov/apy?symbol=DPX-CALLS-SSOV-V2'
     ```
 
 ---
@@ -79,7 +82,7 @@ Returns data about the Dopex IR Vaults
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/rateVaults'
+    curl --location --request GET 'https://api.dopex.io/v2/rateVaults'
     ```
 
 ---
@@ -99,7 +102,7 @@ Returns data about the Dopex Straddles
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/straddles'
+    curl --location --request GET 'https://api.dopex.io/v2/straddles'
     ```
 
 ---
@@ -124,7 +127,7 @@ Returns TVL and APY for a Dopex Sushiswap farm about
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/farms?pool=DPX-WETH'
+    curl --location --request GET 'https://api.dopex.io/v2/farms?pool=DPX-WETH'
     ```
 
 ---
@@ -189,7 +192,7 @@ Returns data about the Dopex SSOV LPs
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/olp'
+    curl --location --request GET 'https://api.dopex.io/v2/olp'
     ```
 
 ---
