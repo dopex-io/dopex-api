@@ -11,6 +11,7 @@ export default (chainId) => {
     const metisRpcUrl = process.env.METIS_RPC_URL
     const goerliRpcUrl = process.env.GOERLI_RPC_URL
     const polygonRpcUrl = process.env.POLYGON_RPC_URL
+    const arbGoerliRpcUrl = process.env.ARB_GOERLI_RPC_URL
 
     if (chainId === BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
         return new providers.MulticallProvider(
@@ -39,6 +40,10 @@ export default (chainId) => {
     else if (chainId === BLOCKCHAIN_TO_CHAIN_ID.POLYGON)
         return new providers.MulticallProvider(
             new ethers.providers.StaticJsonRpcProvider(polygonRpcUrl, chainId)
+        )
+    else if (chainId === BLOCKCHAIN_TO_CHAIN_ID.ARB_GOERLI)
+        return new providers.MulticallProvider(
+            new ethers.providers.StaticJsonRpcProvider(arbGoerliRpcUrl, chainId)
         )
     else {
         throw Error('Unsupported chainId')

@@ -292,3 +292,23 @@ Possible products are: ssov, atlantic-straddles, farms, vedpx
     ```
 
 ---
+
+## Lending
+
+Returns data about the Dopex SSOV Lending
+
+-   **URL**
+
+    `/lending`
+
+-   **Method:**
+
+    `GET`
+
+-   **Sample call:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/api/v2/lending'
+    ```
+
+---
