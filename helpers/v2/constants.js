@@ -504,6 +504,7 @@ export const SSOVS = [
         duration: 'monthly',
         retired: false,
         address: '0x05E7ACeD3b7727f9129E6d302B488cd8a1e0C817',
+        olp: '0x3D0354322D4Ef15CBF4498581976F0dd40DedD07',
     },
     {
         type: 'call',
