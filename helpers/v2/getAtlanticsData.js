@@ -13,7 +13,7 @@ export default async (pool) => {
         provider
     )
 
-    let currentEpoch, tvl, apy, volume
+    let currentEpoch, apy
 
     try {
         currentEpoch = await atlanticPoolContract.currentEpoch()
@@ -22,91 +22,111 @@ export default async (pool) => {
             currentEpoch
         )
 
-        let data
+        const epochData = await atlanticPoolContract.getEpochData(currentEpoch)
 
-        const [totalEpochActiveCollateral, totalEpochCumulativeLiquidity] =
-            await Promise.all([
-                atlanticPoolContract.totalEpochActiveCollateral(currentEpoch),
-                atlanticPoolContract.totalEpochCummulativeLiquidity(
-                    currentEpoch
+        const fundingRate = (
+            (await atlanticPoolContract.vaultConfig(3)) ?? BigNumber.from(0)
+        ).mul(1000)
+
+        const { totalActiveCollateral, totalLiquidity } = epochData
+
+        apy = '-'
+
+        const latestCheckpointsCalls = maxStrikes.map(async (maxStrike) => {
+            return atlanticPoolContract.getEpochCheckpoints(
+                currentEpoch,
+                maxStrike
+            )
+        })
+
+        const checkpoints = await Promise.all(latestCheckpointsCalls)
+
+        let maxStrikeData = []
+
+        for (const i in maxStrikes) {
+            const strike = maxStrikes[i]
+
+            if (!strike) return
+
+            const maxStrikeCheckpoints = checkpoints[i]
+
+            let maxStrikeCheckpointAccumulator = {
+                activeCollateral: BigNumber.from(0),
+                unlockedCollateral: BigNumber.from(0),
+                totalLiquidity: BigNumber.from(0),
+                premiumAccrued: BigNumber.from(0),
+                borrowFeesAccrued: BigNumber.from(0),
+                liquidityBalance: BigNumber.from(0),
+            }
+
+            if (!maxStrikeCheckpoints) return
+
+            for (const j in maxStrikeCheckpoints) {
+                const checkpoint = maxStrikeCheckpoints[j]
+                if (!checkpoint) return
+
+                const {
+                    activeCollateral,
+                    unlockedCollateral,
+                    totalLiquidity,
+                    premiumAccrued,
+                    borrowFeesAccrued,
+                    liquidityBalance,
+                } = checkpoint
+
+                maxStrikeCheckpointAccumulator.activeCollateral =
+                    maxStrikeCheckpointAccumulator.activeCollateral.add(
+                        activeCollateral
+                    )
+                maxStrikeCheckpointAccumulator.unlockedCollateral =
+                    maxStrikeCheckpointAccumulator.unlockedCollateral.add(
+                        unlockedCollateral
+                    )
+                maxStrikeCheckpointAccumulator.totalLiquidity =
+                    maxStrikeCheckpointAccumulator.totalLiquidity.add(
+                        totalLiquidity
+                    )
+                maxStrikeCheckpointAccumulator.premiumAccrued =
+                    maxStrikeCheckpointAccumulator.premiumAccrued.add(
+                        premiumAccrued
+                    )
+                maxStrikeCheckpointAccumulator.borrowFeesAccrued =
+                    maxStrikeCheckpointAccumulator.borrowFeesAccrued.add(
+                        borrowFeesAccrued
+                    )
+                maxStrikeCheckpointAccumulator.liquidityBalance =
+                    maxStrikeCheckpointAccumulator.liquidityBalance.add(
+                        liquidityBalance
+                    )
+            }
+
+            maxStrikeData.push({
+                strike: ethersUtils.formatUnits(strike, 8),
+                activeCollateral: ethersUtils.formatUnits(
+                    maxStrikeCheckpointAccumulator.activeCollateral,
+                    6
                 ),
-            ])
-
-        tvl = totalEpochActiveCollateral.add(totalEpochCumulativeLiquidity)
-        volume = totalEpochActiveCollateral
-        apy = 0
-
-        let epochStrikeData = []
-
-        let accumulator = {
-            totalEpochLiquidity: BigNumber.from(0),
-            totalEpochUnlockedCollateral: BigNumber.from(0),
-            totalEpochActiveCollateral: BigNumber.from(0),
-        }
-
-        for (let i = 0; i < maxStrikes.length; i++) {
-            let [
-                totalEpochMaxStrikeLiquidity,
-                totalEpochMaxStrikeUnlockedCollateral,
-                totalEpochMaxStrikeActiveCollateral,
-            ] = await Promise.all([
-                atlanticPoolContract.totalEpochMaxStrikeLiquidity(
-                    currentEpoch,
-                    maxStrikes[i]
+                unlockedCollateral: ethersUtils.formatUnits(
+                    maxStrikeCheckpointAccumulator.unlockedCollateral,
+                    6
                 ),
-                atlanticPoolContract.totalEpochMaxStrikeUnlockedCollateral(
-                    currentEpoch,
-                    maxStrikes[i]
-                ),
-                atlanticPoolContract.totalEpochMaxStrikeActiveCollateral(
-                    currentEpoch,
-                    maxStrikes[i]
-                ),
-            ])
-
-            accumulator.totalEpochLiquidity =
-                accumulator.totalEpochLiquidity.add(
-                    totalEpochMaxStrikeLiquidity
-                )
-            accumulator.totalEpochUnlockedCollateral =
-                accumulator.totalEpochUnlockedCollateral.add(
-                    totalEpochMaxStrikeUnlockedCollateral
-                )
-            accumulator.totalEpochActiveCollateral =
-                accumulator.totalEpochActiveCollateral.add(
-                    totalEpochMaxStrikeActiveCollateral
-                )
-
-            epochStrikeData.push({
-                strike: ethersUtils.formatUnits(maxStrikes[i], 8),
                 totalLiquidity: ethersUtils.formatUnits(
-                    totalEpochMaxStrikeLiquidity,
-                    8
+                    maxStrikeCheckpointAccumulator.totalLiquidity,
+                    6
                 ),
-                unlocked: ethersUtils.formatUnits(
-                    totalEpochMaxStrikeUnlockedCollateral,
-                    8
+                premiumAccrued: ethersUtils.formatUnits(
+                    maxStrikeCheckpointAccumulator.premiumAccrued,
+                    6
                 ),
-                active: ethersUtils.formatUnits(
-                    totalEpochMaxStrikeActiveCollateral,
-                    8
+                borrowFeesAccrued: ethersUtils.formatUnits(
+                    maxStrikeCheckpointAccumulator.borrowFeesAccrued,
+                    6
+                ),
+                liquidityBalance: ethersUtils.formatUnits(
+                    maxStrikeCheckpointAccumulator.liquidityBalance,
+                    6
                 ),
             })
-        }
-
-        data = {
-            totalEpochLiquidity: ethersUtils.formatUnits(
-                accumulator.totalEpochLiquidity,
-                6
-            ),
-            totalEpochUnlockedCollateral: ethersUtils.formatUnits(
-                accumulator.totalEpochUnlockedCollateral,
-                6
-            ),
-            totalEpochActiveCollateral: ethersUtils.formatUnits(
-                accumulator.totalEpochActiveCollateral,
-                6
-            ),
         }
 
         return {
@@ -114,22 +134,26 @@ export default async (pool) => {
             strikes: maxStrikes.map((strike) =>
                 ethersUtils.formatUnits(strike, 8)
             ),
-            epochData: data,
-            tvl: ethersUtils.formatUnits(tvl, 6),
-            volume: ethersUtils.formatUnits(volume, 6),
-            apy, // hardcoded to 0
+            epochStrikeData: maxStrikeData,
+            tvl: ethersUtils.formatUnits(totalLiquidity, 6),
+            volume: ethersUtils.formatUnits(totalActiveCollateral, 6),
+            active: ethersUtils.formatUnits(BigNumber.from(0), 6),
+            fundingRate: ethersUtils.formatUnits(fundingRate, 6),
+            apy, // hardcoded to '-'
             duration,
-            underlying: underlying,
+            underlying,
         }
     } catch (e) {
         console.log('Failed To Fetch AP Data with error ', e)
         return {
             currentEpoch: '0',
             strikes: [],
-            epochData: {},
+            epochStrikeData: {},
             tvl: '',
             volume: '',
-            apy: '',
+            active: '',
+            fundingRate: '',
+            apy: '-',
             duration: '',
             underlying: '',
         }
