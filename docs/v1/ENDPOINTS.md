@@ -408,7 +408,7 @@ Gets the Farm TVL per pool
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'GET https://api.dopex.io/v1/farms/tvl?pool=dpx-weth'
+    curl --location --request GET 'https://api.dopex.io/v1/farms/tvl?pool=dpx-weth'
     ```
 
 ---
