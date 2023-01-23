@@ -12,6 +12,7 @@ const TOKEN_ADDRESS_TO_NAME = {
     '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'DPX',
     '0x32eb7902d4134bf98a28b963d26de779af92a212': 'rDPX',
     '0x10393c20975cf177a3513071bc110f7962cd67da': 'JONES',
+    '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'LDO',
     TWO_CRV_ADDRESS: '2CRV',
 }
 
@@ -99,6 +100,10 @@ const NAME_TO_GETTER = {
         isCurveStrat: false,
     },
     'rDPX-MONTHLY-CALLS-SSOV-V3-3': {
+        isV2: false,
+        isCurveStrat: false,
+    },
+    'stETH-WEEKLY-CALLS-SSOV-V3': {
         isV2: false,
         isCurveStrat: false,
     },

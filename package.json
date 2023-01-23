@@ -11,9 +11,9 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@0xsequence/multicall": "^0.41.3",
+        "@0xsequence/multicall": "^0.43.4",
         "@dopex-io/sdk": "https://github.com/dopex-io/sdk#feat/atlantics",
-        "axios": "^0.27.2",
+        "axios": "0.27.2",
         "bignumber.js": "^9.0.1",
         "ethers": "^5.6.4",
         "lodash": "^4.17.21"

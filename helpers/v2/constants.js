@@ -1,6 +1,17 @@
 export const SSOVS = [
     {
         type: 'call',
+        underlyingSymbol: 'GOHM',
+        symbol: 'GOHM-CALLS-SSOV-V2',
+        version: 2,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'monthly',
+        retired: true,
+        address: '0x89836d5f178141aaf013412b12abd754802d2318',
+    },
+    {
+        type: 'call',
         underlyingSymbol: 'DPX',
         symbol: 'DPX-CALLS-SSOV-V2',
         version: 2,
@@ -648,6 +659,17 @@ export const SSOVS = [
         retired: false,
         address: '0x8a0dd3203a9F1cf66c7201e4A8Ab4762D09f0B3a',
     },
+    {
+        type: 'call',
+        underlyingSymbol: 'stETH',
+        symbol: 'stETH-WEEKLY-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0xFca61E79F38a7a82c62f469f55A9df54CB8dF678',
+    },
 ]
 
 export const IR_VAULTS = [
@@ -750,6 +772,20 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0x0Dc96f38980144ebFfe745706DFeE92622dba829',
+    },
+]
+
+export const SSOV_LPS = [
+    {
+        underlyingSymbol: 'DPX',
+        symbol: 'DPX-MONTHLY',
+        duration: 'monthly',
+        chainId: 42161,
+        collateralDecimals: 6,
+        retired: false,
+        isPut: false,
+        address: '0x3D0354322D4Ef15CBF4498581976F0dd40DedD07',
+        token: '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55',
     },
 ]
 

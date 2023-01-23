@@ -3,6 +3,8 @@ import BN from 'bignumber.js'
 import { BigNumber } from 'ethers'
 import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
 import { zipWith } from 'lodash'
+import axios from 'axios'
+
 import getPrices from '../getPrices'
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
@@ -16,11 +18,8 @@ const TOKEN_ADDRESS_TO_CG_ID = {
     '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'dopex',
     '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
     '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
+    '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
 }
-
-// https://arbitrum.curve.fi/
-const TWO_CRV_APY = 0.0061
-const CRV_APR = 0.0222
 
 async function fetchEpochRewards(
     ssovContract,
@@ -79,10 +78,7 @@ async function fetchTotalCollateralBalance(ssovContract, epoch) {
 function calculateApy(rewardsPerYear, totalEpochDeposits) {
     const denominator = totalEpochDeposits + rewardsPerYear
     const apr = (denominator / totalEpochDeposits - 1) * 100
-    return (
-        ((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) *
-        100
-    ).toFixed(2)
+    return ((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) * 100
 }
 
 async function _getBnbApy() {
@@ -184,6 +180,20 @@ async function _getGmxApy() {
     return (((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2)
 }
 
+async function getStEthApy() {
+    const poolId = '747c1d2a-c668-4682-b9f9-296708a3dd90'
+
+    const response = await axios.get('https://yields.llama.fi/pools')
+
+    const pool = response.data.data.find((p) => p.pool === poolId)
+
+    const rewardsApy = await getRewardsApy('stETH-WEEKLY-CALLS-SSOV-V3', false)
+
+    const finalApy = pool.apy + Number(rewardsApy)
+
+    return finalApy.toString()
+}
+
 async function getGohmApy() {
     const mainnetProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ETHEREUM)
 
@@ -260,7 +270,7 @@ async function getRewardsApy(name, isV2Staking = false) {
     const rewardsPerYear =
         (totalRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    return calculateApy(rewardsPerYear, totalEpochDepositsInUsd)
+    return calculateApy(rewardsPerYear, totalEpochDepositsInUsd).toFixed(2)
 }
 
 async function getSsovPutApy(name) {
@@ -286,10 +296,7 @@ async function getSsovPutApy(name) {
     const totalEpochDepositsInUsd = totalEpochDeposits * twoCrvPrice
 
     // get CRV and DPX prices
-    const [dpxPrice, crvPrice] = await getPrices([
-        TOKEN_TO_CG_ID.DPX,
-        TOKEN_TO_CG_ID.CRV,
-    ])
+    const [dpxPrice] = await getPrices([TOKEN_TO_CG_ID.DPX])
 
     // calculate DPX incentives
     const { rewards: dpxRewards } = await fetchEpochRewards(
@@ -302,21 +309,30 @@ async function getSsovPutApy(name) {
     const dpxRewardsInUsdPerYear =
         (dpxRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    // calculate 2crv return
-    const twoCrvApr =
-        ((TWO_CRV_APY + 1) ** (1 / DAYS_PER_YEAR) - 1) * DAYS_PER_YEAR
-    const twoCrvRewardsInUsdPerYear =
-        twoCrvPrice * twoCrvApr * totalEpochDeposits
+    // get the 2CRV Reward APY and Fees APY
+    const [crvRewardAprResponse, crvFeesApyResponse] = await Promise.all([
+        axios.get('https://api.curve.fi/api/getFactoGaugesCrvRewards/arbitrum'),
+        axios.get('https://api.curve.fi/api/getSubgraphData/arbitrum'),
+    ])
 
-    // calculate crv return
-    const crvRewardsInUsdPerYear = crvPrice * CRV_APR * totalEpochDeposits
+    const crvRewardApr =
+        crvRewardAprResponse.data.data.sideChainGaugesApys.find(
+            (item) =>
+                item.address.toLowerCase() ===
+                '0x7f90122bf0700f9e7e1f688fe926940e8839f353'
+        ).apy
 
-    const totalRewardsInUsd =
-        dpxRewardsInUsdPerYear +
-        twoCrvRewardsInUsdPerYear +
-        crvRewardsInUsdPerYear
+    const crvFeesApy = crvFeesApyResponse.data.data.poolList.find(
+        (item) =>
+            item.address.toLowerCase() ===
+            '0x7f90122bf0700f9e7e1f688fe926940e8839f353'
+    ).latestDailyApy
 
-    return calculateApy(totalRewardsInUsd, totalEpochDepositsInUsd)
+    return (
+        calculateApy(dpxRewardsInUsdPerYear, totalEpochDepositsInUsd) +
+        crvRewardApr +
+        crvFeesApy
+    ).toFixed(2)
 }
 
 async function _getAvaxAPY() {
@@ -460,6 +476,10 @@ const NAME_TO_GETTER = {
     'rDPX-MONTHLY-CALLS-SSOV-V3-3': {
         fn: getRewardsApy,
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3'],
+    },
+    'stETH-WEEKLY-CALLS-SSOV-V3': {
+        fn: getStEthApy,
+        args: [],
     },
 
     // Puts
