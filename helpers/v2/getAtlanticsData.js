@@ -13,7 +13,7 @@ export default async (pool) => {
         provider
     )
 
-    let currentEpoch, apy
+    let currentEpoch
 
     try {
         currentEpoch = await atlanticPoolContract.currentEpoch()
@@ -28,9 +28,8 @@ export default async (pool) => {
             (await atlanticPoolContract.vaultConfig(3)) ?? BigNumber.from(0)
         ).mul(1000)
 
-        const { totalActiveCollateral, totalLiquidity } = epochData
-
-        apy = '-'
+        const { totalActiveCollateral, totalLiquidity, startTime, expiryTime } =
+            epochData
 
         const latestCheckpointsCalls = maxStrikes.map(async (maxStrike) => {
             return atlanticPoolContract.getEpochCheckpoints(
@@ -129,6 +128,38 @@ export default async (pool) => {
             })
         }
 
+        const epochLength = expiryTime.sub(startTime)
+
+        const epochDurationInDays = Number(epochLength) / 86400
+
+        const cumulativeEpochData = maxStrikeData.reduce(
+            (prev, curr) => {
+                return {
+                    premiumAccrued:
+                        Number(prev.premiumAccrued) +
+                        Number(curr.premiumAccrued),
+                    fundingAccrued:
+                        Number(prev.fundingAccrued) +
+                        Number(curr.borrowFeesAccrued),
+                    liquidityBalance:
+                        Number(prev.liquidityBalance) +
+                        Number(curr.liquidityBalance),
+                }
+            },
+            {
+                premiumAccrued: 0,
+                fundingAccrued: 0,
+                liquidityBalance: 0,
+            }
+        )
+
+        const apr =
+            (((cumulativeEpochData.premiumAccrued +
+                cumulativeEpochData.fundingAccrued) /
+                Number(totalLiquidity.div(1e6))) *
+                (365 * 100)) /
+            epochDurationInDays
+
         return {
             currentEpoch: currentEpoch.toString(),
             strikes: maxStrikes.map((strike) =>
@@ -139,7 +170,7 @@ export default async (pool) => {
             volume: ethersUtils.formatUnits(totalActiveCollateral, 6),
             active: ethersUtils.formatUnits(BigNumber.from(0), 6),
             fundingRate: ethersUtils.formatUnits(fundingRate, 6),
-            apy, // hardcoded to '-'
+            apy: apr,
             duration,
             underlying,
         }
@@ -153,7 +184,7 @@ export default async (pool) => {
             volume: '',
             active: '',
             fundingRate: '',
-            apy: '-',
+            apy: '',
             duration: '',
             underlying: '',
         }
