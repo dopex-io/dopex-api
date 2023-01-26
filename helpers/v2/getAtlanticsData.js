@@ -22,14 +22,12 @@ export default async (pool) => {
             currentEpoch
         )
 
-        const epochData = await atlanticPoolContract.getEpochData(currentEpoch)
+        const { startTime, expiryTime } =
+            await atlanticPoolContract.getEpochData(currentEpoch)
 
         const fundingRate = (
             (await atlanticPoolContract.vaultConfig(3)) ?? BigNumber.from(0)
         ).mul(1000)
-
-        const { totalActiveCollateral, totalLiquidity, startTime, expiryTime } =
-            epochData
 
         const latestCheckpointsCalls = maxStrikes.map(async (maxStrike) => {
             return atlanticPoolContract.getEpochCheckpoints(
@@ -144,21 +142,36 @@ export default async (pool) => {
                     liquidityBalance:
                         Number(prev.liquidityBalance) +
                         Number(curr.liquidityBalance),
+                    unlockedCollateral:
+                        Number(prev.unlockedCollateral) +
+                        Number(curr.unlockedCollateral),
+                    activeCollateral:
+                        Number(prev.activeCollateral) +
+                        Number(curr.activeCollateral),
+                    totalLiquidity:
+                        Number(prev.totalLiquidity) +
+                        Number(curr.totalLiquidity),
                 }
             },
             {
                 premiumAccrued: 0,
                 fundingAccrued: 0,
                 liquidityBalance: 0,
+                activeCollateral: 0,
+                unlockedCollateral: 0,
+                totalLiquidity: 0,
             }
         )
 
-        const apr =
+        const apy = (
             (((cumulativeEpochData.premiumAccrued +
                 cumulativeEpochData.fundingAccrued) /
-                Number(totalLiquidity.div(1e6))) *
+                cumulativeEpochData.totalLiquidity) *
                 (365 * 100)) /
             epochDurationInDays
+        )
+            .toFixed(3)
+            .toString()
 
         return {
             currentEpoch: currentEpoch.toString(),
@@ -166,23 +179,33 @@ export default async (pool) => {
                 ethersUtils.formatUnits(strike, 8)
             ),
             epochStrikeData: maxStrikeData,
-            tvl: ethersUtils.formatUnits(totalLiquidity, 6),
-            volume: ethersUtils.formatUnits(totalActiveCollateral, 6),
-            active: ethersUtils.formatUnits(BigNumber.from(0), 6),
+            tvl: cumulativeEpochData.totalLiquidity.toFixed(3).toString(),
+            unlocked: cumulativeEpochData.unlockedCollateral
+                .toFixed(3)
+                .toString(),
+            active: cumulativeEpochData.activeCollateral.toFixed(3).toString(),
+            utiizationRate: (
+                (cumulativeEpochData.unlockedCollateral /
+                    Number(cumulativeEpochData.totalLiquidity)) *
+                100
+            )
+                .toFixed(3)
+                .toString(),
             fundingRate: ethersUtils.formatUnits(fundingRate, 6),
-            apy: apr,
+            apy,
             duration,
             underlying,
         }
     } catch (e) {
         console.log('Failed To Fetch AP Data with error ', e)
         return {
-            currentEpoch: '0',
+            currentEpoch: '',
             strikes: [],
             epochStrikeData: {},
             tvl: '',
-            volume: '',
+            unlocked: '',
             active: '',
+            utiizationRate: '',
             fundingRate: '',
             apy: '',
             duration: '',
