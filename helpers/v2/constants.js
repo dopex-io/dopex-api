@@ -962,3 +962,39 @@ export const ATLANTIC_POOLS = {
         },
     ],
 }
+
+export const LENDING_SSOVS = [
+    {
+        type: 'put',
+        underlyingSymbol: 'DPX',
+        symbol: 'DPX-WEEKLY-PUTS-SSOV-V3-3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0xf71b2B6fE3c1d94863e751d6B455f750E714163C',
+    },
+    {
+        type: 'put',
+        underlyingSymbol: 'RDPX',
+        symbol: 'rDPX-WEEKLY-PUTS-SSOV-V3-3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0xb4ec6B4eC9e42A42B0b8cdD3D6df8867546Cf11d',
+    },
+    {
+        type: 'put',
+        underlyingSymbol: 'BTC',
+        symbol: 'BTC-WEEKLY-PUTS-SSOV-V3-3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0xa7507c48d78345475b85bc27B9CE9B84b354CaF7',
+    },
+]
