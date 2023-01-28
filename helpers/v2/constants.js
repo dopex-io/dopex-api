@@ -789,3 +789,30 @@ export const SSOV_LPS = [
         token: '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55',
     },
 ]
+
+export const ATLANTIC_POOLS = {
+    WETH: [
+        {
+            strategy: 'Insured Long Perps',
+            retired: true,
+            version: 1,
+            base: 'USDC',
+            underlying: 'WETH',
+            symbol: 'WETH-PUTS-WEEKLY',
+            chainId: 42161,
+            vaultAddress: '0x1640eda814072286FDDc5b952D1C56E576621379',
+            duration: 'WEEKLY',
+        },
+        {
+            strategy: 'Insured Long Perps',
+            retired: false,
+            version: 'latest',
+            base: 'USDC',
+            underlying: 'WETH',
+            symbol: 'WETH-PUTS-WEEKLY',
+            chainId: 42161,
+            vaultAddress: '0x5c267496043F864CE8beB62bBd1BBFc20EfF5248',
+            duration: 'WEEKLY',
+        },
+    ],
+}

@@ -107,6 +107,25 @@ Returns data about the Dopex Straddles
 
 ---
 
+## Atlantic Pools
+
+Returns data for an Atlantic Pool contract
+
+-   **URL**
+
+    `/atlantics`
+
+-   **Method:**
+
+    `GET`
+
+-   **Sample call:**
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/api/v2/atlantics'
+    ```
+
+---
+
 ## Farms
 
 Returns TVL and APY for a Dopex Sushiswap farm about
