@@ -175,6 +175,8 @@ export default async (pool) => {
 
         return {
             currentEpoch: currentEpoch.toString(),
+            retired: pool.retired,
+            version: pool.version,
             strikes: maxStrikes.map((strike) =>
                 ethersUtils.formatUnits(strike, 8)
             ),
@@ -200,6 +202,8 @@ export default async (pool) => {
         console.log('Failed To Fetch AP Data with error ', e)
         return {
             currentEpoch: '',
+            retired: false,
+            version: 0,
             strikes: [],
             epochStrikeData: {},
             tvl: '',
