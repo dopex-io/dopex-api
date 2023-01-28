@@ -18,16 +18,12 @@ export default async (pool) => {
     try {
         currentEpoch = await atlanticPoolContract.currentEpoch()
 
-        const maxStrikes = await atlanticPoolContract.getEpochStrikes(
-            currentEpoch
-        )
-
-        const { startTime, expiryTime } =
-            await atlanticPoolContract.getEpochData(currentEpoch)
-
-        const fundingRate = (
-            (await atlanticPoolContract.vaultConfig(3)) ?? BigNumber.from(0)
-        ).mul(1000)
+        const [{ startTime, expiryTime }, maxStrikes, fundingRate] =
+            await Promise.all([
+                atlanticPoolContract.getEpochData(currentEpoch),
+                atlanticPoolContract.getEpochStrikes(currentEpoch),
+                atlanticPoolContract.vaultConfig(3),
+            ])
 
         const latestCheckpointsCalls = maxStrikes.map(async (maxStrike) => {
             return atlanticPoolContract.getEpochCheckpoints(
@@ -169,9 +165,7 @@ export default async (pool) => {
                 cumulativeEpochData.totalLiquidity) *
                 (365 * 100)) /
             epochDurationInDays
-        )
-            .toFixed(3)
-            .toString()
+        ).toFixed(3)
 
         return {
             currentEpoch: currentEpoch.toString(),
