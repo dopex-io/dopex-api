@@ -25,7 +25,7 @@ export default async (pool) => {
                 atlanticPoolContract.vaultConfig(3),
             ])
 
-        const latestCheckpointsCalls = maxStrikes.map(async (maxStrike) => {
+        const latestCheckpointsCalls = maxStrikes.map((maxStrike) => {
             return atlanticPoolContract.getEpochCheckpoints(
                 currentEpoch,
                 maxStrike
