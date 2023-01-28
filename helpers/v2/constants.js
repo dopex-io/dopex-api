@@ -810,7 +810,7 @@ export const ATLANTIC_POOLS = {
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
             chainId: 42161,
-            vaultAddress: '0x15571497F99dE8574A92b547E1490d63D980bB30',
+            vaultAddress: '0x5c267496043F864CE8beB62bBd1BBFc20EfF5248',
             duration: 'WEEKLY',
         },
     ],
