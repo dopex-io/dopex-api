@@ -516,6 +516,7 @@ export const SSOVS = [
         duration: 'monthly',
         retired: false,
         address: '0xd74c61ca8917Be73377D74A007E6f002c25Efb4e',
+        olp: '',
     },
     {
         type: 'put',
@@ -527,6 +528,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x32449DF9c617C59f576dfC461D03f261F617aD5a',
+        olp: '',
     },
     {
         type: 'put',
@@ -538,6 +540,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0xf71b2B6fE3c1d94863e751d6B455f750E714163C',
+        olp: '',
     },
     {
         type: 'put',
@@ -549,6 +552,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0xb4ec6B4eC9e42A42B0b8cdD3D6df8867546Cf11d',
+        olp: '',
     },
     {
         type: 'put',
@@ -560,6 +564,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0xa7507c48d78345475b85bc27B9CE9B84b354CaF7',
+        olp: '',
     },
     {
         type: 'put',
@@ -571,6 +576,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x4269AF9076586230bF5fa3655144a5fe9CB877Fd',
+        olp: '',
     },
     {
         type: 'put',
@@ -582,6 +588,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0xf071F0c56543A2671a2Dfc5FF51d5d858Be91514',
+        olp: '',
     },
     {
         type: 'put',
@@ -593,6 +600,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x7C5aC7E4E352B733CF65721d9Fe28A17Da890159',
+        olp: '',
     },
     {
         type: 'call',
@@ -604,6 +612,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x9Cc9BeffE64868CB4B97890A19219449890E6eA0',
+        olp: '',
     },
     {
         type: 'call',
@@ -615,6 +624,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x10FD85ec522C245a63239b9FC64434F58520bd1f',
+        olp: '',
     },
     {
         type: 'call',
@@ -626,6 +636,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0xCdaACF37726Bf1017821b5169e22EB34734B28A8',
+        olp: '',
     },
     {
         type: 'call',
@@ -637,6 +648,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x546cd36F761f1D984eEE1Dbe67cC4F86E75cAF0C',
+        olp: '',
     },
     {
         type: 'call',
@@ -648,6 +660,7 @@ export const SSOVS = [
         duration: 'monthly',
         retired: false,
         address: '0xC59836FEC63Cfb2E48b0aa00515056436D74Dc03',
+        olp: '',
     },
     {
         type: 'put',
@@ -659,6 +672,7 @@ export const SSOVS = [
         duration: 'quarterly',
         retired: false,
         address: '0x8a0dd3203a9F1cf66c7201e4A8Ab4762D09f0B3a',
+        olp: '',
     },
     {
         type: 'call',
@@ -670,6 +684,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0xFca61E79F38a7a82c62f469f55A9df54CB8dF678',
+        olp: '',
     },
 ]
 
@@ -788,6 +803,7 @@ export const SSOV_LPS = [
         address: '0x3D0354322D4Ef15CBF4498581976F0dd40DedD07',
         token: '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55',
     },
+    // TODO: add ssov_lps
 ]
 
 export const ATLANTIC_POOLS = {
