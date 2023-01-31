@@ -107,6 +107,10 @@ const NAME_TO_GETTER = {
         isV2: false,
         isCurveStrat: false,
     },
+    'stETH-MONTHLY-CALLS-SSOV-V3': {
+        isV2: false,
+        isCurveStrat: false,
+    },
 
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {
