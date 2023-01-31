@@ -194,7 +194,7 @@ async function getStEthApy(duration) {
 
     const finalApy = pool.apy + Number(rewardsApy)
 
-    return finalApy.toString()
+    return finalApy.toFixed(2)
 }
 
 async function getGohmApy() {
