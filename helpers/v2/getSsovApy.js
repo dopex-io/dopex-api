@@ -180,14 +180,17 @@ async function _getGmxApy() {
     return (((1 + gmxAprTotal / 365 / 100) ** 365 - 1) * 100).toFixed(2)
 }
 
-async function getStEthApy() {
+async function getStEthApy(duration) {
     const poolId = '747c1d2a-c668-4682-b9f9-296708a3dd90'
 
     const response = await axios.get('https://yields.llama.fi/pools')
 
     const pool = response.data.data.find((p) => p.pool === poolId)
 
-    const rewardsApy = await getRewardsApy('stETH-WEEKLY-CALLS-SSOV-V3', false)
+    const rewardsApy = await getRewardsApy(
+        `stETH-${duration.toUpperCase()}-CALLS-SSOV-V3`,
+        false
+    )
 
     const finalApy = pool.apy + Number(rewardsApy)
 
@@ -479,7 +482,11 @@ const NAME_TO_GETTER = {
     },
     'stETH-WEEKLY-CALLS-SSOV-V3': {
         fn: getStEthApy,
-        args: [],
+        args: ['weekly'],
+    },
+    'stETH-MONTHLY-CALLS-SSOV-V3': {
+        fn: getStEthApy,
+        args: ['monthly'],
     },
 
     // Puts
