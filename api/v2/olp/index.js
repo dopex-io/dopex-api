@@ -12,19 +12,7 @@ export default async (_req, res) => {
             })
         )
 
-        const vaultArray = data.map((item, index) => {
-            return {
-                ...item,
-                underlyingSymbol: data[index].underlyingSymbol,
-                symbol: data[index].symbol,
-                duration: data[index].duration,
-                chainId: data[index].chainId,
-                address: data[index].address,
-                tvl: data[index].tvl,
-            }
-        })
-
-        const fData = groupBy(vaultArray, 'chainId')
+        const fData = groupBy(data, 'chainId')
 
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
         res.json({ ...fData })
