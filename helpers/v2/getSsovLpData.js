@@ -63,45 +63,63 @@ export default async (vault) => {
     const { underlyingSymbol, symbol, duration, chainId, token, address } =
         vault
 
-    const provider = getProvider(chainId)
-    const olpContract = SsovLp__factory.connect(address, provider)
+    try {
+        const provider = getProvider(chainId)
+        const olpContract = SsovLp__factory.connect(address, provider)
 
-    const [ssovCall, ssovPut] = await Promise.all([
-        olpContract.getTokenVaultRegistry(token, false),
-        olpContract.getTokenVaultRegistry(token, true),
-    ])
+        const [ssovCall, ssovPut] = await Promise.all([
+            olpContract.getTokenVaultRegistry(token, false),
+            olpContract.getTokenVaultRegistry(token, true),
+        ])
 
-    let expiryPut
-    let expiryCall
+        let expiryPut
+        let expiryCall
 
-    if (ssovPut !== NULL) {
-        const epochPut = await olpContract.getSsovEpoch(ssovPut)
-        expiryPut = await olpContract.getSsovExpiry(ssovCall, epochPut)
-    }
+        if (ssovPut !== NULL) {
+            const epochPut = await olpContract.getSsovEpoch(ssovPut)
+            expiryPut = await olpContract.getSsovExpiry(ssovPut, epochPut)
+        }
 
-    if (ssovCall !== NULL) {
-        const epochCall = await olpContract.getSsovEpoch(ssovCall)
-        expiryCall = await olpContract.getSsovExpiry(ssovCall, epochCall)
-    }
+        if (ssovCall !== NULL) {
+            const epochCall = await olpContract.getSsovEpoch(ssovCall)
+            expiryCall = await olpContract.getSsovExpiry(ssovCall, epochCall)
+        }
 
-    const [tvlUtilCall, tvlUtilPut] = await Promise.all([
-        getSsovLpTvlUtilization(olpContract, ssovCall),
-        getSsovLpTvlUtilization(olpContract, ssovPut),
-    ])
+        const [tvlUtilCall, tvlUtilPut] = await Promise.all([
+            getSsovLpTvlUtilization(olpContract, ssovCall),
+            getSsovLpTvlUtilization(olpContract, ssovPut),
+        ])
 
-    return {
-        underlyingSymbol: underlyingSymbol,
-        symbol: symbol,
-        duration: duration,
-        chainId: chainId,
-        address: address,
-        hasCall: ssovCall !== NULL,
-        hasPut: ssovPut !== NULL,
-        utilization: tvlUtilCall.utilization
-            .add(tvlUtilPut.utilization)
-            .div(DECIMALS_USD)
-            .toNumber(),
-        tvl: tvlUtilCall.tvl.add(tvlUtilPut.tvl).div(DECIMALS_USD).toNumber(),
-        expiry: expiryCall.toString() ?? expiryPut.toString() ?? '-',
+        return {
+            underlyingSymbol: underlyingSymbol,
+            symbol: symbol,
+            duration: duration,
+            chainId: chainId,
+            address: address,
+            hasCall: ssovCall !== NULL,
+            hasPut: ssovPut !== NULL,
+            utilization: tvlUtilCall.utilization
+                .add(tvlUtilPut.utilization)
+                .div(DECIMALS_USD)
+                .toNumber(),
+            tvl: tvlUtilCall.tvl
+                .add(tvlUtilPut.tvl)
+                .div(DECIMALS_USD)
+                .toNumber(),
+            expiry: expiryCall?.toString() ?? expiryPut?.toString() ?? '-',
+        }
+    } catch (err) {
+        return {
+            underlyingSymbol: underlyingSymbol,
+            symbol: symbol,
+            duration: duration,
+            chainId: chainId,
+            address: address,
+            hasCall: false,
+            hasPut: false,
+            utilization: 0,
+            tvl: 0,
+            expiry: 0,
+        }
     }
 }

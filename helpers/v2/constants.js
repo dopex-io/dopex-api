@@ -859,7 +859,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'DPX',
         symbol: 'DPX-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
@@ -869,7 +869,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'RDPX',
         symbol: 'RDPX-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
@@ -879,7 +879,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'GOHM',
         symbol: 'GOHM-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
@@ -889,7 +889,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'STETH',
         symbol: 'STETH-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
@@ -899,7 +899,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'BTC',
         symbol: 'BTC-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
@@ -909,7 +909,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'GMX',
         symbol: 'GMX-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
@@ -919,7 +919,7 @@ export const SSOV_LPS = [
     {
         underlyingSymbol: 'CRV',
         symbol: 'CRV-WEEKLY',
-        duration: 'monthly',
+        duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
