@@ -811,7 +811,6 @@ export const SSOV_LPS = [
         chainId: 42161,
         collateralDecimals: 6,
         retired: false,
-        isPut: false,
         address: '0x3D0354322D4Ef15CBF4498581976F0dd40DedD07',
         token: '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55',
     },
