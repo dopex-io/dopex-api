@@ -82,7 +82,6 @@ export default async (vault) => {
     if (ssovCall !== NULL) {
         const epochCall = await olpContract.getSsovEpoch(ssovCall)
         expiryCall = await olpContract.getSsovExpiry(ssovCall, epochCall)
-        console.log('expiryCall: ', expiryCall)
     }
 
     const [tvlUtilCall, tvlUtilPut] = await Promise.all([
