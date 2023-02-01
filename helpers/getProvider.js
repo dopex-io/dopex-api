@@ -9,8 +9,7 @@ export default (chainId) => {
     const bscRpcUrl = process.env.BSC_RPC_URL
     const avalancheRpcUrl = process.env.AVALANCHE_RPC_URL
     const metisRpcUrl = process.env.METIS_RPC_URL
-    const goerliRpcUrl =
-        'https://eth-goerli.g.alchemy.com/v2/kmExbRuY27s9yJZxJV6eAROW0wsnDLxx'
+    const goerliRpcUrl = process.env.GOERLI_RPC_URL
 
     if (chainId === BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
         return new providers.MulticallProvider(
