@@ -10,7 +10,6 @@ export default async (token, type, chainId) => {
     const contractAddresses = Addresses[chainId]
     const provider = getProvider(chainId)
 
-    console.log('contractAddresses: ', contractAddresses)
     const ssovAddress =
         type === 'put'
             ? contractAddresses['2CRV-SSOV-P'][token].Vault
