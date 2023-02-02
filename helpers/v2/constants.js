@@ -698,18 +698,6 @@ export const SSOVS = [
         address: '0x475a5a712b741b9ab992e6af0b9e5adee3d1851b',
         olp: '0x608871557906CB64C80B36D0F06715Ab00EdF269',
     },
-    {
-        type: 'call',
-        underlyingSymbol: 'stETH',
-        symbol: 'stETH-MONTHLY-CALLS-SSOV-V3',
-        version: 3,
-        chainId: 42161,
-        collateralDecimals: 18,
-        duration: 'monthly',
-        retired: false,
-        address: '0x475a5a712b741b9ab992e6af0b9e5adee3d1851b',
-        olp: '',
-    },
 ]
 
 export const IR_VAULTS = [
