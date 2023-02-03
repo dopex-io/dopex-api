@@ -528,7 +528,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x32449DF9c617C59f576dfC461D03f261F617aD5a',
-        olp: '',
+        olp: '0x12164EbCbae6198d76fF2bA651c55e854da2112e',
     },
     {
         type: 'put',
