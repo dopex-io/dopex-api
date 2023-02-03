@@ -17,4 +17,5 @@ export const BLOCKCHAIN_TO_CHAIN_ID = {
     BSC: 56,
     AVAX: 43114,
     METIS: 1088,
+    POLYGON: 137,
 }
