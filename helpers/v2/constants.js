@@ -801,6 +801,15 @@ export const STRADDLES = [
         retired: false,
         address: '0x0Dc96f38980144ebFfe745706DFeE92622dba829',
     },
+    {
+        underlyingSymbol: 'MATIC',
+        symbol: 'MATIC-ATLANTIC-STRADDLE-V2',
+        duration: '2 days',
+        chainId: 137,
+        collateralDecimals: 6,
+        retired: false,
+        address: '0x5540FEa353dF6302611DA1d57988104e43A4B6b6',
+    },
 ]
 
 export const SSOV_LPS = [
