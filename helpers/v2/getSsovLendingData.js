@@ -83,7 +83,7 @@ export default async (vault) => {
             tokenPrice: 0,
             aprs: [0, 0, 0, 0],
             strikes: [0, 0, 0, 0],
-            optionTokens: 0,
+            optionTokens: ['', '', '', ''],
         }
     }
 }
