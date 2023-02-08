@@ -21,12 +21,16 @@ export default async (vault) => {
     const ssovContract = SsovV3__factory.connect(address, provider)
 
     try {
-        const tokenPrice = await ssovContract.getUnderlyingPrice()
-        const epoch = await ssovContract.currentEpoch()
-        const epochData = await ssovContract.getEpochData(epoch)
-        const epochTimes = await ssovContract.getEpochTimes(epoch)
-        const collateralPrice = await ssovContract.getCollateralPrice()
-        const strikes = epochData.strikes
+        const [tokenPrice, epoch, collateralPrice] = await Promise.all([
+            ssovContract.getUnderlyingPrice(),
+            ssovContract.currentEpoch(),
+            ssovContract.getCollateralPrice(),
+        ])
+
+        const [epochData, epochTimes] = await Promise.all([
+            ssovContract.getEpochData(epoch),
+            ssovContract.getEpochTimes(epoch),
+        ])
 
         let aprs = []
         let optionTokens = []
@@ -65,7 +69,7 @@ export default async (vault) => {
             tokenPrice:
                 tokenPrice.div(BigNumber.from(10).pow(6)).toNumber() / 100,
             aprs: aprs,
-            strikes: strikes.map(
+            strikes: epochData.strikes.map(
                 (s) =>
                     s.mul(BigNumber.from(100)).div(DECIMALS_STRIKE).toNumber() /
                     100
