@@ -214,6 +214,27 @@ Returns data about the Dopex SSOV LPs
     curl --location --request GET 'https://api.dopex.io/v2/olp'
     ```
 
+Returns utilizations about the Dopex SSOV LPs
+
+-   **URL**
+
+    `/olp/utilizations?symbol=DPX-MONTHLY`
+
+-   **Method:**
+
+    `GET`
+
+-   **URL Params**
+
+    -   **Required:** <br />
+        `symbol=[string]`
+
+-   **Sample call:**
+
+    ```bash
+    curl --location --request GET 'https://api.dopex.io/v2/olp/utilizations?symbol=DPX-MONTHLY'
+    ```
+
 ---
 
 ## Protocol TVL
