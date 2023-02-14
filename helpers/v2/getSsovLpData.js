@@ -1,7 +1,7 @@
 import { SsovLp__factory } from '@dopex-io/sdk'
 import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
-import { getSsovLpUtil } from './getSsovLpUtil'
+import { getSsovLpUtilization } from './getSsovLpUtilization'
 
 const DECIMALS_USD = BigNumber.from(10).pow(6)
 const NULL = '0x0000000000000000000000000000000000000000'
@@ -35,8 +35,8 @@ export default async (vault) => {
         }
 
         const [tvlUtilCall, tvlUtilPut] = await Promise.all([
-            getSsovLpUtil(olpContract, ssovCall, epochCall),
-            getSsovLpUtil(olpContract, ssovPut, epochPut),
+            getSsovLpUtilization(olpContract, ssovCall, epochCall),
+            getSsovLpUtilization(olpContract, ssovPut, epochPut),
         ])
 
         return {

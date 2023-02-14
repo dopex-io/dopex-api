@@ -2,17 +2,23 @@ import { SSOV_LPS } from './constants'
 import { SsovLp__factory } from '@dopex-io/sdk'
 import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
-import { getSsovLpUtil } from './getSsovLpUtil'
+import { getSsovLpUtilization } from './getSsovLpUtilization'
 
 const DECIMALS_USD = BigNumber.from(10).pow(6)
 
-const getCallPutUtils = async (olpContract, epochs1, ssov1, epochs2, ssov2) => {
+const getCallPutUtilizations = async (
+    olpContract,
+    epochs1,
+    ssov1,
+    epochs2,
+    ssov2
+) => {
     let utilizations = []
     await Promise.all(
         epochs1.map(async (e) => {
             utilizations.push(
                 await (
-                    await getSsovLpUtil(olpContract, ssov1, e)
+                    await getSsovLpUtilization(olpContract, ssov1, e)
                 ).utilization
             )
         })
@@ -21,7 +27,7 @@ const getCallPutUtils = async (olpContract, epochs1, ssov1, epochs2, ssov2) => {
         epochs2.map(async (e, idx) =>
             utilizations[idx].add(
                 await (
-                    await getSsovLpUtil(olpContract, ssov2, e)
+                    await getSsovLpUtilization(olpContract, ssov2, e)
                 ).utilization
             )
         )
@@ -29,7 +35,7 @@ const getCallPutUtils = async (olpContract, epochs1, ssov1, epochs2, ssov2) => {
     return utilizations
 }
 
-const getSsovLpUtils = async (querySymbol) => {
+const getSsovLpUtilizations = async (querySymbol) => {
     const vault = SSOV_LPS.find(
         (vault) => !vault.retired && vault.symbol === querySymbol
     )
@@ -51,7 +57,7 @@ const getSsovLpUtils = async (querySymbol) => {
 
         let utilizations = []
         if (epochsCall.length < epochsPut.length) {
-            utilizations = await getCallPutUtils(
+            utilizations = await getCallPutUtilizations(
                 olpContract,
                 epochsPut,
                 ssovPut,
@@ -59,7 +65,7 @@ const getSsovLpUtils = async (querySymbol) => {
                 ssovCall
             )
         } else {
-            utilizations = await getCallPutUtils(
+            utilizations = await getCallPutUtilizations(
                 olpContract,
                 epochsCall,
                 ssovCall,
@@ -75,4 +81,4 @@ const getSsovLpUtils = async (querySymbol) => {
     }
 }
 
-export default getSsovLpUtils
+export default getSsovLpUtilizations

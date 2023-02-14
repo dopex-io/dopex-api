@@ -1,8 +1,8 @@
-import getSsovLpUtils from '../../../../helpers/v2/getSsovLpUtils'
+import getSsovLpUtilizations from '../../../../helpers/v2/getSsovLpUtilizations'
 
 export default async (req, res) => {
     try {
-        const utilizations = await getSsovLpUtils(req.query.symbol)
+        const utilizations = await getSsovLpUtilizations(req.query.symbol)
         res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
         res.json({ utilizations })
     } catch (err) {

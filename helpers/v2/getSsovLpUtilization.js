@@ -5,7 +5,7 @@ const DECIMALS_TOKEN = BigNumber.from(10).pow(18)
 const DECIMALS_STRIKE = BigNumber.from(10).pow(8)
 const NULL = '0x0000000000000000000000000000000000000000'
 
-export async function getSsovLpUtil(olpContract, ssov, currentEpoch) {
+export async function getSsovLpUtilization(olpContract, ssov, currentEpoch) {
     let tvl = BigNumber.from(0)
     let utilization = BigNumber.from(0)
 
