@@ -1,10 +1,7 @@
-import { SsovV3__factory } from '@dopex-io/sdk'
-// import { SsovV4Put__factory } from '../../mocks/factories'
+import { SsovV3LendingPut__factory } from '../../mocks/factories/SsovV3LendingPut__factory'
 import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
-
-const DECIMALS_TOKEN = BigNumber.from(10).pow(18)
-const DECIMALS_STRIKE = BigNumber.from(10).pow(8)
+import { DECIMALS_TOKEN, DECIMALS_STRIKE, DECIMALS_USD } from '../constants'
 
 function getApr(optionPrice, strike) {
     // multiply by 100 in case we have decimals
@@ -18,7 +15,7 @@ export default async (vault) => {
     const { underlyingSymbol, symbol, address, chainId } = vault
 
     const provider = getProvider(chainId)
-    const ssovContract = SsovV3__factory.connect(address, provider)
+    const ssovContract = SsovV3LendingPut__factory.connect(address, provider)
 
     try {
         const [tokenPrice, epoch, collateralPrice] = await Promise.all([
@@ -34,6 +31,8 @@ export default async (vault) => {
 
         let aprs = []
         let optionTokens = []
+        let depositsPerStrike = []
+        let purchasesPerStrike = []
         let totalSupply = BigNumber.from(0)
         let totalBorrow = BigNumber.from(0)
 
@@ -53,8 +52,22 @@ export default async (vault) => {
                     epoch,
                     strike
                 )
-                // totalBorrow = totalBorrow.add(epochStrikeData.borrowedCollateral)
+                totalBorrow = totalBorrow.add(
+                    epochStrikeData.borrowedCollateral
+                )
                 totalSupply = totalSupply.add(epochStrikeData.totalCollateral)
+                depositsPerStrike.push(
+                    epochStrikeData.totalCollateral
+                        .div(epochData.collateralExchangeRate)
+                        .div(DECIMALS_STRIKE)
+                        .div(100)
+                        .toNumber()
+                )
+                purchasesPerStrike.push(
+                    epochStrikeData.activeCollateral
+                        .div(DECIMALS_TOKEN)
+                        .toNumber()
+                )
                 optionTokens.push(epochStrikeData.strikeToken)
             })
         )
@@ -66,8 +79,7 @@ export default async (vault) => {
             address: address,
             totalSupply: totalSupply.div(DECIMALS_TOKEN).toNumber(),
             totalBorrow: totalBorrow.div(DECIMALS_TOKEN).toNumber(),
-            tokenPrice:
-                tokenPrice.div(BigNumber.from(10).pow(6)).toNumber() / 100,
+            tokenPrice: tokenPrice.div(DECIMALS_USD).toNumber() / 100,
             aprs: aprs,
             strikes: epochData.strikes.map(
                 (s) =>
@@ -75,8 +87,11 @@ export default async (vault) => {
                     100
             ),
             optionTokens: optionTokens,
+            depositsPerStrike: depositsPerStrike,
+            purchasesPerStrike: purchasesPerStrike,
         }
-    } catch {
+    } catch (err) {
+        console.log(err)
         return {
             underlyingSymbol: underlyingSymbol,
             symbol: symbol,
@@ -85,9 +100,11 @@ export default async (vault) => {
             totalSupply: 0,
             totalBorrow: 0,
             tokenPrice: 0,
-            aprs: [0, 0, 0, 0],
-            strikes: [0, 0, 0, 0],
-            optionTokens: ['', '', '', ''],
+            aprs: [],
+            strikes: [],
+            optionTokens: [],
+            depositsPerStrike: [],
+            purchasesPerStrike: [],
         }
     }
 }

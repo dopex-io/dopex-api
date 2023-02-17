@@ -962,3 +962,17 @@ export const ATLANTIC_POOLS = {
         },
     ],
 }
+
+export const SSOVS_LENDING = [
+    {
+        type: 'put',
+        underlyingSymbol: 'ETH',
+        symbol: 'ETH-WEEKLY-PUTS-SSOV-V3-3',
+        version: 3,
+        chainId: 421613,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0x8a5F55937d49d48a6e83bADB21E78325BCdeeD2C',
+    },
+]

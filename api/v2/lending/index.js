@@ -1,5 +1,5 @@
 import groupBy from 'lodash/groupBy'
-import { SSOVS } from '../../../helpers/v2/constants'
+import { SSOVS, SSOVS_LENDING } from '../../../helpers/v2/constants'
 import getSsovLendingData from '../../../helpers/v2/getSsovLendingData'
 
 export default async (req, res) => {
@@ -7,11 +7,12 @@ export default async (req, res) => {
         const _groupBy = req.query.groupBy ?? 'chainId'
 
         const ssovs = await Promise.all(
-            SSOVS.filter((ssov) => !ssov.retired && ssov.type == 'put').map(
-                (ssov) => {
-                    return getSsovLendingData(ssov)
-                }
-            )
+            // SSOVS.filter(
+            SSOVS_LENDING.filter(
+                (ssov) => !ssov.retired && ssov.type == 'put'
+            ).map((ssov) => {
+                return getSsovLendingData(ssov)
+            })
         )
 
         const data = _groupBy === 'none' ? ssovs : groupBy(ssovs, _groupBy)

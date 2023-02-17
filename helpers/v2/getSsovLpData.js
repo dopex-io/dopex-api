@@ -1,9 +1,8 @@
 import { SsovLp__factory } from '@dopex-io/sdk'
-import { BigNumber } from 'ethers'
 import getProvider from '../getProvider'
 import { getSsovLpUtilization } from './getSsovLpUtilization'
+import { DECIMALS_USD } from '../constants'
 
-const DECIMALS_USD = BigNumber.from(10).pow(6)
 const NULL = '0x0000000000000000000000000000000000000000'
 
 export default async (vault) => {

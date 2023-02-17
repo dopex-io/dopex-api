@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers'
+
 export const TOKEN_TO_CG_ID = {
     DPX: 'dopex',
     RDPX: 'dopex-rebate-token',
@@ -20,3 +22,7 @@ export const BLOCKCHAIN_TO_CHAIN_ID = {
     METIS: 1088,
     POLYGON: 137,
 }
+
+export const DECIMALS_USD = BigNumber.from(10).pow(6)
+export const DECIMALS_TOKEN = BigNumber.from(10).pow(18)
+export const DECIMALS_STRIKE = BigNumber.from(10).pow(8)
