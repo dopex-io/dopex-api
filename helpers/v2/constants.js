@@ -973,6 +973,6 @@ export const SSOVS_LENDING = [
         collateralDecimals: 18,
         duration: 'weekly',
         retired: false,
-        address: '0x8a5F55937d49d48a6e83bADB21E78325BCdeeD2C',
+        address: '0xE2791e98305824a0d22071C1e49A3E32F00EA8Ef',
     },
 ]

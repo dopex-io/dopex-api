@@ -2,10 +2,9 @@ import { SsovV3LendingPut__factory } from '../../mocks/factories/SsovV3LendingPu
 import { SsovV3DatastoreClient__factory } from '../../mocks/factories/SsovV3DatastoreClient__factory'
 // import { Addresses } from '@dopex-io/sdk'
 import getProvider from '../getProvider'
-import { DECIMALS_TOKEN, DECIMALS_STRIKE } from '../constants'
 
 const ARB_GOERLI = 421613
-const SSOV_PUT = '0x241D91Eb2574a34Da612e3EE2E8f2Ee44768de57'
+const SSOV_PUT = '0xE2791e98305824a0d22071C1e49A3E32F00EA8Ef'
 
 const getSsovOwnerDebts = async (symbol, owner) => {
     try {
@@ -27,11 +26,14 @@ const getSsovOwnerDebts = async (symbol, owner) => {
         await Promise.all(
             tokenIds.map(async (id) => {
                 const debt = await ssovContract.getDebtPosition(id)
+                const expiry = await datastoreContract.getExpiry(debt.epoch)
                 debts.push({
+                    id: id.toNumber(),
+                    expiry: expiry.toNumber(),
                     epoch: debt.epoch.toNumber(),
-                    strike: debt.strike.div(DECIMALS_STRIKE).toNumber(),
-                    supplied: debt.supplied.div(DECIMALS_TOKEN).toNumber(),
-                    borrowed: debt.borrowed.div(DECIMALS_TOKEN).toNumber(),
+                    strike: debt.strike.toString(),
+                    supplied: debt.supplied.toString(),
+                    borrowed: debt.borrowed.toString(),
                 })
             })
         )

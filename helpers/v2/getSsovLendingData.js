@@ -74,6 +74,7 @@ export default async (vault) => {
 
         return {
             underlyingSymbol: underlyingSymbol,
+            collateralTokenAddress: epochData.collateralToken,
             symbol: symbol,
             chainId: chainId,
             address: address,
@@ -86,6 +87,8 @@ export default async (vault) => {
                     s.mul(BigNumber.from(100)).div(DECIMALS_STRIKE).toNumber() /
                     100
             ),
+            expiry: epochTimes.end.toNumber(),
+            epoch: epoch.toNumber(),
             optionTokens: optionTokens,
             depositsPerStrike: depositsPerStrike,
             purchasesPerStrike: purchasesPerStrike,
