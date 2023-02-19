@@ -432,10 +432,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@dopex-io/sdk@^1.0.0-beta.44":
-  version "1.0.0-beta.44"
-  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-beta.44.tgz#c164997ba7d9e67e1ba6bca9fc75e7a2eb57c4e8"
-  integrity sha512-YaRD2Oh0l3s1FZ1QwQ2eQTsW5pywvcjzmTgxkUMwwNHp7GQn0T348WQ4EhcezG8/fsnoqR4kdA+G8QEhJe4MUQ==
+"@dopex-io/sdk@^1.0.0-beta.45":
+  version "1.0.0-beta.45"
+  resolved "https://registry.yarnpkg.com/@dopex-io/sdk/-/sdk-1.0.0-beta.45.tgz#578fba8c29e6547456e99a93ddbc34892a468289"
+  integrity sha512-Eat/wSKOWJN49P6Nd4SKnXpN0K9MJNxovTeY3Mftl0LAIoSzJXmRnp9TV9/mDFrrN2AgMWo4mJxPtAXRvIBE5g==
 
 "@eslint/eslintrc@^1.4.1":
   version "1.4.1"
