@@ -1,4 +1,4 @@
-import { AtlanticStraddle__factory } from '@dopex-io/sdk'
+import { AtlanticStraddleV2__factory } from '@dopex-io/sdk'
 import { utils } from 'ethers'
 
 import getProvider from '../getProvider'
@@ -7,7 +7,7 @@ export default async (vault) => {
     const { chainId, address } = vault
     const provider = getProvider(chainId)
 
-    const straddlesContract = AtlanticStraddle__factory.connect(
+    const straddlesContract = AtlanticStraddleV2__factory.connect(
         address,
         provider
     )
