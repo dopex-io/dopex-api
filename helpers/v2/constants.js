@@ -782,6 +782,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0xfca313e2be55957AC628a6193A60D38aDC2da64E',
+        version: 1,
     },
     {
         underlyingSymbol: 'RDPX',
@@ -791,6 +792,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0x5847a350a388454a76f34Ceb6eb386Bf652DD0DD',
+        version: 1,
     },
     {
         underlyingSymbol: 'DPX',
@@ -800,6 +802,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0x0Dc96f38980144ebFfe745706DFeE92622dba829',
+        version: 1,
     },
     {
         underlyingSymbol: 'MATIC',
@@ -809,6 +812,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0x1a848bc8C28b4ea08C2f1589386C4f988d4e9fcb',
+        version: 2,
     },
 ]
 

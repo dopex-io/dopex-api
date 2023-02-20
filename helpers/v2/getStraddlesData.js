@@ -1,16 +1,19 @@
-import { AtlanticStraddleV2__factory } from '@dopex-io/sdk'
+import {
+    AtlanticStraddle__factory,
+    AtlanticStraddleV2__factory,
+} from '@dopex-io/sdk'
 import { utils } from 'ethers'
 
 import getProvider from '../getProvider'
 
 export default async (vault) => {
-    const { chainId, address } = vault
+    const { chainId, address, version } = vault
     const provider = getProvider(chainId)
 
-    const straddlesContract = AtlanticStraddleV2__factory.connect(
-        address,
-        provider
-    )
+    const straddlesContract =
+        version === 2
+            ? AtlanticStraddleV2__factory.connect(address, provider)
+            : AtlanticStraddle__factory.connect(address, provider)
 
     let currentEpoch, tvl, epochData, utilization
 
@@ -23,6 +26,7 @@ export default async (vault) => {
         )
         tvl = utils.formatUnits(epochData['usdDeposits'], 6)
     } catch (err) {
+        console.log('err: ', err)
         return {
             currentEpoch: '0',
             tvl: '0',
