@@ -808,7 +808,7 @@ export const STRADDLES = [
         chainId: 137,
         collateralDecimals: 6,
         retired: false,
-        address: '0x5540FEa353dF6302611DA1d57988104e43A4B6b6',
+        address: '0x1a848bc8C28b4ea08C2f1589386C4f988d4e9fcb',
     },
 ]
 
