@@ -945,7 +945,7 @@ export const ATLANTIC_POOLS = {
         {
             strategy: 'Insured Long Perps',
             retired: true,
-            version: 1,
+            version: 3,
             base: 'USDC',
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
@@ -956,7 +956,7 @@ export const ATLANTIC_POOLS = {
         {
             strategy: 'Insured Long Perps',
             retired: true,
-            version: 1,
+            version: 2,
             base: 'USDC',
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
@@ -967,7 +967,7 @@ export const ATLANTIC_POOLS = {
         {
             strategy: 'Insured Long Perps',
             retired: true,
-            version: 2,
+            version: 1,
             base: 'USDC',
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
