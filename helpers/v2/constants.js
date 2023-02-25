@@ -782,6 +782,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0xfca313e2be55957AC628a6193A60D38aDC2da64E',
+        version: 1,
     },
     {
         underlyingSymbol: 'RDPX',
@@ -791,6 +792,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0x5847a350a388454a76f34Ceb6eb386Bf652DD0DD',
+        version: 1,
     },
     {
         underlyingSymbol: 'DPX',
@@ -800,6 +802,7 @@ export const STRADDLES = [
         collateralDecimals: 6,
         retired: false,
         address: '0x0Dc96f38980144ebFfe745706DFeE92622dba829',
+        version: 1,
     },
     {
         underlyingSymbol: 'MATIC',
@@ -808,7 +811,8 @@ export const STRADDLES = [
         chainId: 137,
         collateralDecimals: 6,
         retired: false,
-        address: '0x5540FEa353dF6302611DA1d57988104e43A4B6b6',
+        address: '0x1a848bc8C28b4ea08C2f1589386C4f988d4e9fcb',
+        version: 2,
     },
 ]
 
@@ -935,13 +939,24 @@ export const ATLANTIC_POOLS = {
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
             chainId: 42161,
+            vaultAddress: '0x9C6b9Bd786adB1f644cedbDcB193203cbC90D1AF',
+            duration: 'WEEKLY',
+        },
+        {
+            strategy: 'Insured Long Perps',
+            retired: true,
+            version: 3,
+            base: 'USDC',
+            underlying: 'WETH',
+            symbol: 'WETH-PUTS-WEEKLY',
+            chainId: 42161,
             vaultAddress: '0x9a63529255D57f9B6e26B2965E8285e6B06761c4',
             duration: 'WEEKLY',
         },
         {
             strategy: 'Insured Long Perps',
             retired: true,
-            version: 1,
+            version: 2,
             base: 'USDC',
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
@@ -952,7 +967,7 @@ export const ATLANTIC_POOLS = {
         {
             strategy: 'Insured Long Perps',
             retired: true,
-            version: 2,
+            version: 1,
             base: 'USDC',
             underlying: 'WETH',
             symbol: 'WETH-PUTS-WEEKLY',
