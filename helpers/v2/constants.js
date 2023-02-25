@@ -698,6 +698,18 @@ export const SSOVS = [
         address: '0x475a5a712b741b9ab992e6af0b9e5adee3d1851b',
         olp: '0x608871557906CB64C80B36D0F06715Ab00EdF269',
     },
+    {
+        type: 'call',
+        underlyingSymbol: 'MATIC',
+        symbol: 'MATIC-WEEKLY-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 137,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0x4ee9fe9500e7c4fe849add9b14beec5ec5b7d955',
+        olp: '',
+    },
 ]
 
 export const IR_VAULTS = [
