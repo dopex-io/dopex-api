@@ -13,11 +13,13 @@ function getApr(optionPrice, strike) {
 
 export default async (vault) => {
     const { underlyingSymbol, symbol, address, chainId } = vault
-
-    const provider = getProvider(chainId)
-    const ssovContract = SsovV3LendingPut__factory.connect(address, provider)
-
     try {
+        const provider = getProvider(chainId)
+        const ssovContract = SsovV3LendingPut__factory.connect(
+            address,
+            provider
+        )
+
         const [tokenPrice, epoch, collateralPrice] = await Promise.all([
             ssovContract.getUnderlyingPrice(),
             ssovContract.currentEpoch(),
