@@ -516,7 +516,7 @@ export const SSOVS = [
         duration: 'monthly',
         retired: false,
         address: '0xd74c61ca8917Be73377D74A007E6f002c25Efb4e',
-        olp: '0xd74c61ca8917Be73377D74A007E6f002c25Efb4e',
+        olp: '0x1eFc9b6b5ed42F2E9F200e34854ee8DBd2B4470F',
     },
     {
         type: 'put',
