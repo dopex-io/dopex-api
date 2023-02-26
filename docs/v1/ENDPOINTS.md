@@ -1,5 +1,7 @@
 # Endpoints
 
+> THE V1 API IS DEPRECATED
+
 The base URL for a hosted version of this API is `https://api.dopex.io/v1`
 
 ## Table of contents
@@ -13,7 +15,6 @@ The base URL for a hosted version of this API is `https://api.dopex.io/v1`
 7. [GET DPX or rDPX token supply](#dpx-or-rdpx-token-supply)
 8. [GET DPX or rDPX market cap](#dpx-or-rdpx-market-cap)
 9. [GET dopex farms TVL per pool](#dopex-farms-tvl-per-pool)
-10. [GET protocol TVL](#protocol-tvl)
 
 ## SSOVs
 
@@ -80,7 +81,7 @@ Returns data about the Dopex SSOVs
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/ssov'
+    curl --location --request GET 'https://api.dopex.io/v1/ssov'
     ```
 
 ---
@@ -115,7 +116,7 @@ Gets the APY for the requested SSOV
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/ssov/apy?asset=DPX'
+    curl --location --request GET 'https://api.dopex.io/v1/ssov/apy?asset=DPX'
     ```
 
 ---
@@ -165,7 +166,7 @@ Gets deposit amounts per strike given an asset and a type, being either `CALL` o
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/ssov/deposits?asset=DPX&type=CALL'
+    curl --location --request GET 'https://api.dopex.io/v1/ssov/deposits?asset=DPX&type=CALL'
     ```
 
 ---
@@ -231,7 +232,7 @@ _Please note usd is the equivalent value of total in USD_
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/ssov/options/prices?asset=DPX&type=CALL'
+    curl --location --request GET 'https://api.dopex.io/v1/ssov/options/prices?asset=DPX&type=CALL'
     ```
 
 ---
@@ -270,7 +271,7 @@ Gets options usage data. Functions similarly to the request above.
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/ssov/options/usage?asset=DPX&type=CALL'
+    curl --location --request GET 'https://api.dopex.io/v1/ssov/options/usage?asset=DPX&type=CALL'
     ```
 
 ---
@@ -306,7 +307,7 @@ Gets the current token price in ETH and USD terms for the request token.
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/rdpx/price'
+    curl --location --request GET 'https://api.dopex.io/v1/rdpx/price'
     ```
 
 ---
@@ -341,7 +342,7 @@ Gets the current supply information for the given token.
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/dpx/supply'
+    curl --location --request GET 'https://api.dopex.io/v1/dpx/supply'
     ```
 
 ---
@@ -374,7 +375,7 @@ Gets the current market cap for the given token
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/dpx/market-cap'
+    curl --location --request GET 'https://api.dopex.io/v1/dpx/market-cap'
     ```
 
 ---
@@ -407,7 +408,7 @@ Gets the Farm TVL per pool
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'GET https://api.dopex.io/api/v1/farms/tvl?pool=dpx-weth'
+    curl --location --request GET 'https://api.dopex.io/v1/farms/tvl?pool=dpx-weth'
     ```
 
 ---
@@ -443,15 +444,15 @@ _Please note TVL includes both premium and deposits._
 -   **Sample calls:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/tvl'
+    curl --location --request GET 'https://api.dopex.io/v1/tvl'
     ```
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/tvl?include=dpx-ssov,eth-ssov'
+    curl --location --request GET 'https://api.dopex.io/v1/tvl?include=dpx-ssov,eth-ssov'
     ```
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v1/tvl?include=dpx-farm,rdpx-farm,dpx-weth-farm,rdpx-weth-farm,dpx-ssov,rdpx-ssov'
+    curl --location --request GET 'https://api.dopex.io/v1/tvl?include=dpx-farm,rdpx-farm,dpx-weth-farm,rdpx-weth-farm,dpx-ssov,rdpx-ssov'
     ```
 
 ---
