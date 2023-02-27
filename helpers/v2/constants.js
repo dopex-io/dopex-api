@@ -516,7 +516,7 @@ export const SSOVS = [
         duration: 'monthly',
         retired: false,
         address: '0xd74c61ca8917Be73377D74A007E6f002c25Efb4e',
-        olp: '0xd74c61ca8917Be73377D74A007E6f002c25Efb4e',
+        olp: '0x1eFc9b6b5ed42F2E9F200e34854ee8DBd2B4470F',
     },
     {
         type: 'put',
@@ -697,6 +697,18 @@ export const SSOVS = [
         retired: false,
         address: '0x475a5a712b741b9ab992e6af0b9e5adee3d1851b',
         olp: '0x608871557906CB64C80B36D0F06715Ab00EdF269',
+    },
+    {
+        type: 'call',
+        underlyingSymbol: 'MATIC',
+        symbol: 'MATIC-WEEKLY-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 137,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0x4ee9fe9500e7c4fe849add9b14beec5ec5b7d955',
+        olp: '',
     },
 ]
 

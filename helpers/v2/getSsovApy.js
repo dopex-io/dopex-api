@@ -9,6 +9,8 @@ import getPrices from '../getPrices'
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
 
+import { SSOVS } from './constants'
+
 const SSOV_VERSION = 'SSOV-V3'
 const BIG_NUMBER_ETHERS = BigNumber.from(10).pow(18)
 const DAYS_PER_YEAR = 365
@@ -21,18 +23,18 @@ const TOKEN_ADDRESS_TO_CG_ID = {
     '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
 }
 
-async function fetchEpochRewards(
-    ssovContract,
-    epoch,
-    provider,
-    isV2Staking = false
-) {
+async function fetchEpochRewards(ssovContract, epoch, provider, version = 1) {
     const stakingStrategyAddress = (await ssovContract.addresses())[
         'stakingStrategy'
     ]
 
     let abis
-    if (isV2Staking) {
+    if (version === 3) {
+        abis = [
+            'function rewardAmountsPerEpoch(uint256,uint256) view returns (uint256)',
+            'function getRewardTokens() view returns (address[])',
+        ]
+    } else if (version === 2) {
         abis = [
             'function rewardsPerEpoch(uint256,uint256) view returns (uint256)',
             'function getRewardTokens() view returns (address[])',
@@ -53,11 +55,22 @@ async function fetchEpochRewards(
     const rewardTokens = await stakingContract.getRewardTokens()
 
     let rewards = []
-    if (isV2Staking) {
+    if (version === 2) {
         const rewardsPromises = []
         rewardTokens.map(async (_, idx) => {
             rewardsPromises.push(
                 stakingContract.rewardsPerEpoch(epoch, BigNumber.from(idx))
+            )
+        })
+        rewards = await Promise.all(rewardsPromises)
+    } else if (version === 3) {
+        const rewardsPromises = []
+        rewardTokens.map(async (_, idx) => {
+            rewardsPromises.push(
+                stakingContract.rewardAmountsPerEpoch(
+                    epoch,
+                    BigNumber.from(idx)
+                )
             )
         })
         rewards = await Promise.all(rewardsPromises)
@@ -225,17 +238,20 @@ async function getGohmApy() {
     return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
 }
 
-async function getRewardsApy(name, isV2Staking = false) {
-    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
+async function getRewardsApy(name, version = 1) {
+    const ssov = SSOVS.find((s) => s.symbol === name)
+
+    const provider = getProvider(ssov.chainId)
 
     const ssovContract = SsovV3__factory.connect(
-        Addresses[42161][SSOV_VERSION].VAULTS[name],
+        Addresses[ssov.chainId][SSOV_VERSION].VAULTS[name],
         provider
     )
 
     const epoch = await ssovContract.currentEpoch()
 
     if (epoch.isZero()) return '0'
+
     const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
     const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
@@ -254,7 +270,7 @@ async function getRewardsApy(name, isV2Staking = false) {
         ssovContract,
         epoch,
         provider,
-        isV2Staking
+        version
     )
 
     const addressToId = rewardTokens.map((rewardToken) => {
@@ -274,6 +290,7 @@ async function getRewardsApy(name, isV2Staking = false) {
         (totalRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
     return calculateApy(rewardsPerYear, totalEpochDepositsInUsd).toFixed(2)
+    // return '20'
 }
 
 async function getSsovPutApy(name) {
@@ -458,11 +475,11 @@ const NAME_TO_GETTER = {
     },
     'DPX-WEEKLY-CALLS-SSOV-V3': {
         fn: getRewardsApy,
-        args: ['DPX-WEEKLY-CALLS-SSOV-V3', true],
+        args: ['DPX-WEEKLY-CALLS-SSOV-V3', 2],
     },
     'rDPX-WEEKLY-CALLS-SSOV-V3': {
         fn: getRewardsApy,
-        args: ['rDPX-WEEKLY-CALLS-SSOV-V3', true],
+        args: ['rDPX-WEEKLY-CALLS-SSOV-V3', 2],
     },
     'gOHM-WEEKLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
@@ -487,6 +504,10 @@ const NAME_TO_GETTER = {
     'stETH-MONTHLY-CALLS-SSOV-V3': {
         fn: getStEthApy,
         args: ['monthly'],
+    },
+    'MATIC-WEEKLY-CALLS-SSOV-V3': {
+        fn: getRewardsApy,
+        args: ['MATIC-WEEKLY-CALLS-SSOV-V3', 3],
     },
 
     // Puts
