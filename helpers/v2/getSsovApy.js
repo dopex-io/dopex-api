@@ -11,6 +11,8 @@ import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
 
 import { SSOVS } from './constants'
 
+import fetchEpochRewards from './ssov/fetchEpochRewards'
+
 const SSOV_VERSION = 'SSOV-V3'
 const BIG_NUMBER_ETHERS = BigNumber.from(10).pow(18)
 const DAYS_PER_YEAR = 365
@@ -22,64 +24,6 @@ const TOKEN_ADDRESS_TO_CG_ID = {
     '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
     '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
     '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': 'matic-network',
-}
-
-async function fetchEpochRewards(ssovContract, epoch, provider, version = 1) {
-    const stakingStrategyAddress = (await ssovContract.addresses())[
-        'stakingStrategy'
-    ]
-
-    let abis
-    if (version === 3) {
-        abis = [
-            'function rewardAmountsPerEpoch(uint256,uint256) view returns (uint256)',
-            'function getRewardTokens() view returns (address[])',
-        ]
-    } else if (version === 2) {
-        abis = [
-            'function rewardsPerEpoch(uint256,uint256) view returns (uint256)',
-            'function getRewardTokens() view returns (address[])',
-        ]
-    } else {
-        abis = [
-            'function rewardsPerEpoch(uint256) view returns (uint256)',
-            'function getRewardTokens() view returns (address[])',
-        ]
-    }
-
-    const stakingContract = new ethers.Contract(
-        stakingStrategyAddress,
-        abis,
-        provider
-    )
-
-    const rewardTokens = await stakingContract.getRewardTokens()
-
-    let rewards = []
-    if (version === 2) {
-        const rewardsPromises = []
-        rewardTokens.map(async (_, idx) => {
-            rewardsPromises.push(
-                stakingContract.rewardsPerEpoch(epoch, BigNumber.from(idx))
-            )
-        })
-        rewards = await Promise.all(rewardsPromises)
-    } else if (version === 3) {
-        const rewardsPromises = []
-        rewardTokens.map(async (_, idx) => {
-            rewardsPromises.push(
-                stakingContract.rewardAmountsPerEpoch(
-                    epoch,
-                    BigNumber.from(idx)
-                )
-            )
-        })
-        rewards = await Promise.all(rewardsPromises)
-    } else {
-        rewards = [await stakingContract.rewardsPerEpoch(epoch)]
-    }
-
-    return { rewards: rewards, rewardTokens: rewardTokens }
 }
 
 async function fetchTotalCollateralBalance(ssovContract, epoch) {
