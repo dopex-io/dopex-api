@@ -21,6 +21,7 @@ const TOKEN_ADDRESS_TO_CG_ID = {
     '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
     '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
     '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
+    '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': 'matic-network',
 }
 
 async function fetchEpochRewards(ssovContract, epoch, provider, version = 1) {
@@ -469,17 +470,13 @@ const _getMetisApy = async () => {
 
 const NAME_TO_GETTER = {
     // Calls
-    'ETH-WEEKLY-CALLS-SSOV-V3-5': {
-        fn: getRewardsApy,
-        args: ['ETH-WEEKLY-CALLS-SSOV-V3-5'],
-    },
     'DPX-WEEKLY-CALLS-SSOV-V3': {
         fn: getRewardsApy,
         args: ['DPX-WEEKLY-CALLS-SSOV-V3', 2],
     },
     'rDPX-WEEKLY-CALLS-SSOV-V3': {
         fn: getRewardsApy,
-        args: ['rDPX-WEEKLY-CALLS-SSOV-V3', 2],
+        args: ['rDPX-WEEKLY-CALLS-SSOV-V3', 3],
     },
     'gOHM-WEEKLY-CALLS-SSOV-V3': {
         fn: getGohmApy,
@@ -495,7 +492,7 @@ const NAME_TO_GETTER = {
     },
     'rDPX-MONTHLY-CALLS-SSOV-V3-3': {
         fn: getRewardsApy,
-        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3'],
+        args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3', 3],
     },
     'stETH-WEEKLY-CALLS-SSOV-V3': {
         fn: getStEthApy,
