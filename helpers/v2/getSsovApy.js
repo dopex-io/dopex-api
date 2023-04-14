@@ -41,14 +41,12 @@ function calculateApy(rewardsPerYear, totalEpochDeposits) {
 async function getStEthApy(duration) {
     const poolId = '747c1d2a-c668-4682-b9f9-296708a3dd90'
 
-    const response = await axios.get('https://yields.llama.fi/pools')
+    const [llamaFiResponse, rewardsApy] = await Promise.all([
+        axios.get('https://yields.llama.fi/pools'),
+        getRewardsApy(`stETH-${duration.toUpperCase()}-CALLS-SSOV-V3`, false),
+    ])
 
-    const pool = response.data.data.find((p) => p.pool === poolId)
-
-    const rewardsApy = await getRewardsApy(
-        `stETH-${duration.toUpperCase()}-CALLS-SSOV-V3`,
-        false
-    )
+    const pool = llamaFiResponse.data.data.find((p) => p.pool === poolId)
 
     const finalApy = pool.apy + Number(rewardsApy)
 
@@ -93,30 +91,29 @@ async function getRewardsApy(name, version = 1) {
         provider
     )
 
-    const epoch = await ssovContract.currentEpoch()
+    const [epoch, _underlyingPrice] = await Promise.all([
+        ssovContract.currentEpoch(),
+        ssovContract.getUnderlyingPrice(),
+    ])
 
     if (epoch.isZero()) return '0'
 
-    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
+    const [epochTimes, totalEpochDeposits, { rewards, rewardTokens }] =
+        await Promise.all([
+            ssovContract.getEpochTimes(epoch),
+            fetchTotalCollateralBalance(ssovContract, epoch),
+            fetchEpochRewards(ssovContract, epoch, provider, version),
+        ])
+
+    const [startTime, expiry] = epochTimes
     const totalPeriod = expiry.toNumber() - startTime.toNumber()
 
     // get price of underlying ssov token
-    const priceUnderlying =
-        (await ssovContract.getUnderlyingPrice()).toNumber() / 10 ** 8
-
-    const totalEpochDeposits = await fetchTotalCollateralBalance(
-        ssovContract,
-        epoch
+    const underlyingPrice = Number(
+        ethers.utils.formatUnits(_underlyingPrice, 8)
     )
-    const totalEpochDepositsInUsd = totalEpochDeposits * priceUnderlying
 
-    // calculate amount of reward token incentives
-    const { rewards, rewardTokens } = await fetchEpochRewards(
-        ssovContract,
-        epoch,
-        provider,
-        version
-    )
+    const totalEpochDepositsInUsd = totalEpochDeposits * underlyingPrice
 
     const addressToId = rewardTokens.map((rewardToken) => {
         return TOKEN_ADDRESS_TO_CG_ID[rewardToken.toLowerCase()]
@@ -135,7 +132,6 @@ async function getRewardsApy(name, version = 1) {
         (totalRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
     return calculateApy(rewardsPerYear, totalEpochDepositsInUsd).toFixed(2)
-    // return '20'
 }
 
 async function getSsovPutApy(name) {
