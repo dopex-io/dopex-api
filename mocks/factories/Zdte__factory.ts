@@ -40,6 +40,16 @@ const _abi = [
                 type: 'address',
             },
             {
+                internalType: 'address',
+                name: '_feeDistributor',
+                type: 'address',
+            },
+            {
+                internalType: 'address',
+                name: '_keeper',
+                type: 'address',
+            },
+            {
                 internalType: 'uint256',
                 name: '_strikeIncrement',
                 type: 'uint256',
@@ -76,25 +86,6 @@ const _abi = [
         inputs: [
             {
                 indexed: false,
-                internalType: 'uint256',
-                name: 'amount',
-                type: 'uint256',
-            },
-            {
-                indexed: true,
-                internalType: 'address',
-                name: 'sender',
-                type: 'address',
-            },
-        ],
-        name: 'ClaimCollateral',
-        type: 'event',
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
                 internalType: 'bool',
                 name: 'isQuote',
                 type: 'bool',
@@ -120,24 +111,12 @@ const _abi = [
         inputs: [
             {
                 indexed: false,
-                internalType: 'uint256',
-                name: 'id',
-                type: 'uint256',
-            },
-            {
-                indexed: false,
-                internalType: 'uint256',
-                name: 'pnl',
-                type: 'uint256',
-            },
-            {
-                indexed: true,
                 internalType: 'address',
-                name: 'user',
+                name: 'keeper',
                 type: 'address',
             },
         ],
-        name: 'ExpireOptionPosition',
+        name: 'KeeperAssigned',
         type: 'event',
     },
     {
@@ -146,19 +125,7 @@ const _abi = [
             {
                 indexed: false,
                 internalType: 'uint256',
-                name: 'id',
-                type: 'uint256',
-            },
-            {
-                indexed: false,
-                internalType: 'uint256',
-                name: 'amount',
-                type: 'uint256',
-            },
-            {
-                indexed: false,
-                internalType: 'uint256',
-                name: 'strike',
+                name: 'expiry',
                 type: 'uint256',
             },
             {
@@ -168,7 +135,20 @@ const _abi = [
                 type: 'address',
             },
         ],
-        name: 'LongOptionPosition',
+        name: 'KeeperExpireSpreads',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'jobDoneTime',
+                type: 'uint256',
+            },
+        ],
+        name: 'KeeperRan',
         type: 'event',
     },
     {
@@ -222,6 +202,25 @@ const _abi = [
             {
                 indexed: false,
                 internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'settlementPrice',
+                type: 'uint256',
+            },
+        ],
+        name: 'SettlementPriceSaved',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'uint256',
                 name: 'id',
                 type: 'uint256',
             },
@@ -251,6 +250,31 @@ const _abi = [
             },
         ],
         name: 'SpreadOptionPosition',
+        type: 'event',
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'id',
+                type: 'uint256',
+            },
+            {
+                indexed: false,
+                internalType: 'uint256',
+                name: 'pnl',
+                type: 'uint256',
+            },
+            {
+                indexed: true,
+                internalType: 'address',
+                name: 'user',
+                type: 'address',
+            },
+        ],
+        name: 'SpreadOptionPositionExpired',
         type: 'event',
     },
     {
@@ -292,6 +316,71 @@ const _abi = [
         type: 'event',
     },
     {
+        inputs: [],
+        name: 'EXPIRY_DELAY_TOLERANCE',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'MARGIN_DECIMALS',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'MAX_LONG_STRIKE_VOL_ADJUST',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'MIN_LONG_STRIKE_VOL_ADJUST',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'STRIKE_DECIMALS',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
         inputs: [
             {
                 internalType: 'address',
@@ -301,6 +390,25 @@ const _abi = [
         ],
         name: 'addToContractWhitelist',
         outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'address',
+                name: '_keeper',
+                type: 'address',
+            },
+        ],
+        name: 'assignKeeperRole',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
+        ],
         stateMutability: 'nonpayable',
         type: 'function',
     },
@@ -325,6 +433,212 @@ const _abi = [
                 internalType: 'contract ZdteLP',
                 name: '',
                 type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'baseLpTokenLiquidty',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+        ],
+        name: 'calcFees',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'fees',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'uint256',
+                name: 'longStrike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'shortStrike',
+                type: 'uint256',
+            },
+        ],
+        name: 'calcMargin',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'margin',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: 'strike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+        ],
+        name: 'calcOpeningFees',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'premium',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: 'id',
+                type: 'uint256',
+            },
+        ],
+        name: 'calcPnl',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'pnl',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'uint256',
+                name: 'strike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+        ],
+        name: 'calcPremium',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'premium',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'uint256',
+                name: 'markPrice',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'strike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'volatility',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+        ],
+        name: 'calcPremiumWithVol',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'premium',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'uint256',
+                name: 'amount',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'longStrike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'shortStrike',
+                type: 'uint256',
+            },
+        ],
+        name: 'canOpenSpreadPosition',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
             },
         ],
         stateMutability: 'view',
@@ -362,19 +676,6 @@ const _abi = [
         type: 'function',
     },
     {
-        inputs: [],
-        name: 'divisor',
-        outputs: [
-            {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-    {
         inputs: [
             {
                 internalType: 'address[]',
@@ -400,9 +701,86 @@ const _abi = [
                 type: 'uint256',
             },
         ],
-        name: 'expireOptionPosition',
+        name: 'expireSpreadOptionPosition',
         outputs: [],
         stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+        ],
+        name: 'expireSpreads',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
+        ],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        name: 'expiryInfo',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: 'begin',
+                type: 'bool',
+            },
+            {
+                internalType: 'bool',
+                name: 'expired',
+                type: 'bool',
+            },
+            {
+                internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'startId',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'count',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        name: 'expiryToSettlementPrice',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
         type: 'function',
     },
     {
@@ -471,6 +849,19 @@ const _abi = [
         type: 'function',
     },
     {
+        inputs: [],
+        name: 'getPrevExpiry',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
         inputs: [
             {
                 internalType: 'uint256',
@@ -479,6 +870,30 @@ const _abi = [
             },
         ],
         name: 'getVolatility',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: 'volatility',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: 'strike',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+        ],
+        name: 'getVolatilityWithExpiry',
         outputs: [
             {
                 internalType: 'uint256',
@@ -509,29 +924,52 @@ const _abi = [
         type: 'function',
     },
     {
-        inputs: [
-            {
-                internalType: 'bool',
-                name: 'isPut',
-                type: 'bool',
-            },
-            {
-                internalType: 'uint256',
-                name: 'amount',
-                type: 'uint256',
-            },
-            {
-                internalType: 'uint256',
-                name: 'strike',
-                type: 'uint256',
-            },
-        ],
-        name: 'longOptionPosition',
+        inputs: [],
+        name: 'keeper',
         outputs: [
             {
-                internalType: 'uint256',
-                name: 'id',
-                type: 'uint256',
+                internalType: 'address',
+                name: '',
+                type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'keeperExpirePrevEpochSpreads',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
+        ],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'keeperRun',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
+        ],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'keeperSaveSettlementPrice',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
             },
         ],
         stateMutability: 'nonpayable',
@@ -558,6 +996,19 @@ const _abi = [
                 internalType: 'contract IOptionPricing',
                 name: '',
                 type: 'address',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'oracleId',
+        outputs: [
+            {
+                internalType: 'bytes32',
+                name: '',
+                type: 'bytes32',
             },
         ],
         stateMutability: 'view',
@@ -636,6 +1087,19 @@ const _abi = [
         type: 'function',
     },
     {
+        inputs: [],
+        name: 'quoteLpTokenLiquidty',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
         inputs: [
             {
                 internalType: 'address',
@@ -653,6 +1117,43 @@ const _abi = [
         name: 'renounceOwnership',
         outputs: [],
         stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: 'expiry',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'settlementPrice',
+                type: 'uint256',
+            },
+        ],
+        name: 'saveSettlementPrice',
+        outputs: [
+            {
+                internalType: 'bool',
+                name: '',
+                type: 'bool',
+            },
+        ],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [],
+        name: 'spreadMarginSafety',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
         type: 'function',
     },
     {
@@ -736,6 +1237,32 @@ const _abi = [
         type: 'function',
     },
     {
+        inputs: [
+            {
+                internalType: 'uint256',
+                name: '_spreadMarginSafety',
+                type: 'uint256',
+            },
+        ],
+        name: 'updateMarginOfSafety',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
+        inputs: [
+            {
+                internalType: 'bytes32',
+                name: '_oracleId',
+                type: 'bytes32',
+            },
+        ],
+        name: 'updateOracleId',
+        outputs: [],
+        stateMutability: 'nonpayable',
+        type: 'function',
+    },
+    {
         inputs: [],
         name: 'volatilityOracle',
         outputs: [
@@ -814,6 +1341,16 @@ const _abi = [
                 type: 'bool',
             },
             {
+                internalType: 'bool',
+                name: 'isPut',
+                type: 'bool',
+            },
+            {
+                internalType: 'bool',
+                name: 'isSpread',
+                type: 'bool',
+            },
+            {
                 internalType: 'uint256',
                 name: 'positions',
                 type: 'uint256',
@@ -859,9 +1396,9 @@ const _abi = [
                 type: 'uint256',
             },
             {
-                internalType: 'enum Zdte.PositionType',
-                name: 'positionType',
-                type: 'uint8',
+                internalType: 'uint256',
+                name: 'margin',
+                type: 'uint256',
             },
         ],
         stateMutability: 'view',
