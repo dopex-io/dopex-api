@@ -13,7 +13,7 @@ function validPk(value) {
 
 const KEEPER_PK = process.env['KEEPER_PK']
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
-const CONTRACT = '0x8f5f38c548804be178ac1889b1cf2516326f583c'
+const CONTRACT = '0x78c89075c3d034126d2336f1c0ad238a26006d51'
 const CHAIN_ID = 42161
 
 export default async () => {
@@ -27,18 +27,17 @@ export default async () => {
             )
         )
 
-        // const wallet = new ethers.Wallet(KEEPER_PK)
-        // const signer = wallet.connect(provider)
+        const wallet = new ethers.Wallet(KEEPER_PK)
+        const signer = wallet.connect(provider)
 
         const zdte = await Zdte__factory.connect(CONTRACT, provider)
-
-        // const tx = await zdte.connect(signer).keeperRun()
+        const tx = await zdte.connect(signer).keeperRun()
         const price = await zdte.getMarkPrice()
-        // const receipt = await tx.wait()
+        const receipt = await tx.wait()
 
         return {
             isKeeperValid: isKeeperValid,
-            // receipt: receipt,
+            receipt: receipt,
             price: price.toNumber(),
         }
     } catch (err) {
