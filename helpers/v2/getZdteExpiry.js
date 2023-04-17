@@ -13,7 +13,7 @@ function validPk(value) {
 
 const KEEPER_PK = process.env['KEEPER_PK']
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
-const CONTRACT = '0x78c89075c3d034126d2336f1c0ad238a26006d51'
+const CONTRACT = '0x73136bfb1cdb9e424814011d00e11989c3a82d38'
 const CHAIN_ID = 42161
 
 export default async () => {
