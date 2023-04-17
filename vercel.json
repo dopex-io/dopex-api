@@ -10,5 +10,16 @@
             ]
         }
     ],
-    "rewrites": [{ "source": "/:path*", "destination": "/api/:path*" }]
+    "rewrites": [
+        {
+            "source": "/:path*",
+            "destination": "/api/:path*"
+        }
+    ],
+    "crons": [
+        {
+            "path": "/v2/zdte/expire",
+            "schedule": "1 8 * * *"
+        }
+    ]
 }

@@ -13,33 +13,33 @@ function validPk(value) {
 
 const KEEPER_PK = process.env['KEEPER_PK']
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
+const CONTRACT = '0x8f5f38c548804be178ac1889b1cf2516326f583c'
+const CHAIN_ID = 42161
 
 export default async () => {
-    const chainId = 42161
-    const address = '0x8f5f38c548804be178ac1889b1cf2516326f583c'
-
     const isKeeperValid = KEEPER_PK && validPk(KEEPER_PK)
-    console.log('isKeeperValid: ', isKeeperValid)
 
     try {
         const provider = new providers.MulticallProvider(
             new ethers.providers.StaticJsonRpcProvider(
                 `https://arbitrum-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
-                chainId
+                CHAIN_ID
             )
         )
 
-        const wallet = new ethers.Wallet(KEEPER_PK)
-        const signer = wallet.connect(provider)
+        // const wallet = new ethers.Wallet(KEEPER_PK)
+        // const signer = wallet.connect(provider)
 
-        const zdte = await Zdte__factory.connect(address, provider)
+        const zdte = await Zdte__factory.connect(CONTRACT, provider)
 
-        const tx = await zdte.connect(signer).keeperRun()
-        const receipt = await tx.wait()
+        // const tx = await zdte.connect(signer).keeperRun()
+        const price = await zdte.getMarkPrice()
+        // const receipt = await tx.wait()
 
         return {
             isKeeperValid: isKeeperValid,
-            receipt: receipt,
+            // receipt: receipt,
+            price: price.toNumber(),
         }
     } catch (err) {
         console.log(err)
