@@ -15,33 +15,62 @@ const KEEPER_PK = process.env['KEEPER_PK']
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
 const CONTRACT = '0x73136bfb1cdb9e424814011d00e11989c3a82d38'
 const CHAIN_ID = 42161
+const MAX_EXPIRE_BATCH = 30
 
 export default async () => {
     const isKeeperValid = KEEPER_PK && validPk(KEEPER_PK)
 
-    try {
-        const provider = new providers.MulticallProvider(
-            new ethers.providers.StaticJsonRpcProvider(
-                `https://arbitrum-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
-                CHAIN_ID
-            )
-        )
-
-        const wallet = new ethers.Wallet(KEEPER_PK)
-        const signer = wallet.connect(provider)
-
-        const zdte = await Zdte__factory.connect(CONTRACT, provider)
-        const tx = await zdte.connect(signer).keeperRun()
-        const price = await zdte.getMarkPrice()
-        const receipt = await tx.wait()
-
+    if (!isKeeperValid) {
         return {
-            isKeeperValid: isKeeperValid,
-            receipt: receipt,
-            price: price.toNumber(),
+            success: false,
+            error: 'Keeper PK is not valid',
+        }
+    }
+
+    const provider = new providers.MulticallProvider(
+        new ethers.providers.StaticJsonRpcProvider(
+            `https://arbitrum-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
+            CHAIN_ID
+        )
+    )
+
+    const wallet = new ethers.Wallet(KEEPER_PK)
+    const signer = wallet.connect(provider)
+    const zdte = await Zdte__factory.connect(CONTRACT, provider)
+
+    try {
+        const tx = await zdte.connect(signer).keeperSaveSettlementPrice()
+        const receipt = await tx.wait()
+        console.log('keeperSaveSettlementPrice: ', receipt)
+    } catch (err) {
+        console.error(err)
+        return {
+            success: false,
+            error: 'Fail to save settlement price',
+        }
+    }
+
+    try {
+        const prevExpiry = await zdte.getPrevExpiry()
+        const numPositions = await zdte.expiryInfo[prevExpiry].count
+        const numRun = Math.round(numPositions.toNumber() / MAX_EXPIRE_BATCH)
+        console.log('num batches to run: ', numRun)
+
+        for (let i = 0; i < numRun; i++) {
+            const tx = await zdte.connect(signer).keeperExpirePrevEpochSpreads()
+            const receipt = await tx.wait()
+            console.log(`keeperExpirePrevEpochSpreads batch ${i}`)
+            console.log(receipt)
         }
     } catch (err) {
-        console.log(err)
-        throw new Error('fail to get zdte expiry', err)
+        console.error(err)
+        return {
+            success: false,
+            error: 'Fail to expire prev epoch spreads',
+        }
+    }
+
+    return {
+        success: true,
     }
 }
