@@ -948,19 +948,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: 'keeperRun',
-        outputs: [
-            {
-                internalType: 'bool',
-                name: '',
-                type: 'bool',
-            },
-        ],
-        stateMutability: 'nonpayable',
-        type: 'function',
-    },
-    {
-        inputs: [],
         name: 'keeperSaveSettlementPrice',
         outputs: [
             {

@@ -63,7 +63,6 @@ export interface ZdteInterface extends utils.Interface {
         'isContract(address)': FunctionFragment
         'keeper()': FunctionFragment
         'keeperExpirePrevEpochSpreads()': FunctionFragment
-        'keeperRun()': FunctionFragment
         'keeperSaveSettlementPrice()': FunctionFragment
         'maxOtmPercentage()': FunctionFragment
         'optionPricing()': FunctionFragment
@@ -129,7 +128,6 @@ export interface ZdteInterface extends utils.Interface {
             | 'isContract'
             | 'keeper'
             | 'keeperExpirePrevEpochSpreads'
-            | 'keeperRun'
             | 'keeperSaveSettlementPrice'
             | 'maxOtmPercentage'
             | 'optionPricing'
@@ -303,10 +301,6 @@ export interface ZdteInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'keeper', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'keeperExpirePrevEpochSpreads',
-        values?: undefined
-    ): string
-    encodeFunctionData(
-        functionFragment: 'keeperRun',
         values?: undefined
     ): string
     encodeFunctionData(
@@ -520,7 +514,6 @@ export interface ZdteInterface extends utils.Interface {
         functionFragment: 'keeperExpirePrevEpochSpreads',
         data: BytesLike
     ): Result
-    decodeFunctionResult(functionFragment: 'keeperRun', data: BytesLike): Result
     decodeFunctionResult(
         functionFragment: 'keeperSaveSettlementPrice',
         data: BytesLike
@@ -969,10 +962,6 @@ export interface Zdte extends BaseContract {
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
-        keeperRun(
-            overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<ContractTransaction>
-
         keeperSaveSettlementPrice(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
@@ -1244,10 +1233,6 @@ export interface Zdte extends BaseContract {
     keeper(overrides?: CallOverrides): Promise<string>
 
     keeperExpirePrevEpochSpreads(
-        overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>
-
-    keeperRun(
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1528,8 +1513,6 @@ export interface Zdte extends BaseContract {
         keeperExpirePrevEpochSpreads(
             overrides?: CallOverrides
         ): Promise<boolean>
-
-        keeperRun(overrides?: CallOverrides): Promise<boolean>
 
         keeperSaveSettlementPrice(overrides?: CallOverrides): Promise<boolean>
 
@@ -1898,10 +1881,6 @@ export interface Zdte extends BaseContract {
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
-        keeperRun(
-            overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<BigNumber>
-
         keeperSaveSettlementPrice(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
@@ -2151,10 +2130,6 @@ export interface Zdte extends BaseContract {
         keeper(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         keeperExpirePrevEpochSpreads(
-            overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<PopulatedTransaction>
-
-        keeperRun(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
