@@ -27,11 +27,9 @@ export default async () => {
         }
     }
 
-    const provider = new providers.MulticallProvider(
-        new ethers.providers.StaticJsonRpcProvider(
-            `https://arbitrum-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
-            CHAIN_ID
-        )
+    const provider = new providers.StaticJsonRpcProvider(
+        `https://arbitrum-mainnet.infura.io/v3/${INFURA_PROJECT_ID}`,
+        CHAIN_ID
     )
 
     const wallet = new ethers.Wallet(KEEPER_PK)
@@ -43,30 +41,29 @@ export default async () => {
         const receipt = await tx.wait()
         console.log('keeperSaveSettlementPrice: ', receipt)
     } catch (err) {
-        console.error(err)
+        console.error('Error saving settlement price:', err.message)
         return {
             success: false,
-            error: 'Fail to save settlement price',
+            error: `Failed to save settlement price: ${err.message}`,
         }
     }
 
     try {
-        const prevExpiry = await zdte.getPrevExpiry()
-        const numPositions = await zdte.expiryInfo[prevExpiry].count
+        const numPositions = await zdte.expiryInfo[await zdte.getPrevExpiry()]
+            .count
         const numRun = Math.round(numPositions.toNumber() / MAX_EXPIRE_BATCH)
-        console.log('num batches to run: ', numRun)
+        console.log('Number of batches to run:', numRun)
 
         for (let i = 0; i < numRun; i++) {
             const tx = await zdte.connect(signer).keeperExpirePrevEpochSpreads()
             const receipt = await tx.wait()
-            console.log(`keeperExpirePrevEpochSpreads batch ${i}`)
-            console.log(receipt)
+            console.log(`Expire prev epoch spreads batch ${i}:`, receipt)
         }
     } catch (err) {
-        console.error(err)
+        console.error('Error expiring prev epoch spreads:', err.message)
         return {
             success: false,
-            error: 'Fail to expire prev epoch spreads',
+            error: `Failed to expire prev epoch spreads: ${err.message}`,
         }
     }
 
