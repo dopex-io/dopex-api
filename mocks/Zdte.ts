@@ -27,18 +27,6 @@ import type {
     PromiseOrValue,
 } from './common'
 
-export declare namespace Zdte {
-    export type DepositInfoStruct = {
-        amount: PromiseOrValue<BigNumberish>
-        expiry: PromiseOrValue<BigNumberish>
-    }
-
-    export type DepositInfoStructOutput = [BigNumber, BigNumber] & {
-        amount: BigNumber
-        expiry: BigNumber
-    }
-}
-
 export interface ZdteInterface extends utils.Interface {
     functions: {
         'EXPIRY_DELAY_TOLERANCE()': FunctionFragment
@@ -62,7 +50,7 @@ export interface ZdteInterface extends utils.Interface {
         'deposit(bool,uint256)': FunctionFragment
         'emergencyWithdraw(address[],bool)': FunctionFragment
         'expireSpreadOptionPosition(uint256)': FunctionFragment
-        'expireSpreads(uint256)': FunctionFragment
+        'expireSpreads(uint256,uint256)': FunctionFragment
         'expiryInfo(uint256)': FunctionFragment
         'feeDistributor()': FunctionFragment
         'feeOpenPosition()': FunctionFragment
@@ -70,14 +58,11 @@ export interface ZdteInterface extends utils.Interface {
         'getCurrentExpiry()': FunctionFragment
         'getMarkPrice()': FunctionFragment
         'getPrevExpiry()': FunctionFragment
-        'getUserToBaseDepositInfo(address)': FunctionFragment
-        'getUserToQuoteDepositInfo(address)': FunctionFragment
         'getVolatility(uint256)': FunctionFragment
         'getVolatilityWithExpiry(uint256,uint256)': FunctionFragment
         'isContract(address)': FunctionFragment
         'keeper()': FunctionFragment
         'keeperExpirePrevEpochSpreads()': FunctionFragment
-        'keeperRun()': FunctionFragment
         'keeperSaveSettlementPrice()': FunctionFragment
         'maxOtmPercentage()': FunctionFragment
         'optionPricing()': FunctionFragment
@@ -100,8 +85,6 @@ export interface ZdteInterface extends utils.Interface {
         'unpause()': FunctionFragment
         'updateMarginOfSafety(uint256)': FunctionFragment
         'updateOracleId(bytes32)': FunctionFragment
-        'userToBaseDepositInfo(address,uint256)': FunctionFragment
-        'userToQuoteDepositInfo(address,uint256)': FunctionFragment
         'volatilityOracle()': FunctionFragment
         'whitelistedContracts(address)': FunctionFragment
         'withdraw(bool,uint256)': FunctionFragment
@@ -140,14 +123,11 @@ export interface ZdteInterface extends utils.Interface {
             | 'getCurrentExpiry'
             | 'getMarkPrice'
             | 'getPrevExpiry'
-            | 'getUserToBaseDepositInfo'
-            | 'getUserToQuoteDepositInfo'
             | 'getVolatility'
             | 'getVolatilityWithExpiry'
             | 'isContract'
             | 'keeper'
             | 'keeperExpirePrevEpochSpreads'
-            | 'keeperRun'
             | 'keeperSaveSettlementPrice'
             | 'maxOtmPercentage'
             | 'optionPricing'
@@ -170,8 +150,6 @@ export interface ZdteInterface extends utils.Interface {
             | 'unpause'
             | 'updateMarginOfSafety'
             | 'updateOracleId'
-            | 'userToBaseDepositInfo'
-            | 'userToQuoteDepositInfo'
             | 'volatilityOracle'
             | 'whitelistedContracts'
             | 'withdraw'
@@ -278,7 +256,7 @@ export interface ZdteInterface extends utils.Interface {
     ): string
     encodeFunctionData(
         functionFragment: 'expireSpreads',
-        values: [PromiseOrValue<BigNumberish>]
+        values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
         functionFragment: 'expiryInfo',
@@ -309,14 +287,6 @@ export interface ZdteInterface extends utils.Interface {
         values?: undefined
     ): string
     encodeFunctionData(
-        functionFragment: 'getUserToBaseDepositInfo',
-        values: [PromiseOrValue<string>]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'getUserToQuoteDepositInfo',
-        values: [PromiseOrValue<string>]
-    ): string
-    encodeFunctionData(
         functionFragment: 'getVolatility',
         values: [PromiseOrValue<BigNumberish>]
     ): string
@@ -331,10 +301,6 @@ export interface ZdteInterface extends utils.Interface {
     encodeFunctionData(functionFragment: 'keeper', values?: undefined): string
     encodeFunctionData(
         functionFragment: 'keeperExpirePrevEpochSpreads',
-        values?: undefined
-    ): string
-    encodeFunctionData(
-        functionFragment: 'keeperRun',
         values?: undefined
     ): string
     encodeFunctionData(
@@ -408,14 +374,6 @@ export interface ZdteInterface extends utils.Interface {
     encodeFunctionData(
         functionFragment: 'updateOracleId',
         values: [PromiseOrValue<BytesLike>]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'userToBaseDepositInfo',
-        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-    ): string
-    encodeFunctionData(
-        functionFragment: 'userToQuoteDepositInfo',
-        values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
     ): string
     encodeFunctionData(
         functionFragment: 'volatilityOracle',
@@ -540,14 +498,6 @@ export interface ZdteInterface extends utils.Interface {
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'getUserToBaseDepositInfo',
-        data: BytesLike
-    ): Result
-    decodeFunctionResult(
-        functionFragment: 'getUserToQuoteDepositInfo',
-        data: BytesLike
-    ): Result
-    decodeFunctionResult(
         functionFragment: 'getVolatility',
         data: BytesLike
     ): Result
@@ -564,7 +514,6 @@ export interface ZdteInterface extends utils.Interface {
         functionFragment: 'keeperExpirePrevEpochSpreads',
         data: BytesLike
     ): Result
-    decodeFunctionResult(functionFragment: 'keeperRun', data: BytesLike): Result
     decodeFunctionResult(
         functionFragment: 'keeperSaveSettlementPrice',
         data: BytesLike
@@ -633,14 +582,6 @@ export interface ZdteInterface extends utils.Interface {
         data: BytesLike
     ): Result
     decodeFunctionResult(
-        functionFragment: 'userToBaseDepositInfo',
-        data: BytesLike
-    ): Result
-    decodeFunctionResult(
-        functionFragment: 'userToQuoteDepositInfo',
-        data: BytesLike
-    ): Result
-    decodeFunctionResult(
         functionFragment: 'volatilityOracle',
         data: BytesLike
     ): Result
@@ -662,7 +603,7 @@ export interface ZdteInterface extends utils.Interface {
         'AddToContractWhitelist(address)': EventFragment
         'Deposit(bool,uint256,address)': EventFragment
         'KeeperAssigned(address)': EventFragment
-        'KeeperExpireSpreads(uint256,address)': EventFragment
+        'KeeperExpireSpreads(uint256,uint256,address)': EventFragment
         'KeeperRan(uint256)': EventFragment
         'OwnershipTransferred(address,address)': EventFragment
         'Paused(address)': EventFragment
@@ -728,10 +669,11 @@ export type KeeperAssignedEventFilter = TypedEventFilter<KeeperAssignedEvent>
 
 export interface KeeperExpireSpreadsEventObject {
     expiry: BigNumber
+    lastId: BigNumber
     user: string
 }
 export type KeeperExpireSpreadsEvent = TypedEvent<
-    [BigNumber, string],
+    [BigNumber, BigNumber, string],
     KeeperExpireSpreadsEventObject
 >
 
@@ -962,6 +904,7 @@ export interface Zdte extends BaseContract {
 
         expireSpreads(
             expiry: PromiseOrValue<BigNumberish>,
+            startId: PromiseOrValue<BigNumberish>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
@@ -969,13 +912,13 @@ export interface Zdte extends BaseContract {
             arg0: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<
-            [boolean, boolean, BigNumber, BigNumber, BigNumber, BigNumber] & {
+            [boolean, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
                 begin: boolean
-                expired: boolean
                 expiry: BigNumber
                 startId: BigNumber
                 count: BigNumber
                 settlementPrice: BigNumber
+                lastProccessedId: BigNumber
             }
         >
 
@@ -997,16 +940,6 @@ export interface Zdte extends BaseContract {
             overrides?: CallOverrides
         ): Promise<[BigNumber] & { expiry: BigNumber }>
 
-        getUserToBaseDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<[Zdte.DepositInfoStructOutput[]]>
-
-        getUserToQuoteDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<[Zdte.DepositInfoStructOutput[]]>
-
         getVolatility(
             strike: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
@@ -1026,10 +959,6 @@ export interface Zdte extends BaseContract {
         keeper(overrides?: CallOverrides): Promise<[string]>
 
         keeperExpirePrevEpochSpreads(
-            overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<ContractTransaction>
-
-        keeperRun(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
 
@@ -1106,22 +1035,6 @@ export interface Zdte extends BaseContract {
             _oracleId: PromiseOrValue<BytesLike>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<ContractTransaction>
-
-        userToBaseDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
-        ): Promise<
-            [BigNumber, BigNumber] & { amount: BigNumber; expiry: BigNumber }
-        >
-
-        userToQuoteDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
-        ): Promise<
-            [BigNumber, BigNumber] & { amount: BigNumber; expiry: BigNumber }
-        >
 
         volatilityOracle(overrides?: CallOverrides): Promise<[string]>
 
@@ -1271,6 +1184,7 @@ export interface Zdte extends BaseContract {
 
     expireSpreads(
         expiry: PromiseOrValue<BigNumberish>,
+        startId: PromiseOrValue<BigNumberish>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1278,13 +1192,13 @@ export interface Zdte extends BaseContract {
         arg0: PromiseOrValue<BigNumberish>,
         overrides?: CallOverrides
     ): Promise<
-        [boolean, boolean, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        [boolean, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
             begin: boolean
-            expired: boolean
             expiry: BigNumber
             startId: BigNumber
             count: BigNumber
             settlementPrice: BigNumber
+            lastProccessedId: BigNumber
         }
     >
 
@@ -1299,16 +1213,6 @@ export interface Zdte extends BaseContract {
     getMarkPrice(overrides?: CallOverrides): Promise<BigNumber>
 
     getPrevExpiry(overrides?: CallOverrides): Promise<BigNumber>
-
-    getUserToBaseDepositInfo(
-        user: PromiseOrValue<string>,
-        overrides?: CallOverrides
-    ): Promise<Zdte.DepositInfoStructOutput[]>
-
-    getUserToQuoteDepositInfo(
-        user: PromiseOrValue<string>,
-        overrides?: CallOverrides
-    ): Promise<Zdte.DepositInfoStructOutput[]>
 
     getVolatility(
         strike: PromiseOrValue<BigNumberish>,
@@ -1329,10 +1233,6 @@ export interface Zdte extends BaseContract {
     keeper(overrides?: CallOverrides): Promise<string>
 
     keeperExpirePrevEpochSpreads(
-        overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>
-
-    keeperRun(
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
 
@@ -1409,22 +1309,6 @@ export interface Zdte extends BaseContract {
         _oracleId: PromiseOrValue<BytesLike>,
         overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>
-
-    userToBaseDepositInfo(
-        arg0: PromiseOrValue<string>,
-        arg1: PromiseOrValue<BigNumberish>,
-        overrides?: CallOverrides
-    ): Promise<
-        [BigNumber, BigNumber] & { amount: BigNumber; expiry: BigNumber }
-    >
-
-    userToQuoteDepositInfo(
-        arg0: PromiseOrValue<string>,
-        arg1: PromiseOrValue<BigNumberish>,
-        overrides?: CallOverrides
-    ): Promise<
-        [BigNumber, BigNumber] & { amount: BigNumber; expiry: BigNumber }
-    >
 
     volatilityOracle(overrides?: CallOverrides): Promise<string>
 
@@ -1578,6 +1462,7 @@ export interface Zdte extends BaseContract {
 
         expireSpreads(
             expiry: PromiseOrValue<BigNumberish>,
+            startId: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<boolean>
 
@@ -1585,13 +1470,13 @@ export interface Zdte extends BaseContract {
             arg0: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
         ): Promise<
-            [boolean, boolean, BigNumber, BigNumber, BigNumber, BigNumber] & {
+            [boolean, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
                 begin: boolean
-                expired: boolean
                 expiry: BigNumber
                 startId: BigNumber
                 count: BigNumber
                 settlementPrice: BigNumber
+                lastProccessedId: BigNumber
             }
         >
 
@@ -1606,16 +1491,6 @@ export interface Zdte extends BaseContract {
         getMarkPrice(overrides?: CallOverrides): Promise<BigNumber>
 
         getPrevExpiry(overrides?: CallOverrides): Promise<BigNumber>
-
-        getUserToBaseDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<Zdte.DepositInfoStructOutput[]>
-
-        getUserToQuoteDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<Zdte.DepositInfoStructOutput[]>
 
         getVolatility(
             strike: PromiseOrValue<BigNumberish>,
@@ -1638,8 +1513,6 @@ export interface Zdte extends BaseContract {
         keeperExpirePrevEpochSpreads(
             overrides?: CallOverrides
         ): Promise<boolean>
-
-        keeperRun(overrides?: CallOverrides): Promise<boolean>
 
         keeperSaveSettlementPrice(overrides?: CallOverrides): Promise<boolean>
 
@@ -1706,22 +1579,6 @@ export interface Zdte extends BaseContract {
             _oracleId: PromiseOrValue<BytesLike>,
             overrides?: CallOverrides
         ): Promise<void>
-
-        userToBaseDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
-        ): Promise<
-            [BigNumber, BigNumber] & { amount: BigNumber; expiry: BigNumber }
-        >
-
-        userToQuoteDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
-        ): Promise<
-            [BigNumber, BigNumber] & { amount: BigNumber; expiry: BigNumber }
-        >
 
         volatilityOracle(overrides?: CallOverrides): Promise<string>
 
@@ -1796,12 +1653,14 @@ export interface Zdte extends BaseContract {
         'KeeperAssigned(address)'(keeper?: null): KeeperAssignedEventFilter
         KeeperAssigned(keeper?: null): KeeperAssignedEventFilter
 
-        'KeeperExpireSpreads(uint256,address)'(
+        'KeeperExpireSpreads(uint256,uint256,address)'(
             expiry?: null,
+            lastId?: null,
             user?: PromiseOrValue<string> | null
         ): KeeperExpireSpreadsEventFilter
         KeeperExpireSpreads(
             expiry?: null,
+            lastId?: null,
             user?: PromiseOrValue<string> | null
         ): KeeperExpireSpreadsEventFilter
 
@@ -1979,6 +1838,7 @@ export interface Zdte extends BaseContract {
 
         expireSpreads(
             expiry: PromiseOrValue<BigNumberish>,
+            startId: PromiseOrValue<BigNumberish>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
@@ -1999,16 +1859,6 @@ export interface Zdte extends BaseContract {
 
         getPrevExpiry(overrides?: CallOverrides): Promise<BigNumber>
 
-        getUserToBaseDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<BigNumber>
-
-        getUserToQuoteDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<BigNumber>
-
         getVolatility(
             strike: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
@@ -2028,10 +1878,6 @@ export interface Zdte extends BaseContract {
         keeper(overrides?: CallOverrides): Promise<BigNumber>
 
         keeperExpirePrevEpochSpreads(
-            overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<BigNumber>
-
-        keeperRun(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<BigNumber>
 
@@ -2107,18 +1953,6 @@ export interface Zdte extends BaseContract {
         updateOracleId(
             _oracleId: PromiseOrValue<BytesLike>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<BigNumber>
-
-        userToBaseDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
-        ): Promise<BigNumber>
-
-        userToQuoteDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
         ): Promise<BigNumber>
 
         volatilityOracle(overrides?: CallOverrides): Promise<BigNumber>
@@ -2252,6 +2086,7 @@ export interface Zdte extends BaseContract {
 
         expireSpreads(
             expiry: PromiseOrValue<BigNumberish>,
+            startId: PromiseOrValue<BigNumberish>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
@@ -2276,16 +2111,6 @@ export interface Zdte extends BaseContract {
 
         getPrevExpiry(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-        getUserToBaseDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<PopulatedTransaction>
-
-        getUserToQuoteDepositInfo(
-            user: PromiseOrValue<string>,
-            overrides?: CallOverrides
-        ): Promise<PopulatedTransaction>
-
         getVolatility(
             strike: PromiseOrValue<BigNumberish>,
             overrides?: CallOverrides
@@ -2305,10 +2130,6 @@ export interface Zdte extends BaseContract {
         keeper(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
         keeperExpirePrevEpochSpreads(
-            overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<PopulatedTransaction>
-
-        keeperRun(
             overrides?: Overrides & { from?: PromiseOrValue<string> }
         ): Promise<PopulatedTransaction>
 
@@ -2394,18 +2215,6 @@ export interface Zdte extends BaseContract {
         updateOracleId(
             _oracleId: PromiseOrValue<BytesLike>,
             overrides?: Overrides & { from?: PromiseOrValue<string> }
-        ): Promise<PopulatedTransaction>
-
-        userToBaseDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
-        ): Promise<PopulatedTransaction>
-
-        userToQuoteDepositInfo(
-            arg0: PromiseOrValue<string>,
-            arg1: PromiseOrValue<BigNumberish>,
-            overrides?: CallOverrides
         ): Promise<PopulatedTransaction>
 
         volatilityOracle(
