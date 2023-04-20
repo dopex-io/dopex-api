@@ -52,12 +52,12 @@ export default async () => {
 
     try {
         const prevExpiry = await zdte.getPrevExpiry()
-        const numPositions = await zdte.expiryInfo[prevExpiry].count
+        const ei = await zdte.expiryInfo(prevExpiry)
+        const numPositions = ei.count
         console.log(
             `Number of spread positions=${numPositions} for expiry=${prevExpiry}`
         )
-
-        const numRun = Math.round(numPositions.toNumber() / MAX_EXPIRE_BATCH)
+        const numRun = Math.ceil(numPositions.toNumber() / MAX_EXPIRE_BATCH)
         console.log('Number of batches to run:', numRun)
 
         for (let i = 0; i < numRun; i++) {
