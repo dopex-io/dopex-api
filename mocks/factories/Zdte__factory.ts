@@ -974,6 +974,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: 'openInterestAmount',
+        outputs: [
+            {
+                internalType: 'uint256',
+                name: '',
+                type: 'uint256',
+            },
+        ],
+        stateMutability: 'view',
+        type: 'function',
+    },
+    {
+        inputs: [],
         name: 'optionPricing',
         outputs: [
             {
@@ -1382,6 +1395,11 @@ const _abi = [
             {
                 internalType: 'uint256',
                 name: 'margin',
+                type: 'uint256',
+            },
+            {
+                internalType: 'uint256',
+                name: 'markPrice',
                 type: 'uint256',
             },
         ],

@@ -13,7 +13,7 @@ function validPk(value) {
 
 const KEEPER_PK = process.env['KEEPER_PK']
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
-const CONTRACT = '0xC9658810C819211a4bA4755Fc9D45A8128079841'
+const CONTRACT = '0x538A001085666FCCF560Ea7117Fbf4562bb5D8a0'
 const CHAIN_ID = 42161
 const MAX_EXPIRE_BATCH = 30
 
@@ -52,12 +52,12 @@ export default async () => {
 
     try {
         const prevExpiry = await zdte.getPrevExpiry()
-        const numPositions = await zdte.expiryInfo[prevExpiry].count
+        const ei = await zdte.expiryInfo(prevExpiry)
+        const numPositions = ei.count
         console.log(
             `Number of spread positions=${numPositions} for expiry=${prevExpiry}`
         )
-
-        const numRun = Math.round(numPositions.toNumber() / MAX_EXPIRE_BATCH)
+        const numRun = Math.ceil(numPositions.toNumber() / MAX_EXPIRE_BATCH)
         console.log('Number of batches to run:', numRun)
 
         for (let i = 0; i < numRun; i++) {
