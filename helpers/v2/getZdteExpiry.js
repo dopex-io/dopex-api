@@ -13,7 +13,7 @@ function validPk(value) {
 
 const KEEPER_PK = process.env['KEEPER_PK']
 const INFURA_PROJECT_ID = process.env['INFURA_PROJECT_ID']
-const CONTRACT = '0x538A001085666FCCF560Ea7117Fbf4562bb5D8a0'
+const CONTRACT = '0xd01e0ec59fb8cfbf64857de839e5c6e23c82511a'
 const CHAIN_ID = 42161
 const MAX_EXPIRE_BATCH = 30
 
