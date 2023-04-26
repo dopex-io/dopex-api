@@ -1,4 +1,4 @@
-import { Zdte__factory } from '../../mocks/factories/Zdte__factory'
+import { Zdte__factory } from '@dopex-io/sdk'
 import { providers } from '@0xsequence/multicall'
 import { Wallet, ethers } from 'ethers'
 
