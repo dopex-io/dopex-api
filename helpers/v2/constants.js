@@ -713,7 +713,7 @@ export const SSOVS = [
     {
         type: 'call',
         underlyingSymbol: 'ARB',
-        symbol: 'ARB-WEEKLY-CALLS-SSOV-V3',
+        symbol: 'ARB-MONTHLY-CALLS-SSOV-V3',
         version: 3,
         chainId: 42161,
         collateralDecimals: 18,
