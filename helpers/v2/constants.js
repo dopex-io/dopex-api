@@ -717,7 +717,7 @@ export const SSOVS = [
         version: 3,
         chainId: 42161,
         collateralDecimals: 18,
-        duration: 'weekly',
+        duration: 'monthly',
         retired: false,
         address: '0xDF3d96299275E2Fb40124b8Ad9d270acFDcc6148',
         olp: '',
