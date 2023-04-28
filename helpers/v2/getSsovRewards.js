@@ -84,6 +84,10 @@ const NAME_TO_GETTER = {
         version: 3,
         isCurveStrat: false,
     },
+    'ARB-MONTHLY-CALLS-SSOV-V3': {
+        version: 3,
+        isCurveStrat: false,
+    },
 
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {

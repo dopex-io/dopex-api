@@ -239,6 +239,10 @@ const NAME_TO_GETTER = {
         fn: getRewardsApy,
         args: ['MATIC-WEEKLY-CALLS-SSOV-V3', 3],
     },
+    'ARB-MONTHLY-CALLS-SSOV-V3': {
+        fn: getRewardsApy,
+        args: ['ARB-MONTHLY-CALLS-SSOV-V3', 3],
+    },
 
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {
