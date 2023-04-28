@@ -132,7 +132,7 @@ async function getRewardsApy(name, version = 1) {
     const rewardsPerYear =
         (totalRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
 
-    return calculateApy(rewardsPerYear, totalEpochDepositsInUsd).toFixed(2)
+    return ((rewardsPerYear * 100) / totalEpochDepositsInUsd).toFixed(2)
 }
 
 async function getSsovPutApy(name) {
