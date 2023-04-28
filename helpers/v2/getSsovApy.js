@@ -23,6 +23,7 @@ const TOKEN_ADDRESS_TO_CG_ID = {
     '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
     '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
     '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': 'matic-network',
+    '0x912ce59144191c1204e64559fe8253a0e49e6548': 'arbitrum',
 }
 
 async function fetchTotalCollateralBalance(ssovContract, epoch) {

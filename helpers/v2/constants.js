@@ -710,6 +710,18 @@ export const SSOVS = [
         address: '0x4ee9fe9500e7c4fe849add9b14beec5ec5b7d955',
         olp: '',
     },
+    {
+        type: 'call',
+        underlyingSymbol: 'ARB',
+        symbol: 'ARB-WEEKLY-CALLS-SSOV-V3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0xDF3d96299275E2Fb40124b8Ad9d270acFDcc6148',
+        olp: '',
+    },
 ]
 
 export const IR_VAULTS = [
