@@ -15,14 +15,8 @@ export default async (ssov) => {
             },
         }
 
-    const {
-        underlyingSymbol,
-        symbol,
-        type,
-        chainId,
-        version,
-        collateralDecimals,
-    } = ssov
+    const { underlyingSymbol, type, chainId, version, collateralDecimals } =
+        ssov
     const contractAddresses = Addresses[chainId]
     const provider = getProvider(chainId)
 
@@ -63,7 +57,7 @@ export default async (ssov) => {
             },
         }
     } else {
-        const ssovAddress = Addresses[chainId]['SSOV-V3'].VAULTS[symbol]
+        const ssovAddress = ssov.address
 
         const ssovContract = SsovV3__factory.connect(ssovAddress, provider)
 

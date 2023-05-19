@@ -1,4 +1,4 @@
-import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
+import { SsovV3__factory } from '@dopex-io/sdk'
 import zipWith from 'lodash/zipWith'
 
 import getProvider from '../getProvider'
@@ -6,7 +6,6 @@ import getProvider from '../getProvider'
 import _fetchEpochRewards from './ssov/fetchEpochRewards'
 import { SSOVS } from './constants'
 
-const SSOV_VERSION = 'SSOV-V3'
 const TWO_CRV_ADDRESS = '0x11cdb42b0eb46d95f990bedd4695a6e3fa034978'
 
 const TOKEN_ADDRESS_TO_NAME = {
@@ -24,10 +23,7 @@ async function fetchEpochRewards(name, version, isCurveStrat) {
 
     const provider = getProvider(ssov.chainId)
 
-    const ssovContract = SsovV3__factory.connect(
-        Addresses[ssov.chainId][SSOV_VERSION].VAULTS[name],
-        provider
-    )
+    const ssovContract = SsovV3__factory.connect(ssov.address, provider)
 
     const epoch = await ssovContract.currentEpoch()
 
@@ -116,6 +112,10 @@ const NAME_TO_GETTER = {
         isCurveStrat: true,
     },
     'CRV-WEEKLY-PUTS-SSOV-V3-3': {
+        version: 1,
+        isCurveStrat: true,
+    },
+    'CVX-WEEKLY-PUTS-SSOV-V3': {
         version: 1,
         isCurveStrat: true,
     },
