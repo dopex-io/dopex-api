@@ -136,12 +136,11 @@ async function getRewardsApy(name, version = 1) {
 }
 
 async function getSsovPutApy(name) {
+    const ssov = SSOVS.find((s) => s.symbol === name)
+
     const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
 
-    const ssovContract = SsovV3__factory.connect(
-        Addresses[42161][SSOV_VERSION].VAULTS[name],
-        provider
-    )
+    const ssovContract = SsovV3__factory.connect(ssov.address, provider)
 
     const epoch = await ssovContract.currentEpoch()
 
@@ -276,6 +275,10 @@ const NAME_TO_GETTER = {
     'ETH-QUARTERLY-PUTS-SSOV-V3': {
         fn: getSsovPutApy,
         args: ['ETH-QUARTERLY-PUTS-SSOV-V3'],
+    },
+    'CVX-WEEKLY-PUTS-SSOV-V3': {
+        fn: getSsovPutApy,
+        args: ['CVX-WEEKLY-PUTS-SSOV-V3'],
     },
 }
 

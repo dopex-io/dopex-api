@@ -722,6 +722,18 @@ export const SSOVS = [
         address: '0xDF3d96299275E2Fb40124b8Ad9d270acFDcc6148',
         olp: '',
     },
+    {
+        type: 'put',
+        underlyingSymbol: 'CVX',
+        symbol: 'CVX-WEEKLY-PUTS-SSOV-V3',
+        version: 3,
+        chainId: 42161,
+        collateralDecimals: 18,
+        duration: 'weekly',
+        retired: false,
+        address: '0x3e138322b86897eDf4Ffc6060Edc0C1220b4F8B0',
+        olp: '',
+    },
 ]
 
 export const IR_VAULTS = [

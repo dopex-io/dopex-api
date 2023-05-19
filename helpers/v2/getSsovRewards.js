@@ -119,6 +119,10 @@ const NAME_TO_GETTER = {
         version: 1,
         isCurveStrat: true,
     },
+    'CVX-WEEKLY-PUTS-SSOV-V3': {
+        version: 1,
+        isCurveStrat: true,
+    },
     'ETH-QUARTERLY-PUTS-SSOV-V3': {
         version: 1,
         isCurveStrat: true,
