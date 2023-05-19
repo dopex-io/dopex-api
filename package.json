@@ -8,6 +8,7 @@
     "scripts": {
         "dev": "vc dev --listen 5001",
         "test": "jest",
+        "build-graph": "graphclient build",
         "prepare": "husky install"
     },
     "dependencies": {
@@ -20,8 +21,10 @@
         "lodash": "^4.17.21"
     },
     "devDependencies": {
+        "@graphprotocol/client-cli": "^2.2.22",
         "eslint": "^8.25.0",
         "eslint-plugin-jest": "^27.1.1",
+        "graphql": "^16.6.0",
         "husky": "^8.0.1",
         "jest": "^29.0.1"
     }

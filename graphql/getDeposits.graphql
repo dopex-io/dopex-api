@@ -1,0 +1,5 @@
+query getDeposits {
+    deposits {
+        id
+    }
+}

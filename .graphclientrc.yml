@@ -1,0 +1,11 @@
+sources:
+    - name: straddles
+      handler:
+          graphql:
+              endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-straddles-polygon
+      transforms:
+          - autoPagination:
+                validateSchema: true
+
+documents:
+    - ./graphql/**/*.graphql

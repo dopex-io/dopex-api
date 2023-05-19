@@ -118,3 +118,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .vercel
+
+# Graphclient
+.graphclient
+
+# MacOS
+.DS_Store
