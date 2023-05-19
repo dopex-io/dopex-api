@@ -108,10 +108,7 @@ export default async (ssov) => {
                 .toString()
         }
     } else {
-        const ssovContract = SsovV3__factory.connect(
-            Addresses[chainId]['SSOV-V3'].VAULTS[symbol],
-            provider
-        )
+        const ssovContract = SsovV3__factory.connect(ssov.address, provider)
 
         const epoch = await ssovContract.currentEpoch()
 
