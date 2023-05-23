@@ -1,5 +1,10 @@
-import { Addresses, ERC20SSOV__factory, SsovV3__factory } from '@dopex-io/sdk'
-import { utils as ethersUtils } from 'ethers'
+import {
+    Addresses,
+    ERC20SSOV__factory,
+    SsovV3__factory,
+    SsovV3Viewer__factory,
+} from '@dopex-io/sdk'
+import { BigNumber, utils as ethersUtils } from 'ethers'
 
 import getProvider from '../getProvider'
 
@@ -8,6 +13,7 @@ export default async (ssov) => {
         return {
             currentEpoch: 0,
             totalEpochDeposits: '0',
+            totalEpochPurchases: '0',
             underlyingPrice: '0',
             epochTimes: {
                 startTime: '0',
@@ -15,8 +21,14 @@ export default async (ssov) => {
             },
         }
 
-    const { underlyingSymbol, type, chainId, version, collateralDecimals } =
-        ssov
+    const {
+        underlyingSymbol,
+        symbol,
+        type,
+        chainId,
+        version,
+        collateralDecimals,
+    } = ssov
     const contractAddresses = Addresses[chainId]
     const provider = getProvider(chainId)
 
@@ -29,6 +41,7 @@ export default async (ssov) => {
         const ssovContract = ERC20SSOV__factory.connect(ssovAddress, provider)
 
         let epoch = await ssovContract.currentEpoch()
+
         const isEpochExpired = await ssovContract.isEpochExpired(epoch)
 
         if (epoch.isZero()) {
@@ -58,8 +71,13 @@ export default async (ssov) => {
         }
     } else {
         const ssovAddress = ssov.address
+        const viewerAddress = contractAddresses['SSOV-V3'].VIEWER
 
         const ssovContract = SsovV3__factory.connect(ssovAddress, provider)
+        const ssovViewerContract = SsovV3Viewer__factory.connect(
+            viewerAddress,
+            provider
+        )
 
         let epoch = await ssovContract.currentEpoch()
 
@@ -71,16 +89,32 @@ export default async (ssov) => {
             }
         }
 
-        const [epochData, underlyingPrice] = await Promise.all([
-            ssovContract.getEpochData(epoch),
-            ssovContract.getUnderlyingPrice(),
-        ])
+        const [epochData, underlyingPrice, totalEpochOptionsPurchased] =
+            await Promise.all([
+                ssovContract.getEpochData(epoch),
+                ssovContract.getUnderlyingPrice(),
+                ssovViewerContract.getTotalEpochOptionsPurchased(
+                    epoch,
+                    ssovContract.address
+                ),
+            ])
+
+        const totalEpochPurchases = totalEpochOptionsPurchased.reduce(
+            (accumulator, val) => {
+                return accumulator.add(val)
+            },
+            BigNumber.from(0)
+        )
 
         return {
             currentEpoch: epoch.toString(),
             totalEpochDeposits: ethersUtils.formatUnits(
                 epochData['totalCollateralBalance'],
                 collateralDecimals
+            ),
+            totalEpochPurchases: ethersUtils.formatUnits(
+                totalEpochPurchases,
+                18
             ),
             underlyingPrice: ethersUtils.formatUnits(underlyingPrice, 8),
             epochTimes: {
