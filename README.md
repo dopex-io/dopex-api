@@ -30,7 +30,7 @@ yarn global add vercel
 To start the server, run:
 
 ```
-yarn dev
+yarn start
 ```
 
 This will begin the vercel dev server on port 5001.

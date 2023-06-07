@@ -6,7 +6,7 @@
     "author": "Dopex",
     "license": "MIT",
     "scripts": {
-        "dev": "vc dev --listen 5001",
+        "start": "vc dev --listen 5001",
         "test": "jest",
         "build-graph": "graphclient build",
         "prepare": "husky install"
