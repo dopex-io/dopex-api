@@ -1,5 +1,7 @@
-query getDeposits {
-    deposits {
+query getDeposits($epoch: BigInt!, $amount: BigInt!) {
+    deposits(where: { epoch_gte: $epoch, amount_gte: $amount }) {
         id
+        amount
+        epoch
     }
 }

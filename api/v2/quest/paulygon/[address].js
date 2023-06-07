@@ -2,7 +2,7 @@ import getPaulygonQuest from '../../../../helpers/v2/getPaulygonQuest'
 
 export default async (req, res) => {
     try {
-        const result = getPaulygonQuest(req.query.address)
+        const result = await getPaulygonQuest(req.query.address)
 
         res.json({
             valid: result.valid,
