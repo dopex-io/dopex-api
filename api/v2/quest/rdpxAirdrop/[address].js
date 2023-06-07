@@ -1,12 +1,11 @@
-import getPaulygonQuest from '../../../../helpers/v2/quest/getPaulygonQuest'
+import getRdpxAirdrop from '../../../../helpers/v2/quest/getRdpxAirdrop'
 
 export default async (req, res) => {
     try {
-        const result = await getPaulygonQuest(req.query.address)
+        const result = await getRdpxAirdrop(req.query.address)
 
         res.json({
-            valid: result.valid,
-            ...(result.error && { error: result.error }),
+            ...result,
         })
     } catch (err) {
         console.log(err)

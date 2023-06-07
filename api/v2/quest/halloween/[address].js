@@ -1,12 +1,11 @@
-import getPaulygonQuest from '../../../../helpers/v2/quest/getPaulygonQuest'
+import getHalloween from '../../../../helpers/v2/quest/getHalloween'
 
 export default async (req, res) => {
     try {
-        const result = await getPaulygonQuest(req.query.address)
+        const result = await getHalloween(req.query.address)
 
         res.json({
-            valid: result.valid,
-            ...(result.error && { error: result.error }),
+            ...result,
         })
     } catch (err) {
         console.log(err)
