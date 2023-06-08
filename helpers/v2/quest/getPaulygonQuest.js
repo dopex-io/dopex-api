@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 
-import { getBuiltGraphSDK } from '../../.graphclient'
+import { getBuiltGraphSDK } from '../../../.graphclient'
 
 const sdk = getBuiltGraphSDK()
 

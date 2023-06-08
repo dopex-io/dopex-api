@@ -1,4 +1,4 @@
-import getPaulygonQuest from '../../../../helpers/v2/getPaulygonQuest'
+import getPaulygonQuest from '../../../../helpers/v2/quest/getPaulygonQuest'
 
 export default async (req, res) => {
     try {
