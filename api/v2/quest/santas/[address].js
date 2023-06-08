@@ -1,8 +1,16 @@
-import getSantas from '../../../../helpers/v2/quest/getBridgoor'
+import { Addresses } from '@dopex-io/sdk'
+
+import getMerkleClaim from '../../../../helpers/v2/quest/getMerkleClaim'
+import dopexSantasAddresses from '../../../../constants/json/dopexSantasAddresses.json'
 
 export default async (req, res) => {
     try {
-        const result = await getSantas(req.query.address)
+        const result = await getMerkleClaim({
+            accountAddress: req.query.address,
+            chainId: 42161,
+            contractAddress: Addresses[42161]['NFTS']['DopexSantasNFT'],
+            treeData: dopexSantasAddresses,
+        })
 
         res.json({
             ...result,

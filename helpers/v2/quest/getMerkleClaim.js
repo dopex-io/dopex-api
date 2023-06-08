@@ -1,14 +1,18 @@
 import { ethers } from 'ethers'
-import { Addresses, MerkleDistributor__factory } from '@dopex-io/sdk'
+import { MerkleDistributor__factory } from '@dopex-io/sdk'
 
 import getProvider from '../../getProvider'
-import airdropAddresses from '../../../constants/json/airdropAddresses.json'
 import BalanceTree from '../../../utils/merkle/balance-tree'
 
-const getRdpxAirdrop = async (address) => {
-    const provider = getProvider(1)
+const getMerkleClaim = async ({
+    accountAddress,
+    chainId,
+    contractAddress,
+    treeData,
+}) => {
+    const provider = getProvider(chainId)
 
-    const isAddress = ethers.utils.isAddress(address)
+    const isAddress = ethers.utils.isAddress(accountAddress)
 
     let error = ''
     let valid = false
@@ -17,19 +21,20 @@ const getRdpxAirdrop = async (address) => {
     if (!isAddress) {
         error = 'Not an address'
     } else {
-        const index = airdropAddresses.findIndex(
-            (item) => item.account.toLowerCase() === address?.toLowerCase()
+        const index = treeData.findIndex(
+            (item) =>
+                item.account.toLowerCase() === accountAddress?.toLowerCase()
         )
 
         if (index !== -1) {
-            const amount = airdropAddresses[index].amount
+            const amount = treeData[index].amount
 
-            const tree = new BalanceTree(airdropAddresses)
+            const tree = new BalanceTree(treeData)
 
             if (index >= 0) {
                 const merkleDistributorContract =
                     MerkleDistributor__factory.connect(
-                        Addresses[1]['MerkleDistributor'],
+                        contractAddress,
                         provider
                     )
 
@@ -38,11 +43,11 @@ const getRdpxAirdrop = async (address) => {
                 )
 
                 if (!isClaimed) {
-                    const proof = tree.getProof(index, address, amount)
+                    const proof = tree.getProof(index, accountAddress, amount)
 
                     data = {
                         index,
-                        address,
+                        address: accountAddress,
                         amount,
                         proof,
                     }
@@ -56,4 +61,4 @@ const getRdpxAirdrop = async (address) => {
     return { valid, error, data }
 }
 
-export default getRdpxAirdrop
+export default getMerkleClaim
