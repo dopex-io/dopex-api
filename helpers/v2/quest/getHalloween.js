@@ -6,7 +6,7 @@ import dopexHalloweenAddresses from '../../../constants/json/dopexHalloweenAddre
 import BalanceTree from '../../../utils/merkle/balance-tree'
 
 const getHalloween = async (address) => {
-    const provider = getProvider(1)
+    const provider = getProvider(42161)
 
     const isAddress = ethers.utils.isAddress(address)
 

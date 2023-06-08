@@ -6,7 +6,7 @@ import dopexBridgoorAddresses from '../../../constants/json/dopexBridgoorAddress
 import BalanceTree from '../../../utils/merkle/balance-tree'
 
 const getBridgoor = async (address) => {
-    const provider = getProvider(1)
+    const provider = getProvider(42161)
 
     const isAddress = ethers.utils.isAddress(address)
 
@@ -25,6 +25,8 @@ const getBridgoor = async (address) => {
             const amount = dopexBridgoorAddresses[index].amount
 
             const tree = new BalanceTree(dopexBridgoorAddresses)
+
+            console.log(Addresses[42161]['NFTS']['DopexBridgoorNFT'])
 
             if (index >= 0) {
                 const contract = BaseNFT__factory.connect(
