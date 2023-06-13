@@ -1,5 +1,9 @@
 query getStraddlePurchases($epoch: BigInt!, $cost: BigInt!) {
-    straddlePurchases(where: { epoch_gte: $epoch, cost_gte: $cost }) {
+    straddlePurchases(
+        where: { epoch_gte: $epoch, cost_gte: $cost }
+        first: 5000
+        skip: 0
+    ) {
         id
         cost
         epoch

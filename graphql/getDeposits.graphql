@@ -1,5 +1,9 @@
 query getDeposits($epoch: BigInt!, $amount: BigInt!) {
-    deposits(where: { epoch_gte: $epoch, amount_gte: $amount }) {
+    deposits(
+        where: { epoch_gte: $epoch, amount_gte: $amount }
+        first: 5000
+        skip: 0
+    ) {
         id
         amount
         epoch
