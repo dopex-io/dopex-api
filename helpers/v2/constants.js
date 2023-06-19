@@ -991,3 +991,5 @@ export const ATLANTIC_POOLS = {
         },
     ],
 }
+
+export const SSOV_V3_OPTION_TOKEN_NAME = 'Dopex SSOV V3 Options Token'
