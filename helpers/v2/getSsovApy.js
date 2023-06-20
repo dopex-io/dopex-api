@@ -157,9 +157,13 @@ async function getStakingRewardsApy(name) {
 
     const currentEpoch = await ssovContract.currentEpoch()
 
-    const [epochData] = await Promise.all([
+    const [epochData, collateralPrice] = await Promise.all([
         ssovContract.getEpochData(currentEpoch),
+        ssovContract.getCollateralPrice(),
     ])
+
+    const collateralPriceUsd = ethers.utils.formatUnits(collateralPrice, 8)
+
     const { strikes } = epochData
 
     const stakingRewardsInfoCalls = []
@@ -228,9 +232,9 @@ async function getStakingRewardsApy(name) {
                 _rewardsUsdValue = Number(usd) * amount
             }
 
-            totalDeposits += Number(
-                ethers.utils.formatUnits(rewardInfo.totalSupply, 18)
-            )
+            totalDeposits +=
+                Number(ethers.utils.formatUnits(rewardInfo.totalSupply, 18)) *
+                Number(collateralPriceUsd)
             totalUsdValue += _rewardsUsdValue
         }
 
@@ -238,6 +242,7 @@ async function getStakingRewardsApy(name) {
             totalUsdValue === 0
                 ? 0
                 : ((totalUsdValue * 52) / totalDeposits) * 100
+
         apys.push(apy.toFixed(2))
     }
 
