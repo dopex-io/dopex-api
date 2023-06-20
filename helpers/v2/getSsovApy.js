@@ -15,8 +15,6 @@ import { SSOVS, SSOV_V3_OPTION_TOKEN_NAME } from './constants'
 
 import fetchEpochRewards from './ssov/fetchEpochRewards'
 
-import getPrice from '../getPrice'
-
 const SSOV_VERSION = 'SSOV-V3'
 const BIG_NUMBER_ETHERS = BigNumber.from(10).pow(18)
 const DAYS_PER_YEAR = 365
@@ -222,14 +220,18 @@ async function getStakingRewardsApy(name) {
                     optionsContract.optionValue(),
                     optionsContract.collateralSymbol(),
                 ])
-                const { usd } = await getPrice(TOKEN_TO_CG_ID[collateralSymbol])
+
+                const usdPrice = await getPrices([
+                    TOKEN_TO_CG_ID[collateralSymbol],
+                ])
 
                 optionValue = Number(ethers.utils.formatUnits(optionValue, 18))
 
-                _rewardsUsdValue = optionValue * amount * Number(usd)
+                _rewardsUsdValue = optionValue * amount * Number(usdPrice)
             } else {
-                const { usd } = await getPrice(TOKEN_TO_CG_ID[symbol])
-                _rewardsUsdValue = Number(usd) * amount
+                const usdPrice = await getPrices([TOKEN_TO_CG_ID[symbol]])
+
+                _rewardsUsdValue = Number(usdPrice) * amount
             }
 
             totalDeposits +=
