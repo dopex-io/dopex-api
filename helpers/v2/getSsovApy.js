@@ -324,7 +324,7 @@ const NAME_TO_GETTER = {
         args: ['gOHM-WEEKLY-CALLS-SSOV-V3'],
     },
     'ETH-MONTHLY-CALLS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getRewardsApy,
         args: ['ETH-MONTHLY-CALLS-SSOV-V3-3'],
     },
     'DPX-MONTHLY-CALLS-SSOV-V3-3': {
@@ -336,8 +336,8 @@ const NAME_TO_GETTER = {
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3', 3],
     },
     'stETH-WEEKLY-CALLS-SSOV-V3': {
-        fn: getStEthApy,
-        args: ['weekly'],
+        fn: getStakingRewardsApy,
+        args: ['stETH-WEEKLY-CALLS-SSOV-V3'],
     },
     'stETH-MONTHLY-CALLS-SSOV-V3': {
         fn: getStEthApy,
