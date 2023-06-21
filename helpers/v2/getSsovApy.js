@@ -1,14 +1,17 @@
 import { ethers } from 'ethers'
 import { BigNumber } from 'ethers'
-import { Addresses, SsovV3__factory } from '@dopex-io/sdk'
+import { Addresses, ERC20Mock__factory, SsovV3__factory } from '@dopex-io/sdk'
 import { zipWith } from 'lodash'
 import axios from 'axios'
+
+import stakingRewardsAbi from '../../constants/abis/ssovStakingRewards/stakingRewardsAbi.json'
+import SsovV3OptionTokensAbi from '../../constants/abis/ssovOptionsToken/SsovOptionsToken.json'
 
 import getPrices from '../getPrices'
 import getProvider from '../getProvider'
 import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
 
-import { SSOVS } from './constants'
+import { SSOVS, SSOV_V3_OPTION_TOKEN_NAME } from './constants'
 
 import fetchEpochRewards from './ssov/fetchEpochRewards'
 
@@ -135,6 +138,119 @@ async function getRewardsApy(name, version = 1) {
     return calculateApy(rewardsPerYear, totalEpochDepositsInUsd).toFixed(2)
 }
 
+async function getStakingRewardsApy(name) {
+    const ssov = SSOVS.find((s) => s.symbol === name)
+    const provider = getProvider(ssov.chainId)
+
+    const stakingContract = new ethers.Contract(
+        '0x64CcDDf4eE6bc26Ab6F6967B7Eab60f3280239e3',
+        stakingRewardsAbi,
+        provider
+    )
+
+    const ssovContract = SsovV3__factory.connect(
+        Addresses[ssov.chainId][SSOV_VERSION].VAULTS[name],
+        provider
+    )
+
+    const currentEpoch = await ssovContract.currentEpoch()
+
+    const [epochData, collateralPrice] = await Promise.all([
+        ssovContract.getEpochData(currentEpoch),
+        ssovContract.getCollateralPrice(),
+    ])
+
+    const collateralPriceUsd = ethers.utils.formatUnits(collateralPrice, 8)
+
+    const { strikes } = epochData
+
+    const stakingRewardsInfoCalls = []
+    const strikeDataCalls = []
+
+    for (const strike of strikes) {
+        strikeDataCalls.push(
+            ssovContract.getEpochStrikeData(currentEpoch, strike)
+        )
+
+        stakingRewardsInfoCalls.push(
+            stakingContract[
+                'getSsovEpochStrikeRewardsInfo(address,uint256,uint256)'
+            ](ssovContract.address, strike, currentEpoch)
+        )
+    }
+
+    const stakingRewardsInfo = await Promise.all(stakingRewardsInfoCalls)
+
+    let apys = []
+
+    for (const [index] of strikes.entries()) {
+        const rewardsInfo = stakingRewardsInfo[index]
+
+        let totalUsdValue = 0
+        // default as 1 to avoid division by zero
+        let totalDeposits = 1
+
+        for (const rewardInfo of rewardsInfo) {
+            const rewardToken = ERC20Mock__factory.connect(
+                rewardInfo.rewardToken,
+                provider
+            )
+
+            // Fetching name and symbol, for option tokens should return the option name
+            const [name, symbol] = await Promise.all([
+                rewardToken.name(),
+                rewardToken.symbol(),
+            ])
+
+            const amount = Number(
+                ethers.utils.formatUnits(rewardInfo.rewardAmount, 18)
+            )
+
+            let _rewardsUsdValue = 0
+            // If reward token is option token
+            if (name === SSOV_V3_OPTION_TOKEN_NAME) {
+                const optionsContract = new ethers.Contract(
+                    rewardInfo.rewardToken,
+                    SsovV3OptionTokensAbi,
+                    provider
+                )
+
+                // Option value == premium of the option
+                let [optionValue, collateralSymbol] = await Promise.all([
+                    optionsContract.optionValue(),
+                    optionsContract.collateralSymbol(),
+                ])
+
+                const usdPrice = await getPrices([
+                    TOKEN_TO_CG_ID[collateralSymbol],
+                ])
+
+                optionValue = Number(ethers.utils.formatUnits(optionValue, 18))
+
+                _rewardsUsdValue = optionValue * amount * Number(usdPrice)
+            } else {
+                const usdPrice = await getPrices([TOKEN_TO_CG_ID[symbol]])
+
+                _rewardsUsdValue = Number(usdPrice) * amount
+            }
+
+            totalDeposits +=
+                Number(ethers.utils.formatUnits(rewardInfo.totalSupply, 18)) *
+                Number(collateralPriceUsd)
+            totalUsdValue += _rewardsUsdValue
+        }
+
+        const apy =
+            totalUsdValue === 0
+                ? 0
+                : ((totalUsdValue * 52) / totalDeposits) * 100
+
+        apys.push(apy.toFixed(2))
+    }
+
+    return apys
+}
+
 async function getSsovPutApy(name) {
     const ssov = SSOVS.find((s) => s.symbol === name)
 
@@ -203,11 +319,11 @@ const getZeroApy = () => {
 const NAME_TO_GETTER = {
     // Calls
     'DPX-WEEKLY-CALLS-SSOV-V3': {
-        fn: getRewardsApy,
+        fn: getStakingRewardsApy,
         args: ['DPX-WEEKLY-CALLS-SSOV-V3', 2],
     },
     'rDPX-WEEKLY-CALLS-SSOV-V3': {
-        fn: getRewardsApy,
+        fn: getStakingRewardsApy,
         args: ['rDPX-WEEKLY-CALLS-SSOV-V3', 3],
     },
     'gOHM-WEEKLY-CALLS-SSOV-V3': {
@@ -227,8 +343,8 @@ const NAME_TO_GETTER = {
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3', 3],
     },
     'stETH-WEEKLY-CALLS-SSOV-V3': {
-        fn: getStEthApy,
-        args: ['weekly'],
+        fn: getStakingRewardsApy,
+        args: ['stETH-WEEKLY-CALLS-SSOV-V3'],
     },
     'stETH-MONTHLY-CALLS-SSOV-V3': {
         fn: getStEthApy,
