@@ -5,6 +5,10 @@
     "description": "A nodejs based HTTP API for Dopex",
     "author": "Dopex",
     "license": "MIT",
+    "engines": {
+        "node": ">=18"
+    },
+    "engineStrict": true,
     "scripts": {
         "start": "vc dev --listen 5001",
         "test": "jest",
@@ -22,7 +26,7 @@
         "lodash": "^4.17.21"
     },
     "devDependencies": {
-        "@graphprotocol/client-cli": "^2.2.22",
+        "@graphprotocol/client-cli": "^3.0.0",
         "eslint": "^8.25.0",
         "eslint-plugin-jest": "^27.1.1",
         "graphql": "^16.6.0",
