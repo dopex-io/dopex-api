@@ -248,7 +248,7 @@ async function getStakingRewardsApy(name) {
         apys.push(apy.toFixed(2))
     }
 
-    return Math.max(...apys.map((apy) => Number(apy)))
+    return apys
 }
 
 async function getSsovPutApy(name) {
