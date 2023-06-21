@@ -1025,7 +1025,7 @@ module.exports = [
         chainId: 42161,
         collateralDecimals: 18,
         duration: 'monthly',
-        retired: false,
+        retired: true,
         paused: false,
         address: '0xC59836FEC63Cfb2E48b0aa00515056436D74Dc03',
     },
