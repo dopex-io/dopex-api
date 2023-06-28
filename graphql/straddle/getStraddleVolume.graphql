@@ -1,0 +1,8 @@
+query getStraddleVolume($fromTimestamp: BigInt!) {
+    straddlePurchases(
+        where: { transaction_: { timestamp_gt: $fromTimestamp } }
+    ) {
+        id
+        amount
+    }
+}
