@@ -1,0 +1,5 @@
+query getAtlanticsVolume($fromTimestamp: BigInt!) {
+    purchases(where: { transaction_: { timestamp_gt: $fromTimestamp } }) {
+        purchaseId
+    }
+}

@@ -1,0 +1,8 @@
+query getSsovVolume($fromTimestamp: BigInt!) {
+    ssovoptionPurchases(
+        where: { transaction_: { timestamp_gt: $fromTimestamp } }
+    ) {
+        id
+        amount
+    }
+}

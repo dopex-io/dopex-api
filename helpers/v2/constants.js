@@ -992,4 +992,30 @@ export const ATLANTIC_POOLS = {
     ],
 }
 
+export const ZDTES = [
+    {
+        underlyingSymbol: 'ETH',
+        address: '0x0a9efaddab01c0a00edfaf24377460fafba9411d',
+        retired: false,
+    },
+    {
+        underlyingSymbol: 'ARB',
+        address: '0xebf0ac8896fddeec5b8592f4c9eb5b8ea3d4dc82',
+        retired: false,
+    },
+]
+
+export const SCALPS = [
+    {
+        underlyingSymbol: 'ETH',
+        address: '0x96FAEeE355195b3D4ad106127d448B4dF21af759',
+        retired: false,
+    },
+    {
+        underlyingSymbol: 'ARB',
+        address: '0xcACa6e86786a49cFcB736b642e77d74752499FdB',
+        retired: false,
+    },
+]
+
 export const SSOV_V3_OPTION_TOKEN_NAME = 'Dopex SSOV V3 Options Token'

@@ -1,0 +1,8 @@
+query getStraddlePolygonVolume($fromTimestamp: BigInt!) {
+    straddles_polygonstraddlePurchases(
+        where: { transaction_: { timestamp_gt: $fromTimestamp } }
+    ) {
+        id
+        amount
+    }
+}
