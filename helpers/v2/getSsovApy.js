@@ -143,15 +143,12 @@ async function getStakingRewardsApy(name) {
     const provider = getProvider(ssov.chainId)
 
     const stakingContract = new ethers.Contract(
-        '0x64CcDDf4eE6bc26Ab6F6967B7Eab60f3280239e3',
+        '0x9d5FA385cd988d3F148F53a9A5C87B7C8540B62d',
         stakingRewardsAbi,
         provider
     )
 
-    const ssovContract = SsovV3__factory.connect(
-        Addresses[ssov.chainId][SSOV_VERSION].VAULTS[name],
-        provider
-    )
+    const ssovContract = SsovV3__factory.connect(ssov.address, provider)
 
     const currentEpoch = await ssovContract.currentEpoch()
 
@@ -162,7 +159,7 @@ async function getStakingRewardsApy(name) {
 
     const collateralPriceUsd = ethers.utils.formatUnits(collateralPrice, 8)
 
-    const { strikes } = epochData
+    const { strikes, expired } = epochData
 
     const stakingRewardsInfoCalls = []
     const strikeDataCalls = []
@@ -216,16 +213,28 @@ async function getStakingRewardsApy(name) {
                 )
 
                 // Option value == premium of the option
-                let [optionValue, collateralSymbol] = await Promise.all([
-                    optionsContract.optionValue(),
-                    optionsContract.collateralSymbol(),
-                ])
+                let [optionValue, collateralSymbol, strike] = await Promise.all(
+                    [
+                        expired ? 0 : optionsContract.optionValue(),
+                        optionsContract.collateralSymbol(),
+                        optionsContract.strike(),
+                    ]
+                )
 
                 const usdPrice = await getPrices([
                     TOKEN_TO_CG_ID[collateralSymbol],
                 ])
 
-                optionValue = Number(ethers.utils.formatUnits(optionValue, 18))
+                if (expired) {
+                    optionValue =
+                        Number(usdPrice) -
+                        Number(strike.div(1e8)) / Number(usdPrice)
+                    optionValue = optionValue < 0 ? 0 : optionValue
+                } else {
+                    optionValue = Number(
+                        ethers.utils.formatUnits(optionValue, 18)
+                    )
+                }
 
                 _rewardsUsdValue = optionValue * amount * Number(usdPrice)
             } else {
@@ -327,19 +336,19 @@ const NAME_TO_GETTER = {
         args: ['rDPX-WEEKLY-CALLS-SSOV-V3', 3],
     },
     'gOHM-WEEKLY-CALLS-SSOV-V3': {
-        fn: getGohmApy,
+        fn: getStakingRewardsApy,
         args: ['gOHM-WEEKLY-CALLS-SSOV-V3'],
     },
     'ETH-MONTHLY-CALLS-SSOV-V3-3': {
-        fn: getRewardsApy,
+        fn: getStakingRewardsApy,
         args: ['ETH-MONTHLY-CALLS-SSOV-V3-3'],
     },
     'DPX-MONTHLY-CALLS-SSOV-V3-3': {
-        fn: getRewardsApy,
+        fn: getStakingRewardsApy,
         args: ['DPX-MONTHLY-CALLS-SSOV-V3-3'],
     },
     'rDPX-MONTHLY-CALLS-SSOV-V3-3': {
-        fn: getRewardsApy,
+        fn: getStakingRewardsApy,
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3', 3],
     },
     'stETH-WEEKLY-CALLS-SSOV-V3': {
@@ -347,53 +356,53 @@ const NAME_TO_GETTER = {
         args: ['stETH-WEEKLY-CALLS-SSOV-V3'],
     },
     'stETH-MONTHLY-CALLS-SSOV-V3': {
-        fn: getStEthApy,
-        args: ['monthly'],
+        fn: getStakingRewardsApy,
+        args: ['stETH-MONTHLY-CALLS-SSOV-V3'],
     },
     'MATIC-WEEKLY-CALLS-SSOV-V3': {
         fn: getRewardsApy,
         args: ['MATIC-WEEKLY-CALLS-SSOV-V3', 3],
     },
     'ARB-MONTHLY-CALLS-SSOV-V3': {
-        fn: getRewardsApy,
+        fn: getStakingRewardsApy,
         args: ['ARB-MONTHLY-CALLS-SSOV-V3', 3],
     },
 
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['ETH-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'DPX-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['DPX-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'rDPX-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['rDPX-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'BTC-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['BTC-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'gOHM-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['gOHM-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'GMX-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['GMX-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'CRV-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['CRV-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'ETH-QUARTERLY-PUTS-SSOV-V3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['ETH-QUARTERLY-PUTS-SSOV-V3'],
     },
     'CVX-WEEKLY-PUTS-SSOV-V3': {
-        fn: getSsovPutApy,
+        fn: getStakingRewardsApy,
         args: ['CVX-WEEKLY-PUTS-SSOV-V3'],
     },
 }
