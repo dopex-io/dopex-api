@@ -8,6 +8,7 @@ export const TOKEN_TO_CG_ID = {
     AVAX: 'avalanche-2',
     METIS: 'metis',
     CRV: 'curve-dao-token',
+    ARB: 'arbitrum',
 }
 
 export const BLOCKCHAIN_TO_CHAIN_ID = {
