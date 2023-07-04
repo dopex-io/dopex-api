@@ -720,7 +720,7 @@ export const SSOVS = [
         duration: 'monthly',
         retired: false,
         address: '0xDF3d96299275E2Fb40124b8Ad9d270acFDcc6148',
-        olp: '',
+        olp: '0xcC997557ACD205C968ca2E3a4Ab048a11D165e68',
     },
     {
         type: 'put',
@@ -732,7 +732,7 @@ export const SSOVS = [
         duration: 'weekly',
         retired: false,
         address: '0x3e138322b86897eDf4Ffc6060Edc0C1220b4F8B0',
-        olp: '',
+        olp: '0xc11d9d267b553ab04c2e951c147edc5664a0b9d3',
     },
 ]
 
@@ -919,7 +919,7 @@ export const SSOV_LPS = [
         duration: 'weekly',
         chainId: 42161,
         collateralDecimals: 6,
-        retired: false,
+        retired: true,
         address: '0x759dc34637630c1912760Edbc8e12a7c14bd231f',
         token: '0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1',
     },
@@ -962,6 +962,26 @@ export const SSOV_LPS = [
         retired: false,
         address: '0xc1e6E4E28e9760099450653908bEed7ca3129E1D',
         token: '0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978',
+    },
+    {
+        underlyingSymbol: 'ARB',
+        symbol: 'ARB-MONTHLY',
+        duration: 'monthly',
+        chainId: 42161,
+        collateralDecimals: 18,
+        retired: false,
+        address: '0xcC997557ACD205C968ca2E3a4Ab048a11D165e68',
+        token: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+    },
+    {
+        underlyingSymbol: 'CVX',
+        symbol: 'CVX-WEEKLY',
+        duration: 'monthly',
+        chainId: 42161,
+        collateralDecimals: 6,
+        retired: false,
+        address: '0xc11d9d267b553ab04c2e951c147edc5664a0b9d3',
+        token: '0xb952A807345991BD529FDded05009F5e80Fe8F45',
     },
 ]
 
