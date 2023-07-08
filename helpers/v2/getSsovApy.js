@@ -159,7 +159,10 @@ async function getStakingRewardsApy(name) {
 
     const collateralPriceUsd = ethers.utils.formatUnits(collateralPrice, 8)
 
-    const { strikes, expired } = epochData
+    const { strikes, expired, expiry, startTime } = epochData
+    const interval = Math.floor(
+        365 / Math.ceil(expiry.sub(startTime).toNumber() / 86400)
+    )
 
     const stakingRewardsInfoCalls = []
     const strikeDataCalls = []
@@ -252,7 +255,7 @@ async function getStakingRewardsApy(name) {
         const apy =
             totalUsdValue === 0
                 ? 0
-                : ((totalUsdValue * 52) / totalDeposits) * 100
+                : ((totalUsdValue * interval) / totalDeposits) * 100
 
         apys.push(apy.toFixed(2))
     }
