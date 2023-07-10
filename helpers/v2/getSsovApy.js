@@ -205,7 +205,6 @@ async function getStakingRewardsApy(name) {
             const amount = Number(
                 ethers.utils.formatUnits(rewardInfo.rewardAmount, 18)
             )
-
             let _rewardsUsdValue = 0
             // If reward token is option token
             if (name === SSOV_V3_OPTION_TOKEN_NAME) {
@@ -235,7 +234,7 @@ async function getStakingRewardsApy(name) {
                 _rewardsUsdValue = Number(usdPrice) * amount
             }
 
-            totalDeposits +=
+            totalDeposits =
                 Number(ethers.utils.formatUnits(rewardInfo.totalSupply, 18)) *
                 Number(collateralPriceUsd)
             totalUsdValue += _rewardsUsdValue
