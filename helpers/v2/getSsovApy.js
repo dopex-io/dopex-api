@@ -159,7 +159,7 @@ async function getStakingRewardsApy(name) {
 
     const collateralPriceUsd = ethers.utils.formatUnits(collateralPrice, 8)
 
-    const { strikes, expired, expiry, startTime } = epochData
+    const { strikes, expiry, startTime } = epochData
     const interval = Math.floor(
         365 / Math.ceil(expiry.sub(startTime).toNumber() / 86400)
     )
@@ -216,30 +216,19 @@ async function getStakingRewardsApy(name) {
                 )
 
                 // Option value == premium of the option
-                let [optionValue, collateralSymbol, strike] = await Promise.all(
-                    [
-                        expired ? 0 : optionsContract.optionValue(),
-                        optionsContract.collateralSymbol(),
-                        optionsContract.strike(),
-                    ]
-                )
-
-                const usdPrice = await getPrices([
-                    TOKEN_TO_CG_ID[collateralSymbol],
+                let [underlyingSymbol, strike] = await Promise.all([
+                    optionsContract.underlyingSymbol(),
+                    optionsContract.strike(),
                 ])
 
-                if (expired) {
-                    optionValue =
-                        Number(usdPrice) -
-                        Number(strike.div(1e8)) / Number(usdPrice)
-                    optionValue = optionValue < 0 ? 0 : optionValue
-                } else {
-                    optionValue = Number(
-                        ethers.utils.formatUnits(optionValue, 18)
-                    )
-                }
+                const usdPrice = await getPrices([
+                    TOKEN_TO_CG_ID[underlyingSymbol],
+                ])
 
-                _rewardsUsdValue = optionValue * amount * Number(usdPrice)
+                let optionValue = Number(usdPrice) - Number(strike.div(1e8))
+                optionValue = optionValue < 0 ? 0 : optionValue
+
+                _rewardsUsdValue = optionValue * amount
             } else {
                 const usdPrice = await getPrices([TOKEN_TO_CG_ID[symbol]])
 
