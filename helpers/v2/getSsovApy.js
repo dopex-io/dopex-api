@@ -159,7 +159,10 @@ async function getStakingRewardsApy(name) {
 
     const collateralPriceUsd = ethers.utils.formatUnits(collateralPrice, 8)
 
-    const { strikes, expired } = epochData
+    const { strikes, expiry, startTime } = epochData
+    const interval = Math.floor(
+        365 / Math.ceil(expiry.sub(startTime).toNumber() / 86400)
+    )
 
     const stakingRewardsInfoCalls = []
     const strikeDataCalls = []
@@ -202,7 +205,6 @@ async function getStakingRewardsApy(name) {
             const amount = Number(
                 ethers.utils.formatUnits(rewardInfo.rewardAmount, 18)
             )
-
             let _rewardsUsdValue = 0
             // If reward token is option token
             if (name === SSOV_V3_OPTION_TOKEN_NAME) {
@@ -213,37 +215,26 @@ async function getStakingRewardsApy(name) {
                 )
 
                 // Option value == premium of the option
-                let [optionValue, collateralSymbol, strike] = await Promise.all(
-                    [
-                        expired ? 0 : optionsContract.optionValue(),
-                        optionsContract.collateralSymbol(),
-                        optionsContract.strike(),
-                    ]
-                )
-
-                const usdPrice = await getPrices([
-                    TOKEN_TO_CG_ID[collateralSymbol],
+                let [underlyingSymbol, strike] = await Promise.all([
+                    optionsContract.underlyingSymbol(),
+                    optionsContract.strike(),
                 ])
 
-                if (expired) {
-                    optionValue =
-                        Number(usdPrice) -
-                        Number(strike.div(1e8)) / Number(usdPrice)
-                    optionValue = optionValue < 0 ? 0 : optionValue
-                } else {
-                    optionValue = Number(
-                        ethers.utils.formatUnits(optionValue, 18)
-                    )
-                }
+                const usdPrice = await getPrices([
+                    TOKEN_TO_CG_ID[underlyingSymbol],
+                ])
 
-                _rewardsUsdValue = optionValue * amount * Number(usdPrice)
+                let optionValue = Number(usdPrice) - Number(strike.div(1e8))
+                optionValue = optionValue < 0 ? 0 : optionValue
+
+                _rewardsUsdValue = optionValue * amount
             } else {
                 const usdPrice = await getPrices([TOKEN_TO_CG_ID[symbol]])
 
                 _rewardsUsdValue = Number(usdPrice) * amount
             }
 
-            totalDeposits +=
+            totalDeposits =
                 Number(ethers.utils.formatUnits(rewardInfo.totalSupply, 18)) *
                 Number(collateralPriceUsd)
             totalUsdValue += _rewardsUsdValue
@@ -252,7 +243,7 @@ async function getStakingRewardsApy(name) {
         const apy =
             totalUsdValue === 0
                 ? 0
-                : ((totalUsdValue * 52) / totalDeposits) * 100
+                : ((totalUsdValue * interval) / totalDeposits) * 100
 
         apys.push(apy.toFixed(2))
     }
