@@ -46,7 +46,7 @@ export default async (req, res) => {
             }
 
             case 'farms': {
-                const { usd: ethPrice } = await getPrice('ethereum')
+                const ethPrice = await getPrice('ethereum')
 
                 const farmTvls = await Promise.all([
                     getFarmTvl('DPX-WETH', ethPrice),

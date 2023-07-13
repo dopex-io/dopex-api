@@ -1,14 +1,14 @@
-import getPrice from "../../../helpers/getPrice";
-import getRdpxCirculatingSupply from "../../../helpers/getRdpxCirculatingSupply";
+import getPrice from '../../../helpers/getPrice'
+import getRdpxCirculatingSupply from '../../../helpers/getRdpxCirculatingSupply'
 
 export default async (_req, res) => {
-  const [rdpxPrice, rdpxCirculatingSupply] = await Promise.all([
-    getPrice("dopex-rebate-token"),
-    getRdpxCirculatingSupply(),
-  ]);
+    const [rdpxPrice, rdpxCirculatingSupply] = await Promise.all([
+        getPrice('dopex-rebate-token'),
+        getRdpxCirculatingSupply(),
+    ])
 
-  const marketCap = rdpxPrice.usd * rdpxCirculatingSupply;
+    const marketCap = rdpxPrice * rdpxCirculatingSupply
 
-  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
-  await res.json({ marketCap });
-};
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
+    await res.json({ marketCap })
+}

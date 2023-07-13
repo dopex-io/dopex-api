@@ -31,7 +31,7 @@ export default async (_req, res) => {
             return acc + Number(item.tvl)
         }, 0)
 
-        const { usd: ethPrice } = await getPrice('ethereum')
+        const ethPrice = await getPrice('ethereum')
 
         const farmTvls = await Promise.all([
             getFarmTvl('DPX-WETH', ethPrice),

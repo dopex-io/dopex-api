@@ -22,7 +22,7 @@ export default async (req, res) => {
 
         res.json({
             oraclePrice,
-            cgPrice: String(cgPrice.usd),
+            cgPrice: String(cgPrice),
             oracleType: tokenData.oracleType,
         })
     } catch (err) {

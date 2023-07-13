@@ -17,7 +17,7 @@ export default async (req, res) => {
     let apy = 0
     if (req.query.pool) {
         if (isValidQuery(req.query)) {
-            const { usd: ethPriceFinal } = await getPrice('ethereum')
+            const ethPriceFinal = await getPrice('ethereum')
             tvl = (
                 await getFarmTvl(req.query.pool.toUpperCase(), ethPriceFinal)
             ).toString()

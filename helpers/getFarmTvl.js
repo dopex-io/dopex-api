@@ -26,6 +26,7 @@ const getFarmTvl = async (token, ethPriceFinal) => {
     const totalTokens = new BN((await tokenContract.totalSupply()).toString())
 
     const stakingAsset = token.toUpperCase() + 'StakingRewards'
+    console.log(stakingAsset)
 
     const stakingRewardsContract = StakingRewardsV3__factory.connect(
         stakingRewardsAddresses[stakingAsset],

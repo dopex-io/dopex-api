@@ -67,4 +67,40 @@ export default [
         decimals: 8,
         oracleType: 'chainlink',
     },
+    {
+        symbol: 'CVX',
+        name: 'Convex',
+        cgId: 'convex-finance',
+        oracleAddress: '0x851175a919f36c8e30197c09a9a49da932c2cc00',
+        oracleFunctionName: 'latestRoundData()',
+        oracleFunction:
+            'function latestRoundData() view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)',
+        oracleGetter: 'answer',
+        decimals: 8,
+        oracleType: 'chainlink',
+    },
+    {
+        symbol: 'ARB',
+        name: 'Arbitrum',
+        cgId: 'arbitrum',
+        oracleAddress: '0xb2a824043730fe05f3da2efafa1cbbe83fa548d6',
+        oracleFunctionName: 'latestRoundData()',
+        oracleFunction:
+            'function latestRoundData() view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)',
+        oracleGetter: 'answer',
+        decimals: 8,
+        oracleType: 'chainlink',
+    },
+    {
+        symbol: 'stETH',
+        name: 'Lido Staked Ether',
+        cgId: 'staked-ether',
+        oracleAddress: '0x07c5b924399cc23c24a95c8743de4006a32b7f2a',
+        oracleFunctionName: 'latestRoundData()',
+        oracleFunction:
+            'function latestRoundData() view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)',
+        oracleGetter: 'answer',
+        decimals: 8,
+        oracleType: 'chainlink',
+    },
 ]

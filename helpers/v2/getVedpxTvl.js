@@ -12,7 +12,7 @@ export default async () => {
     let tvl = 0
 
     try {
-        const { usd: dpxPrice } = await getPrice('dopex')
+        const dpxPrice = await getPrice('dopex')
         const dpxBalance = await dpxContract.balanceOf(
             '0x80789D252A288E93b01D82373d767D71a75D9F16' // veDPX Contract address
         )
