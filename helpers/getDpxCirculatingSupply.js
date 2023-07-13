@@ -4,7 +4,7 @@ import { ethers, BigNumber } from 'ethers'
 import { BLOCKCHAIN_TO_CHAIN_ID } from '../helpers/constants'
 import getProvider from './getProvider'
 
-export default async () => {
+const getDpxCirculatingSupply = async () => {
     const arbProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
     const ethProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ETHEREUM)
 
@@ -79,3 +79,5 @@ export default async () => {
 
     return Number(ethers.utils.formatEther(cs))
 }
+
+export default getDpxCirculatingSupply
