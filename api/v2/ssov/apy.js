@@ -1,9 +1,9 @@
+import cachedResponse from '../../../helpers/cachedResponse'
 import { SSOVS } from '../../../helpers/v2/constants'
 import getSsovApy from '../../../helpers/v2/getSsovApy'
 
 export default async (req, res) => {
-    try {
-        res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
+    return cachedResponse(req, res, async (req, res) => {
         const symbol = req.query.symbol
 
         if (!symbol) {
@@ -24,19 +24,12 @@ export default async (req, res) => {
             })
         }
 
-        if (ssov.retired) {
-            return res.json({ apy: 0 })
+        let apy = 0
+
+        if (!ssov.retired) {
+            apy = await getSsovApy(ssov)
         }
 
-        const apy = await getSsovApy(ssov)
-
-        return res.json({ apy })
-    } catch (err) {
-        console.log(err)
-
-        return res.status(500).json({
-            error: 'Something went wrong.',
-            details: err['reason'],
-        })
-    }
+        return { apy }
+    })
 }

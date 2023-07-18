@@ -6,8 +6,10 @@ import getSsovTvl from '../../../helpers/v2/getSsovTvl'
 import getSsovData from '../../../helpers/v2/getSsovData'
 import getSsovRewards from '../../../helpers/v2/getSsovRewards'
 
+import cachedResponse from '../../../helpers/cachedResponse'
+
 export default async (req, res) => {
-    try {
+    return cachedResponse(req, res, async (req) => {
         const _groupBy = req.query.groupBy ?? 'chainId'
 
         const _SSOVS = SSOVS.filter((ssov) => !ssov.retired)
@@ -52,14 +54,6 @@ export default async (req, res) => {
         const fData =
             _groupBy === 'none' ? ssovArray : groupBy(ssovArray, _groupBy)
 
-        res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate')
-
-        res.json({ ...fData })
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({
-            error: 'Something went wrong.',
-            details: err['reason'],
-        })
-    }
+        return { ...fData }
+    })
 }
