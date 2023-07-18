@@ -1,0 +1,19 @@
+query getStraddleDeposits(
+    $epoch_gte: BigInt!
+    $epoch_lte: BigInt!
+    $amount: BigInt!
+) {
+    deposits(
+        where: {
+            epoch_gte: $epoch_gte
+            epoch_lte: $epoch_lte
+            amount_gte: $amount
+        }
+        first: 5000
+        skip: 0
+    ) {
+        id
+        amount
+        epoch
+    }
+}

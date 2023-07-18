@@ -12,12 +12,19 @@ const getPaulygonQuest = async (address) => {
         error = 'Not an address'
     } else {
         const [depositData, purchaseData] = await Promise.all([
-            sdk.getDeposits({ epoch: '46', amount: '50000000' }),
+            sdk.getStraddleDeposits({
+                epoch_gte: '46',
+                epoch_lte: '70',
+                amount: '50000000',
+            }),
             sdk.getStraddlePurchases({
-                epoch: '46',
+                epoch_gte: '46',
+                epoch_lte: '70',
                 cost: '4500000000000000000000000000',
             }),
         ])
+
+        console.log(depositData, purchaseData)
 
         for (let i = 0; i < depositData.deposits.length; i++) {
             const item = depositData.deposits[i]
