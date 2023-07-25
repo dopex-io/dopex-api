@@ -8,14 +8,13 @@ The base URL for a hosted version of this API is `https://api.dopex.io/v2`
 
 1. [GET SSOVs](#ssovs)
 2. [GET SSOV APYs](#ssov-apys)
-3. [GET IR VAULTs](#ssovs)
-4. [GET STRADDLES](#straddles)
-5. [GET FARMS](#farms)
-6. [GET SUPPORTED TOKENS](#supported-tokens-for-pricing)
-7. [GET PRICE](#token-oracle--coingecko-price)
-8. [GET OLP](#options-liquidity-pool)
-9. [GET PROTOCOL TVL](#protocol-tvl)
-10. [GET PRODUCT TVL](#product-tvl)
+3. [GET STRADDLES](#straddles)
+4. [GET FARMS](#farms)
+5. [GET SUPPORTED TOKENS](#supported-tokens-for-pricing)
+6. [GET PRICE](#token-oracle--coingecko-price)
+7. [GET OLP](#options-liquidity-pool)
+8. [GET PROTOCOL TVL](#protocol-tvl)
+9. [GET PRODUCT TVL](#product-tvl)
 
 ## SSOVs
 
@@ -44,11 +43,11 @@ Returns data about the Dopex SSOVs
 
 ## SSOV APYs
 
-Gets the APY for the requested SSOV
+Gets the APYs for the requested SSOV
 
 -   **URL**
 
-    `/ssov/apy?symbol=DPX`
+    `/ssov/apy?symbol=DPX-WEEKLY-CALLS-SSOV-V3`
 
 -   **Method:**
 
@@ -62,27 +61,7 @@ Gets the APY for the requested SSOV
 -   **Sample call:**
 
     ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/ssov/apy?symbol=DPX-CALLS-SSOV-V2'
-    ```
-
----
-
-## IR Vaults
-
-Returns data about the Dopex IR Vaults
-
--   **URL**
-
-    `/rateVaults`
-
--   **Method:**
-
-    `GET`
-
--   **Sample call:**
-
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/rateVaults'
+    curl --location --request GET 'https://api.dopex.io/v2/ssov/apy?symbol=DPX-WEEKLY-CALLS-SSOV-V3'
     ```
 
 ---
