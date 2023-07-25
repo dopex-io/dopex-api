@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { ERC20Mock__factory, SsovV3__factory } from '@dopex-io/sdk'
+import { ERC20__factory, SsovV3__factory } from '@dopex-io/sdk'
 import axios from 'axios'
 
 import stakingRewardsAbi from '../../constants/abis/ssovStakingRewards/stakingRewardsAbi.json'
@@ -96,7 +96,7 @@ async function getStakingRewardsApy(name) {
         let totalDeposits = 1
 
         for (const rewardInfo of rewardsInfo) {
-            const rewardToken = ERC20Mock__factory.connect(
+            const rewardToken = ERC20__factory.connect(
                 rewardInfo.rewardToken,
                 provider
             )
