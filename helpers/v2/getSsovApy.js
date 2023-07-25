@@ -9,7 +9,7 @@ import SsovV3OptionTokensAbi from '../../constants/abis/ssovOptionsToken/SsovOpt
 
 import getPrices from '../getPrices'
 import getProvider from '../getProvider'
-import { BLOCKCHAIN_TO_CHAIN_ID, TOKEN_TO_CG_ID } from '../constants'
+import { TOKEN_TO_CG_ID } from '../constants'
 
 import { SSOVS, SSOV_V3_OPTION_TOKEN_NAME } from './constants'
 
@@ -47,42 +47,31 @@ async function getStEthApy(duration) {
 
     const [llamaFiResponse, rewardsApy] = await Promise.all([
         axios.get('https://yields.llama.fi/pools'),
-        getRewardsApy(`stETH-${duration.toUpperCase()}-CALLS-SSOV-V3`, false),
+        getStakingRewardsApy(`stETH-${duration.toUpperCase()}-CALLS-SSOV-V3`),
     ])
 
     const pool = llamaFiResponse.data.data.find((p) => p.pool === poolId)
 
-    const finalApy = pool.apy + Number(rewardsApy)
+    console.log(pool, rewardsApy)
 
-    return finalApy.toFixed(2)
+    return rewardsApy.map((apy) => (pool.apy + Number(apy)).toFixed(2))
 }
 
-async function getGohmApy() {
-    const mainnetProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ETHEREUM)
+async function getStMaticApy() {
+    const poolId = 'bf3a7f07-80a0-4d5b-a311-b0f06f650f83'
 
-    const stakingContract = new ethers.Contract(
-        '0xB63cac384247597756545b500253ff8E607a8020',
-        [
-            'function epoch() view returns (uint256 length, uint256 number, uint256 end, uint256 distribute)',
-        ],
-        mainnetProvider
-    )
-    const sohmMainContract = new ethers.Contract(
-        '0x04906695D6D12CF5459975d7C3C03356E4Ccd460',
-        ['function circulatingSupply() view returns (uint256)'],
-        mainnetProvider
-    )
+    const llamaFiResponse = await axios.get('https://yields.llama.fi/pools')
 
-    const [epoch, circulatingSupply] = await Promise.all([
-        stakingContract.epoch(),
-        sohmMainContract.circulatingSupply(),
-    ])
+    const pool = llamaFiResponse.data.data.find((p) => p.pool === poolId)
 
-    const stakingRebase =
-        Number(epoch.distribute.toString()) /
-        Number(circulatingSupply.toString())
+    const finalApy = pool.apy
 
-    return ((Math.pow(1 + stakingRebase, 365 * 3) - 1) * 100).toFixed(2)
+    return [
+        finalApy.toFixed(2),
+        finalApy.toFixed(2),
+        finalApy.toFixed(2),
+        finalApy.toFixed(2),
+    ]
 }
 
 async function getRewardsApy(name, version = 1) {
@@ -252,45 +241,15 @@ async function getStakingRewardsApy(name) {
 }
 
 async function getSsovPutApy(name) {
-    const ssov = SSOVS.find((s) => s.symbol === name)
-
-    const provider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM)
-
-    const ssovContract = SsovV3__factory.connect(ssov.address, provider)
-
-    const epoch = await ssovContract.currentEpoch()
-
-    if (epoch.isZero()) return '0'
-    const [startTime, expiry] = await ssovContract.getEpochTimes(epoch)
-    const totalPeriod = expiry.toNumber() - startTime.toNumber()
-
-    const twoCrvPrice =
-        (await ssovContract.getCollateralPrice()).toNumber() / 10 ** 8
-    const totalEpochDeposits = await fetchTotalCollateralBalance(
-        ssovContract,
-        epoch
-    )
-    const totalEpochDepositsInUsd = totalEpochDeposits * twoCrvPrice
-
-    // get CRV and DPX prices
-    const [dpxPrice] = await getPrices([TOKEN_TO_CG_ID.DPX])
-
-    // calculate DPX incentives
-    const { rewards: dpxRewards } = await fetchEpochRewards(
-        ssovContract,
-        epoch,
-        provider
-    )
-    const dpxRewardsInUsd =
-        dpxRewards[0].div(BIG_NUMBER_ETHERS).toNumber() * dpxPrice
-    const dpxRewardsInUsdPerYear =
-        (dpxRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
-
     // get the 2CRV Reward APY and Fees APY
-    const [crvRewardAprResponse, crvFeesApyResponse] = await Promise.all([
-        axios.get('https://api.curve.fi/api/getFactoGaugesCrvRewards/arbitrum'),
-        axios.get('https://api.curve.fi/api/getSubgraphData/arbitrum'),
-    ])
+    const [crvRewardAprResponse, crvFeesApyResponse, rewardApys] =
+        await Promise.all([
+            axios.get(
+                'https://api.curve.fi/api/getFactoGaugesCrvRewards/arbitrum'
+            ),
+            axios.get('https://api.curve.fi/api/getSubgraphData/arbitrum'),
+            getStakingRewardsApy(name),
+        ])
 
     const crvRewardApr =
         crvRewardAprResponse.data.data.sideChainGaugesApys.find(
@@ -305,15 +264,13 @@ async function getSsovPutApy(name) {
             '0x7f90122bf0700f9e7e1f688fe926940e8839f353'
     ).latestDailyApy
 
-    return (
-        calculateApy(dpxRewardsInUsdPerYear, totalEpochDepositsInUsd) +
-        crvRewardApr +
-        crvFeesApy
-    ).toFixed(2)
+    return rewardApys.map((apy) => {
+        return (crvRewardApr + crvFeesApy + Number(apy)).toFixed(2)
+    })
 }
 
 const getZeroApy = () => {
-    return '0'
+    return ['0', '0', '0', '0']
 }
 
 const NAME_TO_GETTER = {
@@ -326,14 +283,6 @@ const NAME_TO_GETTER = {
         fn: getStakingRewardsApy,
         args: ['rDPX-WEEKLY-CALLS-SSOV-V3', 3],
     },
-    'gOHM-WEEKLY-CALLS-SSOV-V3': {
-        fn: getStakingRewardsApy,
-        args: ['gOHM-WEEKLY-CALLS-SSOV-V3'],
-    },
-    'ETH-MONTHLY-CALLS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
-        args: ['ETH-MONTHLY-CALLS-SSOV-V3-3'],
-    },
     'DPX-MONTHLY-CALLS-SSOV-V3-3': {
         fn: getStakingRewardsApy,
         args: ['DPX-MONTHLY-CALLS-SSOV-V3-3'],
@@ -343,16 +292,16 @@ const NAME_TO_GETTER = {
         args: ['rDPX-MONTHLY-CALLS-SSOV-V3-3', 3],
     },
     'stETH-WEEKLY-CALLS-SSOV-V3': {
-        fn: getStakingRewardsApy,
-        args: ['stETH-WEEKLY-CALLS-SSOV-V3'],
+        fn: getStEthApy,
+        args: ['WEEKLY'],
     },
     'stETH-MONTHLY-CALLS-SSOV-V3': {
-        fn: getStakingRewardsApy,
-        args: ['stETH-MONTHLY-CALLS-SSOV-V3'],
+        fn: getStEthApy,
+        args: ['MONTHLY'],
     },
     'MATIC-WEEKLY-CALLS-SSOV-V3': {
-        fn: getRewardsApy,
-        args: ['MATIC-WEEKLY-CALLS-SSOV-V3', 3],
+        fn: getStMaticApy,
+        args: [],
     },
     'ARB-MONTHLY-CALLS-SSOV-V3': {
         fn: getStakingRewardsApy,
@@ -361,39 +310,31 @@ const NAME_TO_GETTER = {
 
     // Puts
     'ETH-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['ETH-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'DPX-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['DPX-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'rDPX-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['rDPX-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'BTC-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['BTC-WEEKLY-PUTS-SSOV-V3-3'],
     },
-    'gOHM-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
-        args: ['gOHM-WEEKLY-PUTS-SSOV-V3-3'],
-    },
     'GMX-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['GMX-WEEKLY-PUTS-SSOV-V3-3'],
     },
     'CRV-WEEKLY-PUTS-SSOV-V3-3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['CRV-WEEKLY-PUTS-SSOV-V3-3'],
     },
-    'ETH-QUARTERLY-PUTS-SSOV-V3': {
-        fn: getStakingRewardsApy,
-        args: ['ETH-QUARTERLY-PUTS-SSOV-V3'],
-    },
     'CVX-WEEKLY-PUTS-SSOV-V3': {
-        fn: getStakingRewardsApy,
+        fn: getSsovPutApy,
         args: ['CVX-WEEKLY-PUTS-SSOV-V3'],
     },
 }
@@ -401,9 +342,9 @@ const NAME_TO_GETTER = {
 const getSsovApy = async (ssov) => {
     const { symbol } = ssov
 
-    if (ssov.retired) return getZeroApy()
-
     let apy = getZeroApy()
+
+    if (ssov.retired) return apy
 
     try {
         if (NAME_TO_GETTER[symbol])
