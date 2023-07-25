@@ -1,7 +1,5 @@
 import { ethers } from 'ethers'
-import { BigNumber } from 'ethers'
-import { Addresses, ERC20Mock__factory, SsovV3__factory } from '@dopex-io/sdk'
-import { zipWith } from 'lodash'
+import { ERC20Mock__factory, SsovV3__factory } from '@dopex-io/sdk'
 import axios from 'axios'
 
 import stakingRewardsAbi from '../../constants/abis/ssovStakingRewards/stakingRewardsAbi.json'
@@ -12,35 +10,6 @@ import getProvider from '../getProvider'
 import { TOKEN_TO_CG_ID } from '../constants'
 
 import { SSOVS, SSOV_V3_OPTION_TOKEN_NAME } from './constants'
-
-import fetchEpochRewards from './ssov/fetchEpochRewards'
-
-const SSOV_VERSION = 'SSOV-V3'
-const BIG_NUMBER_ETHERS = BigNumber.from(10).pow(18)
-const DAYS_PER_YEAR = 365
-const SECONDS_PER_DAY = 60 * 60 * 24
-
-const TOKEN_ADDRESS_TO_CG_ID = {
-    '0x6c2c06790b3e3e3c38e12ee22f8183b37a13ee55': 'dopex',
-    '0x32eb7902d4134bf98a28b963d26de779af92a212': 'dopex-rebate-token',
-    '0x10393c20975cf177a3513071bc110f7962cd67da': 'jones-dao',
-    '0x13ad51ed4f1b7e9dc168d8a00cb3f4ddd85efa60': 'lido-dao',
-    '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270': 'matic-network',
-    '0x912ce59144191c1204e64559fe8253a0e49e6548': 'arbitrum',
-}
-
-async function fetchTotalCollateralBalance(ssovContract, epoch) {
-    const totalEpochDeposits = (await ssovContract.getEpochData(epoch))[
-        'totalCollateralBalance'
-    ]
-    return totalEpochDeposits.div(BIG_NUMBER_ETHERS).toNumber()
-}
-
-function calculateApy(rewardsPerYear, totalEpochDeposits) {
-    const denominator = totalEpochDeposits + rewardsPerYear
-    const apr = (denominator / totalEpochDeposits - 1) * 100
-    return ((1 + apr / DAYS_PER_YEAR / 100) ** DAYS_PER_YEAR - 1) * 100
-}
 
 async function getStEthApy(duration) {
     const poolId = '747c1d2a-c668-4682-b9f9-296708a3dd90'
@@ -72,59 +41,6 @@ async function getStMaticApy() {
         finalApy.toFixed(2),
         finalApy.toFixed(2),
     ]
-}
-
-async function getRewardsApy(name, version = 1) {
-    const ssov = SSOVS.find((s) => s.symbol === name)
-
-    const provider = getProvider(ssov.chainId)
-
-    const ssovContract = SsovV3__factory.connect(
-        Addresses[ssov.chainId][SSOV_VERSION].VAULTS[name],
-        provider
-    )
-
-    const [epoch, _underlyingPrice] = await Promise.all([
-        ssovContract.currentEpoch(),
-        ssovContract.getUnderlyingPrice(),
-    ])
-
-    if (epoch.isZero()) return '0'
-
-    const [epochTimes, totalEpochDeposits, { rewards, rewardTokens }] =
-        await Promise.all([
-            ssovContract.getEpochTimes(epoch),
-            fetchTotalCollateralBalance(ssovContract, epoch),
-            fetchEpochRewards(ssovContract, epoch, provider, version),
-        ])
-
-    const [startTime, expiry] = epochTimes
-    const totalPeriod = expiry.toNumber() - startTime.toNumber()
-
-    // get price of underlying ssov token
-    const underlyingPrice = Number(
-        ethers.utils.formatUnits(_underlyingPrice, 8)
-    )
-
-    const totalEpochDepositsInUsd = totalEpochDeposits * underlyingPrice
-
-    const addressToId = rewardTokens.map((rewardToken) => {
-        return TOKEN_ADDRESS_TO_CG_ID[rewardToken.toLowerCase()]
-    })
-
-    const rewardTokenPrices = await getPrices(addressToId)
-
-    let totalRewardsInUsd = 0
-    zipWith(rewards, rewardTokenPrices, function (reward, rewardTokenPrice) {
-        const rewardsInUsd =
-            rewardTokenPrice * reward.div(BIG_NUMBER_ETHERS).toNumber()
-        totalRewardsInUsd += rewardsInUsd
-    })
-
-    const rewardsPerYear =
-        (totalRewardsInUsd / totalPeriod) * (SECONDS_PER_DAY * DAYS_PER_YEAR)
-
-    return calculateApy(rewardsPerYear, totalEpochDepositsInUsd).toFixed(2)
 }
 
 async function getStakingRewardsApy(name) {
