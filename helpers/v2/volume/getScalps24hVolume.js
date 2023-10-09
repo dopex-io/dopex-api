@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers'
 
 import getAddressToSymbol from './getAddressToSymbol'
 
-const getScalpsOrZdte24hVolume = async (scalpsPayload, tokenToPrice, data) => {
+const getScalps24hVolume = async (scalpsPayload, tokenToPrice, data) => {
     const addressToSymbol = getAddressToSymbol(
         data.filter((item) => !item.retired)
     )
@@ -31,4 +31,4 @@ const getScalpsOrZdte24hVolume = async (scalpsPayload, tokenToPrice, data) => {
     return scalpsAmount
 }
 
-export default getScalpsOrZdte24hVolume
+export default getScalps24hVolume

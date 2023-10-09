@@ -1,48 +1,34 @@
 sources:
-    - name: straddles
-      handler:
-          graphql:
-              endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-straddles
-      transforms:
-          - autoPagination:
-                validateSchema: true
-    - name: straddles_polygon
-      handler:
-          graphql:
-              endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-straddles-polygon
-      transforms:
-          - prefix:
-                value: straddles_polygon
-                includeRootOperations: true
-          - autoPagination:
-                validateSchema: true
-    - name: scalps
-      handler:
-          graphql:
-              endpoint: https://api.thegraph.com/subgraphs/name/aercwarden/dopex-option-scalps
-      transforms:
-          - autoPagination:
-                validateSchema: true
-    - name: ssov
-      handler:
-          graphql:
-              endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-ssov
-      transforms:
-          - autoPagination:
-                validateSchema: true
-    - name: zdte
-      handler:
-          graphql:
-              endpoint: https://api.thegraph.com/subgraphs/name/garyunwin42/zdte
-      transforms:
-          - autoPagination:
-                validateSchema: true
-    - name: atlantics
-      handler:
-          graphql:
-              endpoint: https://api.thegraph.com/subgraphs/name/psytama/atlanitc-puts-pool
-      transforms:
-          - autoPagination:
-                validateSchema: true
+  - name: straddles
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-straddles
+    transforms:
+      - autoPagination:
+          validateSchema: true
+  - name: straddles_polygon
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-straddles-polygon
+    transforms:
+      - prefix:
+          value: straddles_polygon
+          includeRootOperations: true
+      - autoPagination:
+          validateSchema: true
+  - name: scalps
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/aercwarden/dopex-option-scalps
+    transforms:
+      - autoPagination:
+          validateSchema: true
+  - name: ssov
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/psytama/dopex-ssov
+    transforms:
+      - autoPagination:
+          validateSchema: true
 documents:
-    - ./graphql/**/*.graphql
+  - ./graphql/**/*.graphql

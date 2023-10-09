@@ -1,6 +1,0 @@
-query getZdteVolume($fromTimestamp: BigInt!) {
-    trades(where: { timestamp_gt: $fromTimestamp }) {
-        id
-        amount
-    }
-}
