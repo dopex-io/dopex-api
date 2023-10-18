@@ -20,24 +20,24 @@ The base URL for a hosted version of this API is `https://api.dopex.io/v2`
 
 Returns data about the Dopex SSOVs
 
--   **URL**
+- **URL**
 
-    `/ssovs`
+  `/ssovs`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **URL Params**
+- **URL Params**
 
-    -   **Optional:** <br />
-        `groupBy=[chainId, type etc defaults to chainId, use none for no grouping]`
+  - **Optional:** <br />
+    `groupBy=[chainId, type etc defaults to chainId, use none for no grouping]`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/ssov'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/ssov'
+  ```
 
 ---
 
@@ -45,24 +45,24 @@ Returns data about the Dopex SSOVs
 
 Gets the APYs for the requested SSOV
 
--   **URL**
+- **URL**
 
-    `/ssov/apy?symbol=DPX-WEEKLY-CALLS-SSOV-V3`
+  `/ssov/apy?symbol=DPX-WEEKLY-CALLS-SSOV-V3`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **URL Params**
+- **URL Params**
 
-    -   **Required:** <br />
-        `symbol=[string]`
+  - **Required:** <br />
+    `symbol=[string]`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/ssov/apy?symbol=DPX-WEEKLY-CALLS-SSOV-V3'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/ssov/apy?symbol=DPX-WEEKLY-CALLS-SSOV-V3'
+  ```
 
 ---
 
@@ -70,38 +70,19 @@ Gets the APYs for the requested SSOV
 
 Returns data about the Dopex Straddles
 
--   **URL**
+- **URL**
 
-    `/straddles`
+  `/straddles`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/straddles'
-    ```
-
----
-
-## Atlantic Pools
-
-Returns data for an Atlantic Pool contract
-
--   **URL**
-
-    `/atlantics`
-
--   **Method:**
-
-    `GET`
-
--   **Sample call:**
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/api/v2/atlantics'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/straddles'
+  ```
 
 ---
 
@@ -109,24 +90,24 @@ Returns data for an Atlantic Pool contract
 
 Returns TVL and APY for a Dopex Sushiswap farm about
 
--   **URL**
+- **URL**
 
-    `/farms`
+  `/farms`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **URL Params**
+- **URL Params**
 
-    -   **Required:** <br />
-        `pool=[string]` where pool is either `DPX-WETH` or `RDPX-WETH`
+  - **Required:** <br />
+    `pool=[string]` where pool is either `DPX-WETH` or `RDPX-WETH`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/farms?pool=DPX-WETH'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/farms?pool=DPX-WETH'
+  ```
 
 ---
 
@@ -134,19 +115,19 @@ Returns TVL and APY for a Dopex Sushiswap farm about
 
 Returns the supported tokens for oracle and coingecko prices
 
--   **URL**
+- **URL**
 
-    `/price`
+  `/price`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/price'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/price'
+  ```
 
 ---
 
@@ -154,24 +135,24 @@ Returns the supported tokens for oracle and coingecko prices
 
 Returns the oracle and coingecko price in usd for dopex supported tokens
 
--   **URL**
+- **URL**
 
-    `/price/[token]`
+  `/price/[token]`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **URL Params**
+- **URL Params**
 
-    -   **Required:** <br />
-        `[token]` where token is any of our supported tokens
+  - **Required:** <br />
+    `[token]` where token is any of our supported tokens
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/price/dpx'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/price/dpx'
+  ```
 
 ---
 
@@ -179,40 +160,40 @@ Returns the oracle and coingecko price in usd for dopex supported tokens
 
 Returns data about the Dopex SSOV LPs
 
--   **URL**
+- **URL**
 
-    `/olp`
+  `/olp`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/olp'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/olp'
+  ```
 
 Returns utilizations about the Dopex SSOV LPs
 
--   **URL**
+- **URL**
 
-    `/olp/utilizations?symbol=DPX-MONTHLY`
+  `/olp/utilizations?symbol=DPX-MONTHLY`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **URL Params**
+- **URL Params**
 
-    -   **Required:** <br />
-        `symbol=[string]`
+  - **Required:** <br />
+    `symbol=[string]`
 
--   **Sample call:**
+- **Sample call:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/olp/utilizations?symbol=DPX-MONTHLY'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/olp/utilizations?symbol=DPX-MONTHLY'
+  ```
 
 ---
 
@@ -222,25 +203,25 @@ Returns the total TVL of all Dopex Products. Allows you to query for specific pr
 
 Possible products are: ssov, atlantic-straddles, farms, vedpx
 
--   **URL**
+- **URL**
 
-    `/tvl`
+  `/tvl`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **Success response:**
+- **Success response:**
 
-    ```json
-    { "tvl": "385272088.86094545716095555338" }
-    ```
+  ```json
+  { "tvl": "385272088.86094545716095555338" }
+  ```
 
--   **Sample calls:**
+- **Sample calls:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/tvl'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/tvl'
+  ```
 
 ---
 
@@ -250,24 +231,24 @@ Returns the total TVL of a dopex product
 
 Possible products are: ssov, atlantic-straddles, farms, vedpx
 
--   **URL**
+- **URL**
 
-    `/tvl/[product]`
+  `/tvl/[product]`
 
--   **Method:**
+- **Method:**
 
-    `GET`
+  `GET`
 
--   **Success response:**
+- **Success response:**
 
-    ```json
-    { "tvl": "385272088.86094545716095555338" }
-    ```
+  ```json
+  { "tvl": "385272088.86094545716095555338" }
+  ```
 
--   **Sample calls:**
+- **Sample calls:**
 
-    ```bash
-    curl --location --request GET 'https://api.dopex.io/v2/tvl/ssov'
-    ```
+  ```bash
+  curl --location --request GET 'https://api.dopex.io/v2/tvl/ssov'
+  ```
 
 ---
