@@ -16,13 +16,6 @@ sources:
           includeRootOperations: true
       - autoPagination:
           validateSchema: true
-  - name: scalps
-    handler:
-      graphql:
-        endpoint: https://api.thegraph.com/subgraphs/name/aercwarden/dopex-option-scalps
-    transforms:
-      - autoPagination:
-          validateSchema: true
   - name: ssov
     handler:
       graphql:
