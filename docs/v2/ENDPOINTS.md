@@ -9,12 +9,11 @@ The base URL for a hosted version of this API is `https://api.dopex.io/v2`
 1. [GET SSOVs](#ssovs)
 2. [GET SSOV APYs](#ssov-apys)
 3. [GET STRADDLES](#straddles)
-4. [GET FARMS](#farms)
-5. [GET SUPPORTED TOKENS](#supported-tokens-for-pricing)
-6. [GET PRICE](#token-oracle--coingecko-price)
-7. [GET OLP](#options-liquidity-pool)
-8. [GET PROTOCOL TVL](#protocol-tvl)
-9. [GET PRODUCT TVL](#product-tvl)
+4. [GET SUPPORTED TOKENS](#supported-tokens-for-pricing)
+5. [GET PRICE](#token-oracle--coingecko-price)
+6. [GET OLP](#options-liquidity-pool)
+7. [GET PROTOCOL TVL](#protocol-tvl)
+8. [GET PRODUCT TVL](#product-tvl)
 
 ## SSOVs
 
@@ -82,31 +81,6 @@ Returns data about the Dopex Straddles
 
   ```bash
   curl --location --request GET 'https://api.dopex.io/v2/straddles'
-  ```
-
----
-
-## Farms
-
-Returns TVL and APY for a Dopex Sushiswap farm about
-
-- **URL**
-
-  `/farms`
-
-- **Method:**
-
-  `GET`
-
-- **URL Params**
-
-  - **Required:** <br />
-    `pool=[string]` where pool is either `DPX-WETH` or `RDPX-WETH`
-
-- **Sample call:**
-
-  ```bash
-  curl --location --request GET 'https://api.dopex.io/v2/farms?pool=DPX-WETH'
   ```
 
 ---
@@ -229,7 +203,7 @@ Possible products are: ssov, atlantic-straddles, farms, vedpx
 
 Returns the total TVL of a dopex product
 
-Possible products are: ssov, atlantic-straddles, farms, vedpx
+Possible products are: ssov, vedpx
 
 - **URL**
 
