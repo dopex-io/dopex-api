@@ -16,8 +16,6 @@ export default async (tokenData) => {
     ...(tokenData.oracleFunctionArgs ? tokenData.oracleFunctionArgs : [])
   );
 
-  console.log(priceData);
-
   const price = tokenData.oracleGetter
     ? priceData[tokenData.oracleGetter]
     : priceData;
