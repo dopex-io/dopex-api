@@ -18,6 +18,8 @@ export default async (req, res) => {
       getPrice(tokenData.cgId),
     ]);
 
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate");
+
     res.json({
       oraclePrice,
       cgPrice: String(cgPrice.price),
