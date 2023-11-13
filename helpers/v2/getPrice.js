@@ -3,7 +3,7 @@ import axios from "axios";
 import redis from "../redis";
 
 export default async (id) => {
-  let price = await redis.get(id);
+  let price = await redis.get(id + "-json");
 
   if (!price) {
     price = await axios
@@ -13,13 +13,15 @@ export default async (id) => {
       .then(async (payload) => {
         const _price = {
           price: payload.data[id].usd,
-          usd_24h_change: payload.data[id].usd_24h_change,
+          change24h: payload.data[id].usd_24h_change,
         };
 
-        await redis.set(id, _price, { ex: 60 });
+        await redis.set(id + "-json", JSON.stringify(_price), { ex: 60 });
 
         return _price;
       });
+  } else {
+    price = JSON.parse(price);
   }
 
   return price;
