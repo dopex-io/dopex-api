@@ -1,5 +1,5 @@
 import getOraclePrice from "../../../helpers/v2/getOraclePrice";
-import getPrice from "../../../helpers/v2/getPrice";
+import getPrice from "../../../helpers/getPrice";
 import tokens from "../../../helpers/v2/tokens";
 
 export default async (req, res) => {
@@ -20,8 +20,8 @@ export default async (req, res) => {
 
     res.json({
       oraclePrice,
-      cgPrice: String(cgPrice.price),
-      change24h: String(cgPrice.usd_24h_change),
+      cgPrice: String(cgPrice),
+      change24h: String(1),
       oracleType: tokenData.oracleType,
     });
   } catch (err) {
