@@ -5,25 +5,18 @@ import { BLOCKCHAIN_TO_CHAIN_ID } from "../helpers/constants";
 import getProvider from "./getProvider";
 
 const getRdpxCirculatingSupply = async () => {
-  const ethProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ETHEREUM);
   const arbProvider = getProvider(BLOCKCHAIN_TO_CHAIN_ID.ARBITRUM);
-
-  const totalSupply = ethers.utils.parseEther("2250000");
 
   /**
    * Circulating Supply = Total Supply - Treasury Balances - Non emitted tokens
-   * Non emitted tokens are from the airdrop contract, ssovs, dopex deployer address
    */
-
-  const rdpxEth = ERC20__factory.connect(
-    Addresses[BLOCKCHAIN_TO_CHAIN_ID["ETHEREUM"]].RDPX,
-    ethProvider
-  );
 
   const rdpxArb = ERC20__factory.connect(
     Addresses[BLOCKCHAIN_TO_CHAIN_ID["ARBITRUM"]].RDPX,
     arbProvider
   );
+
+  const totalSupply = await rdpxArb.totalSupply();
 
   const arbAddresses = [
     // Arbitrum mainnet treasury
@@ -37,10 +30,6 @@ const getRdpxCirculatingSupply = async () => {
     "0x13F4063c6E0CB8B6486fcb726dCe3CD19bae97E8",
   ];
 
-  const rdpxMerkleDistributorBalance = await rdpxEth.balanceOf(
-    "0x20E3D49241A9658C36Df595437160a6F6Dc01bDe"
-  );
-
   const arbRdpxBalances = await Promise.all(
     arbAddresses.map((addr) => {
       return rdpxArb.balanceOf(addr);
@@ -51,9 +40,7 @@ const getRdpxCirculatingSupply = async () => {
     return acc.add(balance);
   }, BigNumber.from(0));
 
-  const cs = totalSupply
-    .sub(rdpxMerkleDistributorBalance)
-    .sub(totalArbRdpxBalance);
+  const cs = totalSupply.sub(totalArbRdpxBalance);
 
   return Number(ethers.utils.formatEther(cs));
 };
