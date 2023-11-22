@@ -20,8 +20,6 @@ export default async (id) => {
 
         return _price;
       });
-  } else {
-    price = JSON.parse(price);
   }
 
   return price;
